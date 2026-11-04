@@ -1,26 +1,248 @@
-import { WHATSAPP_URL, student, lessonSteps } from './demo-data.js';
+import 'katex/dist/katex.min.css';
 import './style.css';
+import { WHATSAPP_URL, ENGINEER_NAME, ENGINEER_PHONE } from './demo-data.js';
+import { SUBJECT_LABELS, lessons, stages, notebookSections } from './course.js';
+import { icons, heroArt } from './icons.js';
+import { formula, quantity } from './math.js';
 
 const app = document.querySelector('#app');
-let page = 'home';
-let step = 0;
-let selected = '';
-const icons = {
- arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 12H5m6-6-6 6 6 6"/></svg>',
- sparkle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2c.8 5.4 2.6 7.2 8 8-5.4.8-7.2 2.6-8 8-.8-5.4-2.6-7.2-8-8 5.4-.8 7.2-2.6 8-8ZM19 16v5m-2.5-2.5h5"/></svg>',
- atom: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="24" cy="24" rx="20" ry="8"/><ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(60 24 24)"/><ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(120 24 24)"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></svg>',
- flask: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 5h12M20 5v14L9 37a4 4 0 0 0 3.5 6h23A4 4 0 0 0 39 37L28 19V5M14 31h20"/><circle cx="22" cy="35" r="1" fill="currentColor"/><circle cx="28" cy="28" r="1" fill="currentColor"/></svg>',
- book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20c-2-2-5-2.5-9-2V5c4-.5 7 0 9 2m0 13c2-2 5-2.5 9-2V5c-4-.5-7 0-9 2m0 13V7"/></svg>'
-};
-const arrow = icons.arrow;
-function brand(){return `<button class="brand" data-page="home" aria-label="الفيزياء الممتعة، الصفحة الرئيسية"><span class="brand-mark"><span>✳</span></span><span><strong>الفيزياء الممتعة</strong><small>PHYSICS & CHEMISTRY</small></span></button>`}
-function header(){return `<header class="site-header"><div class="header-inner">${brand()}<nav class="main-nav" aria-label="التنقل الرئيسي"><button class="${page==='home'?'active':''}" data-page="home">الرئيسية</button><button class="${page==='dashboard'?'active':''}" data-page="dashboard">مساحة التعلّم</button><button class="${page==='lesson'?'active':''}" data-page="lesson">الدرس التجريبي</button></nav><div class="header-actions"><a class="contact" href="${WHATSAPP_URL}" target="_blank" rel="noopener noreferrer">تواصل معنا <span>↗</span></a><button class="header-cta" data-page="dashboard">ابدأ الاستكشاف <span>↖</span></button></div></div></header>`}
-function footer(){return `<footer><div class="footer-inner"><div>${brand()}<p>مساحة صغيرة لأسئلة كبيرة.</p></div><div class="footer-credit">صُنعت بشغف للمعرفة <span>✳</span><br><strong>المهندس سومر شاهين</strong></div><a href="${WHATSAPP_URL}" target="_blank" rel="noopener noreferrer">تواصل عبر واتساب <span dir="ltr">0930215022</span> ↗</a></div></footer>`}
-function universe(){return `<div class="universe" aria-label="رسم تجريدي لمدارات وعناصر علمية"><div class="universe-grid"></div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="orbit-line"></div><div class="planet"><div class="planet-inner"><span>✳</span></div></div><span class="orb orb-a"></span><span class="orb orb-b"></span><span class="orb orb-c"></span><span class="star star-a">✳</span><span class="star star-b">✦</span><span class="star star-c">+</span><span class="visual-label label-top"><i></i> فضول بلا حدود</span><span class="visual-label label-bottom"><b dir="ltr">01 / 02</b> عالمان، رحلة واحدة</span><div class="visual-caption"><span>THE SCIENCE<br>OF WONDER</span><span>✳</span></div></div>`}
-function home(){return `<main><section class="hero"><div class="hero-copy"><div class="eyebrow"><span class="tiny-star">✳</span> أهلاً بك في مختبر الاكتشاف <span class="eyebrow-line"></span> <span dir="ltr">EST. 01</span></div><h1>العلم حكاية،<br><em>وأنت بطلها.</em></h1><p class="hero-description">من سؤال صغير تبدأ رحلة كبيرة. اكتشف الفيزياء والكيمياء بطريقة تقرّب إليك العالم، وتترك لفضولك مساحة لينطلق.</p><div class="hero-actions"><button class="button button-dark" data-page="dashboard">ادخل مساحة التعلّم ${arrow}</button><button class="text-button" data-scroll="paths">اكتشف المسارات <span>↓</span></button></div><div class="hero-meta"><div class="meta-symbol">✺</div><div><strong>للصف السابع</strong><span>الفيزياء والكيمياء · المنهاج السوري</span></div><div class="meta-index" dir="ltr">SCROLL TO EXPLORE <span>↓</span></div></div></div>${universe()}</section><section class="paths section-wrap" id="paths"><div class="section-top"><div><div class="section-kicker"><span>✳</span> اختر وجهتك</div><h2>عالمان من الاكتشاف<span class="dot">.</span></h2></div><p>لكل سؤال بداية، ولكل بداية مسار.<br>إلى أين سيقودك فضولك اليوم؟</p><span class="section-index" dir="ltr">EXPLORE / 01—02</span></div><div class="path-grid"><button class="path-card physics" data-page="dashboard"><div class="path-card-top"><span class="path-number" dir="ltr">01 / PHYSICS</span><span class="path-arrow">↖</span></div><div class="path-icon">${icons.atom}</div><div class="path-bottom"><div><span class="path-overline">اكتشف كيف يعمل العالم</span><h3>الفيزياء</h3><p>حركة، طاقة، وأسئلة تنتظر من يستكشفها.</p></div><span class="path-plus">+</span></div></button><button class="path-card chemistry" data-page="dashboard"><div class="path-card-top"><span class="path-number" dir="ltr">02 / CHEMISTRY</span><span class="path-arrow">↖</span></div><div class="path-icon">${icons.flask}</div><div class="path-bottom"><div><span class="path-overline">اقترب من أسرار المادة</span><h3>الكيمياء</h3><p>عناصر وتفاعلات، وعالم مدهش من التفاصيل.</p></div><span class="path-plus">+</span></div></button></div><div class="demo-note"><span>✳</span> هذه نسخة تجريبية للتصميم؛ المحتوى التعليمي سيُضاف في مرحلة لاحقة. <span dir="ltr">PROTOTYPE / 01</span></div></section><section class="quote-strip"><div class="section-wrap quote-inner"><span class="quote-star">✳</span><div><span>فكرة المنصة</span><h2>الفضول هو بداية كل اكتشاف.</h2></div><button class="button button-outline" data-page="lesson">شاهد الدرس التجريبي ${arrow}</button></div></section></main>`}
-function dashboard(){return `<main class="inner-page section-wrap"><div class="breadcrumb"><button data-page="home">الرئيسية</button> / <span>مساحة التعلّم</span></div><section class="dashboard-intro"><div><div class="section-kicker"><span>✳</span> مساحة التعلّم <span class="demo-pill">بيانات تجريبية</span></div><h1>أهلاً بعودتك، ${student.name}<span class="dot">.</span></h1><p>مساحة لأفكارك وأسئلتك وكل اكتشافاتك القادمة.</p></div><div class="intro-stamp"><span>✳</span><small>KEEP<br>WONDERING</small></div></section><div class="dashboard-layout"><div><div class="block-heading"><div><span class="mini-label">YOUR PATHS / مساراتك</span><h2>ماذا ستكتشف اليوم؟</h2></div><span class="muted">مساران بانتظارك</span></div><div class="dashboard-cards"><article class="subject-card"><div class="subject-head"><span class="subject-icon blue">${icons.atom}</span><span class="tag">مسار تجريبي</span></div><h3>الفيزياء</h3><p>مساحة لاستكشاف الأفكار وفهم العالم من حولك.</p><div class="progress-label"><span>التقدم التجريبي</span><b dir="ltr">${student.physics}%</b></div><div class="progress"><span style="width:${student.physics}%"></span></div><button class="card-link" data-page="lesson">استكشف المسار ${arrow}</button></article><article class="subject-card"><div class="subject-head"><span class="subject-icon orange">${icons.flask}</span><span class="tag">مسار تجريبي</span></div><h3>الكيمياء</h3><p>اقترب أكثر من التفاصيل التي تكوّن عالمنا.</p><div class="progress-label"><span>التقدم التجريبي</span><b dir="ltr">${student.chemistry}%</b></div><div class="progress orange-progress"><span style="width:${student.chemistry}%"></span></div><button class="card-link" data-page="lesson">استكشف المسار ${arrow}</button></article></div><div class="continue-card"><div class="continue-icon">◌</div><div><span class="mini-label">أكمل رحلتك · مثال تجريبي</span><h3>رحلة في عالم الاكتشاف</h3><p>تعرّف على شكل الدرس التفاعلي المستقبلي.</p></div><button class="button button-dark" data-page="lesson">تابع الاستكشاف ${arrow}</button></div></div><aside class="discovery-card"><span class="mini-label">A LITTLE INSPIRATION</span><div class="discovery-art"><div class="discovery-ring">✳</div><span>✦</span></div><span class="tag light-tag">لحظة اكتشاف</span><h2>كل سؤال<br>يفتح عالماً<span>.</span></h2><p>احتفظ بفضولك قريباً. أجمل الاكتشافات تبدأ بفكرة صغيرة.</p><div class="discovery-bottom">مختبر الاكتشاف <span>✳</span></div></aside></div></main>`}
-function notebook(){return `<div class="notebook-grid"><div class="notebook-item wide"><span>01 / الفكرة الأساسية</span><p>مساحة لتدوين الفكرة الأساسية للدرس.</p></div><div class="notebook-item"><span>02 / تعريفات</span><p>مساحة للمفاهيم والتعريفات.</p></div><div class="notebook-item"><span>03 / قوانين ووحدات</span><p>مساحة للرموز والوحدات المستقبلية.</p><div class="formula" dir="ltr">x = ? &nbsp; · &nbsp; [unit]</div></div><div class="notebook-item"><span>04 / رسومات</span><p>مساحة لرسم توضيحي.</p><div class="diagram">◯ ─ ─ ◯</div></div><div class="notebook-item"><span>05 / خطوات وإجراءات</span><p>مساحة لترتيب خطوات النشاط.</p></div><div class="notebook-item wide"><span>06 / قائمة المراجعة</span><label><input type="checkbox"> راجعت ملاحظاتي التجريبية</label><label><input type="checkbox"> دوّنت أسئلتي للمرة القادمة</label></div></div>`}
-function lesson(){const s=lessonSteps[step]; return `<main class="lesson-page section-wrap"><div class="breadcrumb"><button data-page="dashboard">مساحة التعلّم</button> / <span>الدرس التجريبي</span></div><div class="lesson-heading"><div><div class="section-kicker"><span>✳</span> نموذج درس <span class="demo-pill">تجريبي بالكامل</span></div><h1>رحلة في عالم الاكتشاف<span class="dot">.</span></h1><p>نموذج يوضح تجربة الدرس المستقبلية، وليس درساً من المنهاج.</p></div><div class="lesson-count" dir="ltr">${s.number} <span>/ 07</span></div></div><div class="lesson-layout"><aside class="lesson-nav"><div class="lesson-nav-head"><span class="mini-label">YOUR JOURNEY</span><h2>محطات الرحلة</h2><p>اختر محطة للتنقل بينها</p></div><nav aria-label="محطات الدرس">${lessonSteps.map((item,i)=>`<button data-step="${i}" class="${i===step?'current':''}" ${i===step?'aria-current="step"':''}><span class="step-num">${item.number}</span><span>${item.label}</span><span class="step-indicator">${i===step?'←':'·'}</span></button>`).join('')}</nav><div class="nav-note">✳ <span>كل المحتوى هنا تجريبي وغير مرتبط بالمنهاج.</span></div></aside><section class="lesson-content" aria-label="محتوى محطة الدرس"><div class="lesson-content-top"><span>${s.eyebrow} / ${s.number}</span><span>نموذج توضيحي</span></div><div class="lesson-body"><div class="lesson-emblem">${step===6?icons.book:icons.sparkle}</div><span class="mini-label">المحطة ${s.number} · محتوى تجريبي</span><h2 tabindex="-1" id="lesson-title">${s.title}</h2><p class="lesson-description">${s.body}</p>${step===6?notebook():`<div class="prompt-box"><span>✳ &nbsp; مساحة تجريبية</span><h3>${s.prompt}</h3>${step===3||step===4?`<div class="choice-row">${(step===3?['◯','△','✳']:['نعم، لنكمل','أحتاج لحظة']).map(c=>`<button class="choice ${selected===c?'chosen':''}" data-choice="${c}" aria-pressed="${selected===c}">${c}</button>`).join('')}</div><p class="choice-feedback" aria-live="polite">${selected?'تم اختيارك في النموذج التجريبي.':''}</p>`:'<div class="placeholder-lines"><span></span><span></span></div>'}</div>`}</div><div class="lesson-bottom"><span>رحلتك، خطوة بخطوة <span dir="ltr">${s.number} / 07</span></span><div>${step>0?'<button class="back-button" data-prev>السابق</button>':''}${step<6?`<button class="button button-dark" data-next>المحطة التالية ${arrow}</button>`:'<button class="button button-dark" data-page="dashboard">العودة لمساحة التعلّم '+arrow+'</button>'}</div></div></section></div></main>`}
-function render(){app.innerHTML=header()+(page==='home'?home():page==='dashboard'?dashboard():lesson())+footer(); document.title=(page==='home'?'الفيزياء الممتعة':page==='dashboard'?'مساحة التعلّم':'الدرس التجريبي')+' | الفيزياء الممتعة'; const nav=app.querySelector('.lesson-nav nav'); const current=nav?.querySelector('[aria-current=step]'); if(nav&&current){const bounds=nav.getBoundingClientRect(), item=current.getBoundingClientRect(); if(item.left<bounds.left) nav.scrollLeft+=item.left-bounds.left; else if(item.right>bounds.right) nav.scrollLeft+=item.right-bounds.right;}}
-app.addEventListener('click', e=>{const target=e.target.closest('button'); if(!target)return; if(target.dataset.page){page=target.dataset.page; step=0;selected='';render();window.scrollTo(0,0)}else if(target.dataset.scroll){document.getElementById(target.dataset.scroll)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}else if(target.dataset.step!==undefined){step=Number(target.dataset.step);selected='';render();app.querySelector(`[data-step="${step}"]`)?.focus({preventScroll:true})}else if(target.hasAttribute('data-next')){step=Math.min(6,step+1);selected='';render();window.scrollTo(0,0);app.querySelector('#lesson-title')?.focus({preventScroll:true})}else if(target.hasAttribute('data-prev')){step=Math.max(0,step-1);selected='';render();window.scrollTo(0,0);app.querySelector('#lesson-title')?.focus({preventScroll:true})}else if(target.dataset.choice){selected=target.dataset.choice;render();[...app.querySelectorAll('[data-choice]')].find(button=>button.dataset.choice===selected)?.focus({preventScroll:true})}});
+const CHOICES = ['◯', '△', '✳'];
+let selected = { stageId: '', index: -1 };
+
+const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Hash routes: #/, #/student, #/path, #/lesson/:id/:stage. Reloading keeps the place.
+function parseRoute() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (parts.length === 0) return { name: 'home' };
+  if (parts.length === 1 && parts[0] === 'student') return { name: 'student' };
+  if (parts.length === 1 && parts[0] === 'path') return { name: 'path' };
+  if (parts[0] === 'lesson' && parts[1] && parts.length <= 3) {
+    const lesson = lessons.find(item => item.id === parts[1]);
+    const index = stages.findIndex(stage => stage.id === (parts[2] || stages[0].id));
+    if (lesson && index >= 0) return { name: 'lesson', lesson, index };
+  }
+  return { name: 'missing' };
+}
+
+const stageHref = (lesson, stage) => `#/lesson/${lesson.id}/${stage.id}`;
+
+function header(route) {
+  const current = route.name === 'home' ? 'home' : route.name === 'student' ? 'student' : 'path';
+  const link = (key, href, label) => `<a class="nav-link" href="${href}"${current === key ? ' aria-current="page"' : ''}>${label}</a>`;
+  return `<header class="site-header"><div class="wrap header-inner">
+    <a class="brand" href="#/"><span class="brand-mark">${icons.atom}</span><span><strong>الفيزياء الممتعة</strong><small>الفيزياء والكيمياء · الصف السابع</small></span></a>
+    <nav class="main-nav" aria-label="التنقل الرئيسي">${link('home', '#/', 'الرئيسية')}${link('student', '#/student', 'مساحة الطالب')}${link('path', '#/path', 'المسار الدراسي')}</nav>
+  </div></header>`;
+}
+
+function footer() {
+  return `<footer class="site-footer"><div class="wrap footer-inner">
+    <span class="brand-text">الفيزياء الممتعة</span>
+    <p class="engineer-chip">${esc(ENGINEER_NAME)} <span aria-hidden="true">·</span> <a href="${WHATSAPP_URL}" target="_blank" rel="noopener noreferrer"><bdi dir="ltr">${esc(ENGINEER_PHONE)}</bdi></a></p>
+  </div></footer>`;
+}
+
+function homeView() {
+  return `<section class="wrap hero">
+    <div class="hero-copy">
+      <p class="eyebrow">الفيزياء والكيمياء · الصف السابع</p>
+      <h1 data-focus="page" tabindex="-1">أهلاً بك في عالم الفيزياء الممتعة!</h1>
+      <p class="lead">ستجد كل الدروس في مسار واحد متسلسل، يتقدم خطوة بخطوة.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#/path">ابدأ من المسار الدراسي ${icons.arrowLeft}</a>
+        <a class="btn btn-secondary" href="#/lesson/demo">جرّب الدرس التجريبي</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">${heroArt}</div>
+  </section>
+  <section class="wrap">
+    <a class="path-teaser" href="#/path">
+      <span class="tile tile-blue">${icons.path}</span>
+      <span class="teaser-text"><strong>المسار الدراسي</strong><span>درس تجريبي واحد حالياً. ستُضاف الدروس هنا بترتيبها.</span></span>
+      <span class="teaser-go">${icons.arrowLeft}</span>
+    </a>
+  </section>`;
+}
+
+function studentView() {
+  return `<section class="wrap page-section">
+    <header class="page-head">
+      <p class="kicker">مساحة الطالب</p>
+      <h1 data-focus="page" tabindex="-1">أهلاً بك في عالم الفيزياء الممتعة!</h1>
+      <p class="lead">من هنا تنتقل إلى المسار الدراسي أو تفتح الدرس التجريبي.</p>
+    </header>
+    <div class="card-grid">
+      <a class="card card-link" href="#/path"><span class="tile tile-blue">${icons.path}</span><h2>المسار الدراسي</h2><p>كل الدروس بترتيبها المتسلسل.</p></a>
+      <a class="card card-link" href="#/lesson/demo"><span class="tile tile-green">${icons.flask}</span><h2>الدرس التجريبي</h2><p>جولة في محطات الدرس العشر.</p></a>
+      <a class="card card-link" href="#/lesson/demo/notebook"><span class="tile tile-violet">${icons.notebook}</span><h2>دفتر الطالب</h2><p>أقسام الدفتر المنظمة للدرس.</p></a>
+    </div>
+    <div class="notice" role="note"><span class="notice-icon">${icons.info}</span><p><strong>نسخة تجريبية.</strong> لا يتم حفظ تقدمك حتى الآن، ولا توجد تسجيلات دخول في هذه النسخة.</p></div>
+  </section>`;
+}
+
+function lessonCard(lesson) {
+  return `<li><a class="lesson-card" href="#/lesson/${lesson.id}">
+    <span class="lesson-index">${lesson.number ? esc(lesson.number) : 'تجريبي'}</span>
+    <span class="lesson-body"><span class="tag tag-${lesson.tag}">${esc(SUBJECT_LABELS[lesson.tag])}</span><strong>${esc(lesson.title)}</strong></span>
+    <span class="lesson-go">افتح ${icons.arrowLeft}</span>
+  </a></li>`;
+}
+
+function pathView() {
+  return `<section class="wrap page-section">
+    <header class="page-head">
+      <p class="kicker">المسار الدراسي</p>
+      <h1 data-focus="page" tabindex="-1">المسار الدراسي</h1>
+      <p class="lead">كل الدروس في مسار واحد، بترتيبها المتسلسل.</p>
+    </header>
+    <ol class="path-list">${lessons.map(lessonCard).join('')}</ol>
+    <div class="state-panel" data-state="empty"><span class="state-icon">${icons.book}</span>
+      <div><strong>الدروس التالية قيد الإعداد</strong><p>ستُضاف الدروس هنا بالترتيب نفسه الذي في الكتاب، بعد استلام صور المنهاج.</p></div>
+    </div>
+  </section>`;
+}
+
+function badgeClass(kind, id) {
+  if (id === 'book') return 'badge-book';
+  if (kind === 'activity') return 'badge-interactive';
+  if (kind === 'notebook') return 'badge-notebook';
+  if (id === 'explain' || id === 'examples') return 'badge-extra';
+  return 'badge-neutral';
+}
+
+function activityBody(stage) {
+  const chosen = selected.stageId === stage.id && selected.index >= 0;
+  return `<div class="activity">
+    <p class="activity-prompt">اختر رمزاً لتجربة الواجهة فقط:</p>
+    <div class="choice-row" role="group" aria-label="خيارات تجريبية">
+      ${CHOICES.map((symbol, i) => `<button type="button" class="choice" data-choice="${i}" aria-pressed="${chosen && selected.index === i}">${symbol}</button>`).join('')}
+    </div>
+    <p class="feedback" aria-live="polite">${chosen ? 'تم اختيارك في النموذج التجريبي.' : ''}</p>
+  </div>`;
+}
+
+function notebookBody() {
+  const cards = notebookSections.map(section => {
+    let content = '';
+    if (section.id === 'checklist') {
+      content = `<label><input type="checkbox"> قرأت الفكرة الأساسية</label><label><input type="checkbox"> دوّنت سؤالاً للمرة القادمة</label>`;
+    } else if (section.id === 'laws') {
+      content = `<p>سيُملأ عند توفر محتوى الدرس.</p>
+        <div class="demo-math"><p class="demo-label">مثال تجريبي للتنسيق فقط</p>${formula('x = \\frac{a}{b}', { display: true })}<p class="demo-line">${quantity('12', 'cm')}</p></div>`;
+    } else {
+      content = '<p>سيُملأ عند توفر محتوى الدرس.</p>';
+    }
+    return `<article class="note-card${section.id === 'checklist' ? ' note-wide' : ''}"><h3>${esc(section.title)}</h3>${content}</article>`;
+  }).join('');
+  return `<p class="stage-text">دفترك يتضمن هذه الأقسام. لا يتضمن إجابات المعلم.</p><div class="note-grid">${cards}</div>`;
+}
+
+function stageBody(stage) {
+  if (stage.kind === 'notebook') return notebookBody();
+  if (stage.kind === 'activity') {
+    return `${activityBody(stage)}<div class="state-panel" data-state="empty"><span class="state-icon">${icons.info}</span><div><strong>المحتوى بانتظار الاعتماد</strong><p>${esc(stage.placeholder)}</p></div></div>`;
+  }
+  return `<div class="state-panel" data-state="empty"><span class="state-icon">${icons.info}</span><div><strong>المحتوى بانتظار الاعتماد</strong><p>${esc(stage.placeholder)}</p></div></div>`;
+}
+
+function lessonView({ lesson, index }) {
+  const stage = stages[index];
+  const n = index + 1;
+  const total = stages.length;
+  const prev = stages[index - 1];
+  const next = stages[index + 1];
+  const stageLinks = stages.map((item, i) => `<li><a href="${stageHref(lesson, item)}"${i === index ? ' aria-current="step"' : ''}><span class="step-num">${i + 1}</span><span>${esc(item.label)}</span></a></li>`).join('');
+  return `<section class="wrap page-section">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="#/">الرئيسية</a> / <a href="#/path">المسار الدراسي</a> / <span aria-current="page">${esc(lesson.title)}</span></nav>
+    <header class="page-head">
+      ${lesson.demo ? '<p class="kicker"><span class="tag tag-demo">درس تجريبي</span></p>' : ''}
+      <h1 data-focus="page" tabindex="-1">${esc(lesson.title)}</h1>
+      <p class="lead">نموذج لتجربة الدرس، وليس درساً من المنهاج.</p>
+    </header>
+    <div class="lesson-layout">
+      <nav class="stage-nav" aria-label="محطات الدرس">
+        <div class="stage-progress"><span>المحطة ${n} من ${total}</span><progress max="${total}" value="${n}" aria-label="تقدمك في محطات الدرس"></progress></div>
+        <ol>${stageLinks}</ol>
+      </nav>
+      <article class="stage" aria-labelledby="stage-title">
+        <div class="stage-top"><span class="badge ${badgeClass(stage.kind, stage.id)}">${esc(stage.badge || stage.title)}</span><span>المحطة ${n} من ${total}</span></div>
+        <h2 id="stage-title" data-focus="stage" tabindex="-1">${esc(stage.title)}</h2>
+        <p class="stage-text">${esc(stage.intro)}</p>
+        ${stageBody(stage)}
+        <div class="stage-actions">
+          ${prev ? `<a class="btn btn-secondary" href="${stageHref(lesson, prev)}">${icons.arrowRight} السابق: ${esc(prev.label)}</a>` : '<span></span>'}
+          ${next ? `<a class="btn btn-primary" href="${stageHref(lesson, next)}">التالي: ${esc(next.label)} ${icons.arrowLeft}</a>` : `<a class="btn btn-primary" href="#/path">العودة إلى المسار الدراسي ${icons.arrowLeft}</a>`}
+        </div>
+      </article>
+    </div>
+  </section>`;
+}
+
+function missingView() {
+  return `<section class="wrap page-section"><div class="state-panel" data-state="error"><span class="state-icon">${icons.info}</span>
+    <div><h1 data-focus="page" tabindex="-1">الصفحة غير متوفرة</h1><p>الرابط غير صحيح، أو لم تعد هذه الصفحة موجودة.</p>
+    <a class="btn btn-primary" href="#/">العودة إلى الرئيسية</a></div></div></section>`;
+}
+
+function view(route) {
+  switch (route.name) {
+    case 'home': return homeView();
+    case 'student': return studentView();
+    case 'path': return pathView();
+    case 'lesson': return lessonView(route);
+    default: return missingView();
+  }
+}
+
+function titleFor(route) {
+  if (route.name === 'home') return 'الرئيسية';
+  if (route.name === 'student') return 'مساحة الطالب';
+  if (route.name === 'path') return 'المسار الدراسي';
+  if (route.name === 'lesson') return `${route.lesson.title} · ${stages[route.index].title}`;
+  return 'الصفحة غير متوفرة';
+}
+
+function render(route = parseRoute()) {
+  app.innerHTML = `<button type="button" class="skip-link" data-skip>تخطَّ إلى المحتوى</button>${header(route)}<main id="main" tabindex="-1">${view(route)}</main>${footer()}`;
+  document.title = `${titleFor(route)} | الفيزياء الممتعة`;
+  const nav = app.querySelector('.stage-nav ol');
+  const current = nav?.querySelector('[aria-current="step"]');
+  if (nav && current && nav.scrollWidth > nav.clientWidth) current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+// Moves focus after navigation (never on first load): to the stage heading when only the
+// stage changed within the same lesson, otherwise to the page heading.
+function afterNavigation(previous, current) {
+  window.scrollTo(0, 0);
+  const sameLesson = previous.name === 'lesson' && current.name === 'lesson' && previous.lesson.id === current.lesson.id;
+  const kind = sameLesson ? 'stage' : 'page';
+  app.querySelector(`[data-focus="${kind}"]`)?.focus({ preventScroll: true });
+}
+
+app.addEventListener('click', event => {
+  const skip = event.target.closest('[data-skip]');
+  if (skip) {
+    app.querySelector('#main')?.focus();
+    return;
+  }
+  const choice = event.target.closest('[data-choice]');
+  if (!choice) return;
+  const route = parseRoute();
+  if (route.name !== 'lesson') return;
+  const index = Number(choice.dataset.choice);
+  selected = { stageId: stages[route.index].id, index };
+  render(route);
+  app.querySelector(`[data-choice="${index}"]`)?.focus({ preventScroll: true });
+});
+
+let lastRoute = parseRoute();
+window.addEventListener('hashchange', () => {
+  const previous = lastRoute;
+  selected = { stageId: '', index: -1 };
+  lastRoute = parseRoute();
+  render(lastRoute);
+  afterNavigation(previous, lastRoute);
+});
+
 render();
