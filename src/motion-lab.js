@@ -1,6 +1,27 @@
 import { motionGraph } from './diagrams.js';
 import { formula } from './math.js';
 
+// هندسة مشتركة للرسم والقيم: طول خط البُعد بالبكسل يتناسب مع القيمة بالمتر.
+export const REFERENCE_GEOMETRY = Object.freeze({
+  svgWidth: 700, busWidth: 190, signX: 90, bOffset: 112,
+  initialBusX: 155, pixelsPerMetre: 8.85, initialDistance: 20,
+  speed: 5, maxTime: 6,
+});
+
+export function referenceSnapshot(reference, time) {
+  const geometry = REFERENCE_GEOMETRY;
+  const safeTime = Math.min(geometry.maxTime, Math.max(0, Number(time)));
+  const distance = geometry.initialDistance + geometry.speed * safeTime;
+  const personBX = geometry.signX + distance * geometry.pixelsPerMetre;
+  const busX = personBX - geometry.bOffset;
+  return {
+    time: safeTime, distance, busX, personBX, busRight: busX + geometry.busWidth,
+    signX: geometry.signX, bOffset: geometry.bOffset,
+    distanceLinePixels: personBX - geometry.signX,
+    moving: reference === 'sign',
+  };
+}
+
 const state = {
   active: 'reference',
   reference: 'sign',
@@ -17,7 +38,9 @@ const state = {
   graphAnswers: {},
 };
 
-const graphConfigs = {
+export const GRAPH_SYMBOLS = Object.freeze({ position: 'x', distance: 'd' });
+
+export const graphConfigs = {
   rest: {
     label: 'ساكن بالنسبة إلى المرجع', max: 7, yMax: 10, yStep: 1,
     position: time => 5, points: Array.from({ length: 8 }, (_, time) => [time, 5]),
@@ -37,6 +60,21 @@ const graphConfigs = {
     explanation: 'المسافات في الثواني المتتالية 1 و3 و5 و7 أمتار. تتساوى الأزمنة ولا تتساوى المسافات؛ لذلك الحركة غير منتظمة.',
   },
 };
+
+export function graphSnapshot(mode, time) {
+  const config = graphConfigs[mode];
+  if (!config) throw new Error('Unknown graph mode');
+  const safeTime = Math.min(config.max, Math.max(0, Number(time)));
+  const position = config.position(safeTime);
+  const initial = config.position(0);
+  const distance = Math.abs(position - initial);
+  return {
+    config, time: safeTime, position, initial, distance,
+    speed: safeTime > 0 ? distance / safeTime : null,
+    positionSymbol: GRAPH_SYMBOLS.position,
+    distanceSymbol: GRAPH_SYMBOLS.distance,
+  };
+}
 
 const round = value => Math.round(value * 100) / 100;
 const fmt = value => Number(round(value).toFixed(2));
@@ -61,33 +99,30 @@ function timeControls(kind, time, max, playing, step = 0.1) {
 }
 
 function referenceScene() {
-  const time = state.referenceTime;
-  const busX = 155 + time * 62;
-  const signX = 90;
-  const bOffset = 112;
-  const distance = 20 + 5 * time;
+  const snapshot = referenceSnapshot(state.reference, state.referenceTime);
+  const { time, busX, signX, bOffset, distance, moving } = snapshot;
   const descriptions = {
     sign: 'الشاخصة المرورية', driver: 'سائق الحافلة', passenger: 'الراكب A',
   };
-  const moving = state.reference === 'sign';
   return `<section class="lab-panel" aria-label="تجربة تغيير الجسم المرجعي">
     <div class="lab-goal"><strong>هدف التجربة:</strong> اكتشف لماذا يتغيّر وصف الراكب B عندما يتغيّر الجسم المرجع.</div>
     <div class="lab-instructions"><strong>جرّب:</strong> اختر مرجعاً، ثم حرّك الزمن ولاحظ بُعد الراكب B عن المرجع. اضغط «تشغيل» أو استعمل المنزلق خطوة خطوة.</div>
     <div class="reference-controls"><label for="reference-select">أقارن الراكب B بـ:</label><select id="reference-select" data-lab-input="reference">
       <option value="sign" ${state.reference === 'sign' ? 'selected' : ''}>الشاخصة المرورية</option><option value="driver" ${state.reference === 'driver' ? 'selected' : ''}>سائق الحافلة</option><option value="passenger" ${state.reference === 'passenger' ? 'selected' : ''}>الراكب A</option>
     </select></div>
-    <div class="lab-scene"><svg viewBox="0 0 700 280" role="img" aria-label="حافلة تتحرك بالنسبة إلى شاخصة، والراكب B ثابت داخلها" dir="ltr">
+    <div class="simulation-source">رسم تخطيطي: يمثّل طول الخط الأزرق بُعد B عن الشاخصة وفق القيمة العددية الظاهرة.</div>
+    <div class="lab-scene"><svg data-reference-svg viewBox="0 0 700 280" role="img" aria-label="حافلة تتحرك بالنسبة إلى شاخصة، والراكب B ثابت داخلها" dir="ltr">
       <rect x="0" y="190" width="700" height="60" fill="#dce5ef"/><line x1="0" y1="220" x2="700" y2="220" class="road-dashes"/>
-      <g class="${state.reference === 'sign' ? 'reference-highlight' : ''}"><line x1="${signX}" y1="105" x2="${signX}" y2="190" class="sign-post"/><circle cx="${signX}" cy="82" r="35" fill="#fff" stroke="#d94b4b" stroke-width="8"/><line x1="${signX - 20}" y1="82" x2="${signX + 20}" y2="82" stroke="#d94b4b" stroke-width="8"/><text x="${signX}" y="142" class="svg-label" text-anchor="middle">شاخصة</text></g>
-      <g transform="translate(${busX} 78)"><rect x="0" y="0" width="190" height="105" rx="25" fill="#ef6c52"/><rect x="20" y="16" width="132" height="43" rx="6" fill="#d8f0f6"/><rect x="153" y="17" width="25" height="60" rx="4" fill="#d8f0f6"/>
-      <g class="${state.reference === 'passenger' ? 'reference-highlight' : ''}"><circle cx="43" cy="37" r="9" fill="#39445c"/><text x="43" y="75" class="svg-label" text-anchor="middle">A</text></g>
+      <g class="${state.reference === 'sign' ? 'reference-highlight' : ''}"><line x1="${signX}" y1="105" x2="${signX}" y2="190" class="sign-post"/><circle cx="${signX}" cy="82" r="35" fill="#fff" stroke="#d94b4b" stroke-width="8"/><line x1="${signX - 20}" y1="82" x2="${signX + 20}" y2="82" stroke="#d94b4b" stroke-width="8"/><text x="${signX}" y="142" class="svg-label" text-anchor="middle">شاخصة</text>${state.reference === 'sign' ? `<circle data-reference-ring="sign" cx="${signX}" cy="82" r="44" class="reference-ring"/>` : ''}</g>
+      <g data-bus-group transform="translate(${busX} 78)"><rect x="0" y="0" width="190" height="105" rx="25" fill="#ef6c52"/><rect x="20" y="16" width="132" height="43" rx="6" fill="#d8f0f6"/><rect x="153" y="17" width="25" height="60" rx="4" fill="#d8f0f6"/>
+      <g class="${state.reference === 'passenger' ? 'reference-highlight' : ''}"><circle cx="43" cy="37" r="9" fill="#39445c"/>${state.reference === 'passenger' ? '<circle data-reference-ring="passenger" cx="43" cy="37" r="17" class="reference-ring"/>' : ''}<text x="43" y="75" class="svg-label" text-anchor="middle">A</text></g>
       <circle cx="112" cy="37" r="9" fill="#39445c"/><text x="112" y="75" class="svg-label bus-b" text-anchor="middle">B</text>
-      <g class="${state.reference === 'driver' ? 'reference-highlight' : ''}"><circle cx="163" cy="39" r="8" fill="#39445c"/><text x="163" y="100" class="svg-label" text-anchor="middle">سائق</text></g>
+      <g class="${state.reference === 'driver' ? 'reference-highlight' : ''}"><circle cx="163" cy="39" r="8" fill="#39445c"/>${state.reference === 'driver' ? '<circle data-reference-ring="driver" cx="163" cy="39" r="16" class="reference-ring"/>' : ''}<text x="163" y="12" class="svg-label" text-anchor="middle">سائق</text></g>
       <circle cx="45" cy="105" r="22" fill="#344055"/><circle cx="45" cy="105" r="9" fill="#cbd5e1"/><circle cx="148" cy="105" r="22" fill="#344055"/><circle cx="148" cy="105" r="9" fill="#cbd5e1"/></g>
-      <line x1="${signX}" y1="265" x2="${busX + bOffset}" y2="265" class="distance-line"/><text x="${(signX + busX + bOffset) / 2}" y="258" class="svg-label" text-anchor="middle">البُعد عن الشاخصة: ${fmt(distance)} m</text>
+      <line data-distance-line data-pixel-length="${snapshot.distanceLinePixels}" x1="${signX}" y1="265" x2="${busX + bOffset}" y2="265" class="distance-line"/><text x="${(signX + busX + bOffset) / 2}" y="258" class="svg-label" text-anchor="middle">البُعد عن الشاخصة: ${fmt(distance)} m</text>
     </svg></div>
     ${timeControls('reference', time, 6, state.referencePlaying)}
-    <div class="measurement-grid"><div><span>المرجع المختار</span><strong>${descriptions[state.reference]}</strong></div><div><span>وصف الراكب B</span><strong class="${moving ? 'moving' : 'resting'}">${moving ? 'متحرك' : 'ساكن'}</strong></div><div><span>بُعد B عن السائق</span><strong>ثابت داخل الحافلة</strong></div></div>
+    <div class="measurement-grid"><div><span>المرجع المختار</span><strong>${descriptions[state.reference]}</strong></div><div><span>وصف الراكب B</span><strong data-reference-state class="${moving ? 'moving' : 'resting'}">${moving ? 'متحرك' : 'ساكن'}</strong></div><div><span>بُعد B عن السائق</span><strong>ثابت داخل الحافلة</strong></div></div>
     <div class="table-scroll" tabindex="0"><table><caption>قياسات التجربة الحالية</caption><thead><tr><th>الزمن</th><th>بُعد B عن الشاخصة</th><th>بُعد B عن السائق</th><th>الوصف بالنسبة إلى ${descriptions[state.reference]}</th></tr></thead><tbody><tr><td>${formula(`${fmt(time)}\\,\\mathrm{s}`)}</td><td>${formula(`${fmt(distance)}\\,\\mathrm{m}`)}</td><td>لا يتغيّر</td><td><strong>${moving ? 'متحرك' : 'ساكن'}</strong></td></tr></tbody></table></div>
     <div class="inference"><h3>استنتج</h3><p>هل يمكن أن يكون الراكب B ساكناً بالنسبة إلى السائق ومتحركاً بالنسبة إلى الشاخصة في الزمن نفسه؟</p><div class="answer-options">${button('ref-answer-yes', 'نعم، لأن المرجع مختلف', state.referenceAnswer === 'نعم، لأن المرجع مختلف', 'answer-option')}${button('ref-answer-no', 'لا، الوصف واحد دائماً', state.referenceAnswer === 'لا، الوصف واحد دائماً', 'answer-option')}</div>
     ${state.referenceAnswer ? `<div class="answer-feedback ${state.referenceAnswer.startsWith('نعم') ? 'correct' : 'incorrect'}" role="status"><strong>${state.referenceAnswer.startsWith('نعم') ? 'استنتاج صحيح.' : 'أعد التجربة وغيّر المرجع.'}</strong><p>الحركة والسكون مفهومان نسبيان. يتغيّر الوصف لأن بُعد B ثابت بالنسبة إلى السائق ومتغيّر بالنسبة إلى الشاخصة.</p></div>` : ''}</div>
@@ -126,12 +161,8 @@ function pathScene() {
 }
 
 function graphScene() {
-  const config = graphConfigs[state.graphMode];
-  const time = Math.min(state.graphTime, config.max);
-  const position = config.position(time);
-  const initial = config.position(0);
-  const distance = Math.abs(position - initial);
-  const speed = time > 0 ? distance / time : null;
+  const snapshot = graphSnapshot(state.graphMode, state.graphTime);
+  const { config, time, position, initial, distance, speed, positionSymbol, distanceSymbol } = snapshot;
   const answer = state.graphAnswers[state.graphMode];
   const currentRow = Math.round(time);
   return `<section class="lab-panel" aria-label="تجربة الزمن والموضع والرسم البياني">
@@ -139,10 +170,10 @@ function graphScene() {
     <div class="lab-instructions"><strong>جرّب:</strong> اختر حالة، ثم غيّر الزمن. النقطة البرتقالية هي القراءة الحالية. في هذه الحالات الحركة إما ساكنة أو على خط مستقيم باتجاه واحد، لذلك ${formula('d=|x-x_0|')}.</div>
     <div class="lab-choice-row" aria-label="اختر حالة الحركة">${Object.entries(graphConfigs).map(([key, item]) => button(`graph-mode-${key}`, item.label, state.graphMode === key, 'lab-mode')).join('')}</div>
     <div class="simulation-source">${state.graphMode === 'rest' ? 'قيمة البُعد من رسم السكون في الكتاب.' : 'النقاط مأخوذة من رسوم الكتاب؛ الحركة بين النقاط استيفاء للمحاكاة.'}</div>
-    <div class="lab-graph-layout">${motionGraph({ id: `lab-${state.graphMode}`, title: config.label, description: config.description, points: config.points, xMax: config.max, yMax: config.yMax, xStep: 1, yStep: config.yStep, currentTime: time, curved: config.curved || false, ySymbol: 'x' })}
-    <div class="live-measurements"><h3>القراءة الحالية</h3><dl><div><dt>الزمن ${formula('t')}</dt><dd>${formula(`${fmt(time)}\\,\\mathrm{s}`)}</dd></div><div><dt>الموضع ${formula('x')}</dt><dd>${formula(`${fmt(position)}\\,\\mathrm{m}`)}</dd></div><div><dt>المسافة من نقطة البدء ${formula('d')}</dt><dd>${formula(`${fmt(distance)}\\,\\mathrm{m}`)}</dd></div></dl><h4>السرعة الوسطية من البداية</h4>${speed === null ? '<p>اختر زمناً أكبر من صفر لحساب السرعة الوسطية.</p>' : formula(`v_{avg}=\\frac{${fmt(distance)}}{${fmt(time)}}=${fmt(speed)}\\,\\mathrm{m}\\cdot\\mathrm{s}^{-1}`, { display: true })}</div></div>
+    <div class="lab-graph-layout">${motionGraph({ id: `lab-${state.graphMode}`, title: config.label, description: config.description, points: config.points, xMax: config.max, yMax: config.yMax, xStep: 1, yStep: config.yStep, currentTime: time, curved: config.curved || false, ySymbol: positionSymbol })}
+    <div class="live-measurements"><h3>القراءة الحالية</h3><dl><div><dt>الزمن ${formula('t')}</dt><dd data-measure="time">${formula(`${fmt(time)}\\,\\mathrm{s}`)}</dd></div><div><dt>الموضع ${formula(positionSymbol)}</dt><dd data-measure="position">${formula(`${fmt(position)}\\,\\mathrm{m}`)}</dd></div><div><dt>المسافة من نقطة البدء ${formula(distanceSymbol)}</dt><dd data-measure="distance">${formula(`${fmt(distance)}\\,\\mathrm{m}`)}</dd></div></dl><h4>السرعة الوسطية من البداية</h4>${speed === null ? '<p>اختر زمناً أكبر من صفر لحساب السرعة الوسطية.</p>' : formula(`v_{avg}=\\frac{${fmt(distance)}}{${fmt(time)}}=${fmt(speed)}\\,\\mathrm{m}\\cdot\\mathrm{s}^{-1}`, { display: true })}</div></div>
     ${timeControls('graph', time, config.max, state.graphPlaying, 0.1)}
-    <div class="table-scroll" tabindex="0" role="region" aria-label="جدول بيانات المحاكاة"><table><caption>الجدول يتغير مع الحالة، والسطر الملوّن يقابل أقرب ثانية إلى القراءة الحالية</caption><thead><tr><th>${formula('t\\,(s)')}</th><th>الموضع ${formula('x\\,(m)')}</th><th>المسافة من البدء ${formula('d\\,(m)')}</th><th>المسافة في الثانية الأخيرة</th></tr></thead><tbody>${config.points.map(([sampleTime, samplePosition], index, array) => {
+    <div class="table-scroll" tabindex="0" role="region" aria-label="جدول بيانات المحاكاة"><table><caption>الجدول يتغير مع الحالة، والسطر الملوّن يقابل أقرب ثانية إلى القراءة الحالية</caption><thead><tr><th>${formula('t\\,(s)')}</th><th>الموضع ${formula(`${positionSymbol}\\,(m)`)}</th><th>المسافة من البدء ${formula(`${distanceSymbol}\\,(m)`)}</th><th>المسافة في الثانية الأخيرة</th></tr></thead><tbody>${config.points.map(([sampleTime, samplePosition], index, array) => {
       const previous = index ? array[index - 1][1] : samplePosition;
       const intervalDistance = index ? Math.abs(samplePosition - previous) : 0;
       return `<tr class="${index === currentRow ? 'current-data-row' : ''}"><td>${formula(String(sampleTime))}</td><td>${formula(String(samplePosition))}</td><td>${formula(String(Math.abs(samplePosition - initial)))}</td><td>${index ? formula(String(intervalDistance)) : '—'}</td></tr>`;

@@ -295,6 +295,7 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
 .svg-label { fill: #1b2a4a; font: 700 14px Tahoma, sans-serif; }
 .bus-b { font-size: 18px; fill: #b91c1c; }
 .reference-highlight { filter: drop-shadow(0 0 6px #f59e0b); }
+.reference-ring { fill: none; stroke: #d97706; stroke-width: 4; }
 .distance-line { stroke: #2563eb; stroke-width: 3; marker-start: none; }
 .time-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 16px; background: var(--surface-soft); border-radius: 14px; margin: 16px 0; }
 .time-controls label { margin-inline-start: auto; min-width: 160px; }

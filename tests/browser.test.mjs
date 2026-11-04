@@ -31,6 +31,14 @@ const range = async (page, id, value) => {
   }, value);
 };
 
+const assertBusInsideSvg = async page => {
+  const svg = await page.locator('[data-reference-svg]').boundingBox();
+  const bus = await page.locator('[data-bus-group]').boundingBox();
+  assert.ok(svg && bus, 'reference SVG and bus must have visible geometry');
+  assert.ok(bus.x >= svg.x - 1 && bus.x + bus.width <= svg.x + svg.width + 1,
+    `bus must not clip horizontally: ${JSON.stringify({ svg, bus })}`);
+};
+
 test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four responsive sizes', { timeout: 300000 }, async () => {
   const serverArgs = production
     ? ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort']
@@ -94,6 +102,9 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
         assert.ok(await page.locator('.stage-book .mfrac').count() > 0, 'vertical fractions are rendered');
         assert.ok(await page.locator('.stage-book .msupsub').count() > 0, 'subscripts are rendered');
         assert.ok(await page.locator('.stage-book .motion-graph').count() >= 5, 'book graphs are present');
+        for (const id of ['book-p8', 'book-p9', 'book-p10', 'book-p11']) {
+          assert.match(await page.locator(`[data-graph-id="${id}"] .graph-label`).last().textContent(), /^d \(m\)/, `${id} keeps the book symbol d`);
+        }
         await noMathErrors();
       }
       if (i === 7) assert.equal(await page.locator('.stage-test .question-card').count(), 0, 'final test is not authored before approval');
@@ -108,12 +119,17 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
 
     // المختبر: تغيير المرجع يغير الوصف، والقيم تتبع الزمن.
     await page.goto(`${base}#/lesson/motion-rest/activity`);
-    await page.locator('[data-lab-input="reference"]').selectOption('driver');
-    await range(page, 'reference-time', 4);
-    assert.match(await page.locator('.measurement-grid').innerText(), /ساكن/);
+    await range(page, 'reference-time', 6);
+    for (const [reference, expected] of [['sign', 'متحرك'], ['driver', 'ساكن'], ['passenger', 'ساكن']]) {
+      await page.locator('[data-lab-input="reference"]').selectOption(reference);
+      assert.equal((await page.locator('[data-reference-state]').innerText()).trim(), expected);
+      assert.equal(await page.locator(`[data-reference-ring="${reference}"]`).count(), 1, `${reference} is visibly highlighted`);
+      await assertBusInsideSvg(page);
+    }
+    assert.match(await page.locator('.lab-panel table').innerText(), /50/);
+    const lineLength = Number(await page.locator('[data-distance-line]').getAttribute('data-pixel-length'));
+    assert.ok(Math.abs(lineLength - 50 * 8.85) < 1e-9, 'distance line uses the same numeric scale');
     await page.locator('[data-lab-input="reference"]').selectOption('sign');
-    assert.match(await page.locator('.measurement-grid').innerText(), /متحرك/);
-    assert.match(await page.locator('.lab-panel table').innerText(), /40/);
     await page.locator('[data-lab-action="ref-answer-yes"]').click();
     assert.equal(await page.locator('.inference .answer-feedback.correct').count(), 1);
 
@@ -128,19 +144,27 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
     // الرسم والجدول والسرعة الوسطية في الحركة المنتظمة والسكون وغير المنتظمة.
     await page.locator('[data-lab-action="tab-graph"]').click();
     await range(page, 'graph-time', 4);
-    assert.match(await page.locator('.live-measurements').innerText(), /40/);
-    assert.match(await page.locator('.live-measurements').innerText(), /10/);
+    assert.match(await page.locator('[data-measure="position"]').textContent(), /70/);
+    assert.match(await page.locator('[data-measure="distance"]').textContent(), /40/);
+    assert.match(await page.locator('.lab-panel').innerText(), /10/);
+    assert.match(await page.locator('[data-graph-id="lab-uniform"] .graph-label').last().textContent(), /^x \(m\)/);
+    assert.match(await page.locator('.lab-panel table thead').textContent(), /x/);
+    assert.match(await page.locator('.lab-panel table thead').textContent(), /d/);
     assert.equal(await page.locator('.current-data-row').count(), 1);
     await page.locator('[data-lab-action="graph-answer-متساوية"]').click();
     assert.equal(await page.locator('.inference .answer-feedback.correct').count(), 1);
     await page.locator('[data-lab-action="graph-mode-changing"]').click();
     await range(page, 'graph-time', 4);
-    assert.match(await page.locator('.live-measurements').innerText(), /16/);
+    assert.match(await page.locator('[data-measure="position"]').textContent(), /16/);
+    assert.match(await page.locator('[data-measure="distance"]').textContent(), /16/);
+    assert.match(await page.locator('[data-graph-id="lab-changing"] .graph-label').last().textContent(), /^x \(m\)/);
     await page.locator('[data-lab-action="graph-answer-غير متساوية"]').click();
     assert.equal(await page.locator('.inference .answer-feedback.correct').count(), 1);
     await page.locator('[data-lab-action="graph-mode-rest"]').click();
     await range(page, 'graph-time', 7);
-    assert.match(await page.locator('.live-measurements').innerText(), /0/);
+    assert.match(await page.locator('[data-measure="position"]').textContent(), /5/);
+    assert.match(await page.locator('[data-measure="distance"]').textContent(), /0/);
+    assert.match(await page.locator('[data-graph-id="lab-rest"] .graph-label').last().textContent(), /^x \(m\)/);
     await page.locator('[data-lab-action="graph-answer-تبقى صفراً"]').click();
     assert.equal(await page.locator('.inference .answer-feedback.correct').count(), 1);
     await page.locator('[data-lab-action="graph-reset"]').click();
@@ -162,6 +186,10 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
     await page.locator('[data-match-select="distance"]').selectOption('المسافة');
     await page.locator('[data-check-matching]').click();
     assert.match(await page.locator('.practice-level').first().innerText(), /3 من 3/);
+    await page.locator('[data-qid="tf-1"][data-value="صح"]').click();
+    assert.match(await page.locator('[data-question-card="tf-1"] .answer-feedback.incorrect').innerText(), /بالجسم المرجع/);
+    await page.locator('[data-qid="tf-1"][data-value="خطأ"]').click();
+    assert.equal(await page.locator('[data-question-card="tf-1"] .answer-feedback.correct').count(), 1);
     await page.locator('#input-boat-kmh').fill('٣٦');
     await page.locator('[data-check-numeric="boat-kmh"]').click();
     assert.equal(await page.locator('[data-numeric-card="boat-kmh"] .answer-feedback.correct').count(), 1);
@@ -189,6 +217,16 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
         await page.goto(`${base}${hash}`, { waitUntil: 'domcontentloaded' });
         await noOverflow(`${name} responsive`);
         await noMathErrors();
+        if (name === 'activity') {
+          await page.locator('[data-lab-action="tab-reference"]').click();
+          await page.locator('[data-lab-input="reference"]').selectOption('passenger');
+          await range(page, 'reference-time', 6);
+          assert.equal((await page.locator('[data-reference-state]').innerText()).trim(), 'ساكن');
+          await assertBusInsideSvg(page);
+          await page.locator('[data-lab-input="reference"]').selectOption('sign');
+          assert.equal((await page.locator('[data-reference-state]').innerText()).trim(), 'متحرك');
+          await assertBusInsideSvg(page);
+        }
         if (name === 'activity' && process.env.SCREENSHOTS === '1') {
           await page.locator('.lab-tabs').evaluate(element => window.scrollTo(0, element.getBoundingClientRect().top + window.scrollY - 16));
           await page.screenshot({ path: `artifacts/screenshots/activity-${width}x${height}.png`, fullPage: false });
