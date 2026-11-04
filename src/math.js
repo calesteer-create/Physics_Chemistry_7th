@@ -1,16 +1,34 @@
-// Reusable math helpers. Output is LTR and isolated from the RTL page.
+// مكوّنات KaTeX موحدة: اتجاه LTR، عزل ثنائي الاتجاه، ومعالجة آمنة للأخطاء.
 import katex from 'katex';
 
-const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-// Renders a LaTeX expression with KaTeX. Set display: true for a separate block
-// (vertical fractions). Invalid input is shown as plain text instead of breaking the page.
-export function formula(tex, { display = false } = {}) {
-  const html = katex.renderToString(tex, { displayMode: display, throwOnError: false, strict: 'ignore' });
-  return `<div class="formula ${display ? 'formula-display' : 'formula-inline'}" dir="ltr">${html}</div>`;
+// لا تظهر أوامر LaTeX الخام للطالب عند وجود خطأ.
+export function formula(tex, { display = false, label = '' } = {}) {
+  const tag = display ? 'div' : 'span';
+  try {
+    // الوضع الافتراضي htmlAndMathml يحفظ قراءة المعادلة لقارئات الشاشة.
+    const html = katex.renderToString(String(tex), {
+      displayMode: display,
+      throwOnError: true,
+      strict: 'ignore',
+    });
+    return `<${tag} class="formula ${display ? 'formula-display' : 'formula-inline'}" dir="ltr" ${label ? `aria-label="${label}"` : ''}>${html}</${tag}>`;
+  } catch {
+    return `<${tag} class="formula math-fallback ${display ? 'formula-display' : 'formula-inline'}" dir="rtl" role="alert">تعذّر عرض المعادلة.</${tag}>`;
+  }
 }
 
-// A number followed by its unit, always in LTR order: "12 cm".
-export function quantity(value, unit) {
-  return `<span class="quantity" dir="ltr"><bdi>${escapeHtml(value)}</bdi> <bdi class="unit">${escapeHtml(unit)}</bdi></span>`;
+// عدد ثم وحدة، وكلاهما داخل KaTeX. unitTex صيغة LaTeX آمنة مكتوبة في المحتوى.
+export function quantity(valueTex, unitTex) {
+  return formula(`${valueTex}\\,${unitTex}`);
 }
+
+export const units = {
+  metre: '\\mathrm{m}',
+  kilometre: '\\mathrm{km}',
+  second: '\\mathrm{s}',
+  minute: '\\mathrm{min}',
+  hour: '\\mathrm{h}',
+  metrePerSecond: '\\mathrm{m}\\cdot\\mathrm{s}^{-1}',
+  kilometrePerHour: '\\mathrm{km}\\cdot\\mathrm{h}^{-1}',
+  celsius: '^\\circ\\mathrm{C}',
+};
