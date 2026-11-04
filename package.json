@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "lint": "node --check src/main.js && node --check src/demo-data.js && node --check src/course.js && node --check src/math.js && node --check src/icons.js",
-    "typecheck": "tsc --noEmit --allowJs --checkJs false --moduleResolution bundler --module esnext --target es2022 src/main.js src/demo-data.js src/course.js src/math.js src/icons.js",
+    "lint": "for file in src/*.js; do node --check \"$file\" || exit 1; done",
+    "typecheck": "tsc --noEmit --allowJs --checkJs false --moduleResolution bundler --module esnext --target es2022 src/*.js",
     "test": "node --test tests/*.test.js",
-    "test:browser": "node --test tests/browser.test.mjs"
+    "test:browser": "node --test tests/browser.test.mjs",
+    "test:browser:production": "npm run build && PRODUCTION=1 node --test tests/browser.test.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.1",
