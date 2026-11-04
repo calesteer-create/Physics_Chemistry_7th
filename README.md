@@ -36,4 +36,4 @@ CHROMIUM_PATH=/path/to/chromium npm run test:browser
 
 ## النشر على GitHub Pages
 
-يبني Vite نسخة الإنتاج تحت المسار `/Physics_Chemistry_7th/`، بينما يبقى مسار التطوير المحلي `/`. ينشر سير GitHub Actions تلقائياً عند الدفع إلى فرع العمل `arena/930704c2-physics-chemistry-7th` أو إلى `main`، ويمكن تشغيله يدوياً أيضاً من تبويب Actions بعد إتاحة سير العمل في الفرع الافتراضي. يتطلب النشر ضبط مصدر Pages على **GitHub Actions** والسماح للفرع بالنشر في بيئة `github-pages` إذا كانت البيئة محمية. لا يتضمن ذلك دمج أي فرع.
+يبني Vite نسخة الإنتاج تحت المسار `/Physics_Chemistry_7th/`، بينما يبقى مسار التطوير المحلي `/`. يفحص سير GitHub Actions البناء والاختبارات عند فتح طلب سحب إلى `main`، ولا ينشر إلى Pages إلا عند الدفع إلى `main` بعد الدمج. يتطلب النشر ضبط مصدر Pages على **GitHub Actions**، دون تغيير حماية بيئة `github-pages`.

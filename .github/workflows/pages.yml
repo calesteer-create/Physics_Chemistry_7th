@@ -1,19 +1,16 @@
-name: Deploy prototype to GitHub Pages
+name: Build and deploy prototype
 
 on:
   push:
-    branches:
-      - main
-      - arena/930704c2-physics-chemistry-7th
-  workflow_dispatch:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -31,11 +28,18 @@ jobs:
       - run: npm test
       - run: npm run build
       - uses: actions/configure-pages@v5
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           path: dist
 
   deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
