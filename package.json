@@ -1,0 +1,19 @@
+{
+  "name": "fun-physics-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "lint": "node --check src/main.js && node --check src/demo-data.js",
+    "typecheck": "tsc --noEmit --allowJs --checkJs false --moduleResolution bundler --module esnext --target es2022 src/main.js src/demo-data.js",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node --test tests/browser.test.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
+}
