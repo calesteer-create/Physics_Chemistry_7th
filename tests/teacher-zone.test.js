@@ -133,13 +133,14 @@ test('question two marks all six statements as false and gives a correction for 
   assert.match(judgements, /في <strong>الحركات المنتظمة<\/strong>/);
 });
 
-test('question three items 1 and 2 stay pending and show no guessed answer or figure description', () => {
+test('question three item 1 stays pending; item 2 is decided from the printed figure', () => {
   const html = teacherSolutionsView();
-  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 2, 'both figure items are marked pending');
-  assert.doesNotMatch(html, /\(c\) منتظمة\./);
-  assert.doesNotMatch(html, /\(b\) الشجرة\./);
+  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 1, 'only item 1 is pending');
+  assert.doesNotMatch(html, /\(c\) منتظمة\./, 'no guessed answer for item 1');
+  assert.match(html, /\(b\) الشجرة\./);
   assert.match(html, /حركة المتزلج الممثلة بالصورة الآتية/);
   assert.match(html, /يمكن اعتبار الجسم المرجع في الصورة الآتية/);
+  assert.doesNotMatch(html, /بمواضع متساوية الفواصل/, 'added description is not printed in the book');
 });
 
 test('question three items 3 and 4 keep their answers (c) 30 m/s and (b) 25 s with working', () => {
@@ -176,8 +177,8 @@ test('verification notes disclose the unresolved points instead of hiding them',
   const html = teacherSolutionsView();
   assert.match(html, /ملاحظة للتحقق:/);
   assert.match(html, /الحركة والسكون مفهومان نسبيان يتعلقان بالجسم المتحرك/);
-  assert.match(html, /مفتاح إجابات متداول على الإنترنت يعدّ العبارة صحيحة/);
-  assert.match(html, /البندان 1 و2 معلّقان بانتظار الصورتين الأصليتين/);
+  assert.match(html, /مفتاح الإجابات المتداول الذي يعدّ العبارة صحيحة/);
+  assert.match(html, /البند 1 معلّق: الصورة تُظهر مسافات متساوية/);
   assert.match(html, /عند تغيّر المرجع يمكن أن تتغيّر حالة حركة الجسم أو سكونه/);
 });
 
