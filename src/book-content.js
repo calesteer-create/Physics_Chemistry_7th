@@ -12,7 +12,7 @@ export function bookContent() {
   return `<div class="book-content">
     <div class="source-notice"><strong>حدود هذا القسم:</strong> النصوص والتعريفات والأمثلة هنا من الكتاب. التوضيحات الإضافية موجودة فقط في المرحلة التالية تحت عنوان «توضيح إثرائي».</div>
     <nav class="book-index" aria-label="فهرس صفحات الدرس">
-      <button type="button" data-scroll-to="book-start">البداية والأهداف</button><button type="button" data-scroll-to="book-motion">الحركة والسكون</button><button type="button" data-scroll-to="book-path">المسار والمسافة</button><button type="button" data-scroll-to="book-graphs">المسافة والزمن</button><button type="button" data-scroll-to="book-speed">السرعة</button><button type="button" data-scroll-to="book-application">التطبيق المحلول</button><button type="button" data-scroll-to="book-review">تعلمت وأختبر نفسي</button>
+      <button type="button" data-book-tab="book-start" role="tab" aria-controls="book-start">البداية والأهداف</button><button type="button" data-book-tab="book-motion" role="tab" aria-controls="book-motion">الحركة والسكون</button><button type="button" data-book-tab="book-path" role="tab" aria-controls="book-path">المسار والمسافة</button><button type="button" data-book-tab="book-graphs" role="tab" aria-controls="book-graphs">المسافة والزمن</button><button type="button" data-book-tab="book-speed" role="tab" aria-controls="book-speed">السرعة</button><button type="button" data-book-tab="book-application" role="tab" aria-controls="book-application">التطبيق المحلول</button><button type="button" data-book-tab="book-review" role="tab" aria-controls="book-review">تعلمت وأختبر نفسي</button>
     </nav>
 
     <div id="book-start">

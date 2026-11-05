@@ -17,6 +17,8 @@ function parseRoute() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (parts.length === 0) return { name: 'home' };
   if (parts.length === 1 && parts[0] === 'student') return { name: 'student' };
+  if (parts.length === 1 && parts[0] === 'assessments') return { name: 'assessments' };
+  if (parts.length === 1 && parts[0] === 'teacher') return { name: 'teacher' };
   if ((parts.length === 1 && parts[0] === 'path') || (parts[0] === 'unit' && parts.length === 2)) {
     const id = parts[0] === 'path' ? 'motion' : parts[1];
     const unit = getUnit(id);
@@ -37,8 +39,8 @@ function header(route) {
   const current = route.name === 'home' ? 'home' : route.name === 'student' ? 'student' : 'unit';
   const link = (key, href, label) => `<a class="nav-link" href="${href}"${current === key ? ' aria-current="page"' : ''}>${label}</a>`;
   return `<header class="site-header"><div class="wrap header-inner">
-    <a class="brand" href="#/"><span class="brand-mark">${icons.atom}</span><span><strong>الفيزياء الممتعة</strong><small>الفيزياء والكيمياء · الصف السابع</small></span></a>
-    <nav class="main-nav" aria-label="التنقل الرئيسي">${link('home', '#/', 'الرئيسية')}${link('student', '#/student', 'مساحة الطالب')}${link('unit', '#/unit/motion', 'الوحدة الأولى: الحركة والتحريك')}</nav>
+    <a class="brand" href="#/"><span class="brand-mark">${icons.atom}</span><span><strong>الفيزياء الممتعة</strong><small>الفيزياء والكيمياء · الصف السابع</small><small class="header-engineer">${esc(ENGINEER_NAME)} · <bdi dir="ltr">${esc(ENGINEER_PHONE)}</bdi></small></span></a>
+    <nav class="main-nav" aria-label="التنقل الرئيسي">${link('home', '#/', 'الرئيسية')}${link('student', '#/student', 'مساحة الطالب')}${link('unit', '#/unit/motion', 'الوحدة الأولى: الحركة والتحريك')}${link('assessments', '#/assessments', 'منطقة الاختبارات')}${link('teacher', '#/teacher', 'منطقة المعلم')}</nav>
   </div></header>`;
 }
 
@@ -86,7 +88,6 @@ function stageBody(stage) {
     case 'activity': return motionLabShell();
     case 'questions': return understandingContent();
     case 'practice': return practiceContent();
-    case 'test': return testPendingContent();
     case 'summary': return summaryContent();
     case 'notebook': return notebookContent();
     default: return '';
@@ -102,9 +103,16 @@ function lessonView({ lesson, unit, index }) {
   const stageLinks = stages.map((item, i) => `<li><a href="${stageHref(lesson, item)}"${i === index ? ' aria-current="step"' : ''}><span class="step-num">${i + 1}</span><span>${esc(item.label)}</span></a></li>`).join('');
   return `<section class="wrap page-section"><nav class="crumbs" aria-label="مسار التنقل"><a href="#/">الرئيسية</a> / <a href="${unitHref(unit)}">${esc(unit.fullTitle)}</a> / <span aria-current="page">${esc(lesson.title)}</span></nav>
   <header class="page-head lesson-head"><p class="kicker"><span class="tag tag-physics">فيزياء</span> · الدرس ${lesson.number}</p><h1 data-focus="page" tabindex="-1">${esc(lesson.title)}</h1><p class="lead">الوحدة الأولى: الحركة والتحريك · صفحات الكتاب ${lesson.pages}</p><a class="back-to-unit" href="${unitHref(unit)}">${icons.arrowRight} العودة إلى صفحة الوحدة</a></header>
-  <div class="lesson-layout"><nav class="stage-nav" aria-label="مراحل الدرس العشر"><div class="stage-progress"><span>المرحلة ${n} من ${total}</span><progress max="${total}" value="${n}" aria-label="تقدمك في مراحل الدرس"></progress></div><ol>${stageLinks}</ol></nav>
+  <div class="lesson-layout"><nav class="stage-nav" aria-label="مراحل الدرس"><div class="stage-progress"><span>المرحلة ${n} من ${total}</span><progress max="${total}" value="${n}" aria-label="تقدمك في مراحل الدرس"></progress></div><ol>${stageLinks}</ol></nav>
   <article class="stage stage-${stage.kind}" aria-labelledby="stage-title"><div class="stage-top"><span class="badge ${badgeClass(stage.kind)}">${esc(stage.badge)}</span><span>المرحلة ${n} من ${total}</span></div><h2 id="stage-title" data-focus="stage" tabindex="-1">${esc(stage.title)}</h2><p class="stage-text">${esc(stage.intro)}</p>${stageBody(stage)}
   <div class="stage-actions">${prev ? `<a class="btn btn-secondary" href="${stageHref(lesson, prev)}">${icons.arrowRight} السابق: ${esc(prev.label)}</a>` : '<span></span>'}${next ? `<a class="btn btn-primary" href="${stageHref(lesson, next)}">التالي: ${esc(next.label)} ${icons.arrowLeft}</a>` : `<a class="btn btn-primary" href="${unitHref(unit)}">العودة إلى الوحدة ${icons.arrowLeft}</a>`}</div></article></div></section>`;
+}
+
+function assessmentsView() {
+  return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة الاختبارات</p><h1 data-focus="page" tabindex="-1">اختبارات الدروس</h1><p class="lead">اختبار الدرس النهائي غير منشأ قبل اعتماد المحتوى. لا توجد اختبارات وحدات معتمدة حالياً.</p></header><div class="assessment-tabs" role="tablist" aria-label="اختبارات الدروس"><button role="tab" aria-selected="true" class="active">الحركة والسكون</button></div><section class="notice" role="status"><h2>اختبار الحركة والسكون</h2><p>بانتظار اعتماد المحتوى التعليمي قبل إعداد الاختبار.</p></section><h2>اختبارات الوحدات</h2><p>لا توجد اختبارات وحدات منشأة.</p><h2>حلول الاختبارات</h2><p>قسم تنظيمي للمعلم فقط. لا يحتوي حلولاً؛ GitHub Pages لا يوفر مصادقة آمنة، ولا تُستخدم كلمة مرور شكلية لحماية محتوى عام.</p></section>`;
+}
+function teacherView() {
+ return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة المعلم</p><h1 data-focus="page" tabindex="-1">حلول أسئلة نهاية الدرس</h1><p class="lead">لا تتوفر صفحات أسئلة نهاية الدرس موثقة في بيانات المشروع لإعداد حلول موثوقة.</p></header><div class="notice"><p>لا توجد حلول منشورة. لا تُعرض هنا حلول داخل تجربة الطالب. GitHub Pages لا يوفر مصادقة خادمية؛ أي محتوى مضاف إلى المشروع العام سيكون قابلاً للوصول.</p></div></section>`;
 }
 
 function missingView() {
@@ -115,6 +123,8 @@ function view(route) {
   switch (route.name) {
     case 'home': return homeView();
     case 'student': return studentView();
+    case 'assessments': return assessmentsView();
+    case 'teacher': return teacherView();
     case 'unit': return unitView(route);
     case 'lesson': return lessonView(route);
     default: return missingView();
@@ -124,6 +134,8 @@ function view(route) {
 function titleFor(route) {
   if (route.name === 'home') return 'الرئيسية';
   if (route.name === 'student') return 'مساحة الطالب';
+  if (route.name === 'assessments') return 'منطقة الاختبارات';
+  if (route.name === 'teacher') return 'منطقة المعلم';
   if (route.name === 'unit') return route.unit.fullTitle;
   if (route.name === 'lesson') return `${route.lesson.title} · ${stages[route.index].title}`;
   return 'الصفحة غير متوفرة';
@@ -134,6 +146,28 @@ function render(route = parseRoute()) {
   disposeLab = null;
   app.innerHTML = `<button type="button" class="skip-link" data-skip>تخطَّ إلى المحتوى</button>${header(route)}<main id="main" tabindex="-1">${view(route)}</main>${footer()}`;
   document.title = `${titleFor(route)} | الفيزياء الممتعة`;
+  const bookTabs = [...app.querySelectorAll('[data-book-tab]')];
+  if (bookTabs.length) {
+    const activateBookTab = id => {
+      bookTabs.forEach(button => {
+        const active = button.dataset.bookTab === id;
+        button.setAttribute('aria-selected', String(active));
+        button.tabIndex = active ? 0 : -1;
+        const panel = app.querySelector(`#${button.dataset.bookTab}`);
+        if (panel) panel.hidden = !active;
+      });
+    };
+    activateBookTab(bookTabs[0].dataset.bookTab);
+    bookTabs.forEach((button, index) => {
+      button.addEventListener('click', () => activateBookTab(button.dataset.bookTab));
+      button.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + bookTabs.length) % bookTabs.length;
+        bookTabs[next].focus(); bookTabs[next].click();
+      });
+    });
+  }
   const labRoot = app.querySelector('#motion-lab');
   if (labRoot) disposeLab = mountMotionLab(labRoot);
   const nav = app.querySelector('.stage-nav ol');

@@ -414,3 +414,14 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Compact, keyboard-operable book navigation and the added standalone zones. */
+.book-index [role="tab"] { cursor: pointer; }
+.book-index [aria-selected="true"] { color: #fff; background: var(--blue); border-color: var(--blue); }
+.book-index [role="tab"]:focus-visible, .main-nav a:focus-visible { outline: 3px solid #f2b84b; outline-offset: 3px; }
+[hidden] { display: none !important; }
+.header-engineer { color: var(--blue-ink); font-size: 12px; font-weight: 700; }
+.assessment-tabs { display: flex; gap: 8px; margin: 16px 0; }
+.assessment-tabs button { min-height: 44px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 14px; padding: 8px 16px; font-weight: 700; }
+.assessment-tabs button[aria-selected="true"] { background: var(--blue-soft); border-color: var(--blue); }
+@media (max-width: 700px) { .header-engineer { display: none; } .book-index { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; } .book-index button { flex: 0 0 auto; } }
