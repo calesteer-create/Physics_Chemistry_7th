@@ -11,17 +11,17 @@ const table = (headers, rows, caption) => `<div class="table-scroll" tabindex="0
 export function bookContent() {
   return `<div class="book-content">
     <div class="source-notice"><strong>حدود هذا القسم:</strong> النصوص والتعريفات والأمثلة هنا من الكتاب. التوضيحات الإضافية موجودة فقط في المرحلة التالية تحت عنوان «توضيح إثرائي».</div>
-    <nav class="book-index" aria-label="فهرس صفحات الدرس">
-      <button type="button" data-scroll-to="book-start">البداية والأهداف</button><button type="button" data-scroll-to="book-motion">الحركة والسكون</button><button type="button" data-scroll-to="book-path">المسار والمسافة</button><button type="button" data-scroll-to="book-graphs">المسافة والزمن</button><button type="button" data-scroll-to="book-speed">السرعة</button><button type="button" data-scroll-to="book-application">التطبيق المحلول</button><button type="button" data-scroll-to="book-review">تعلمت وأختبر نفسي</button>
+    <nav class="book-index" role="tablist" aria-label="أجزاء محتوى الكتاب">
+      <button type="button" data-book-tab="book-start" id="book-tab-book-start" role="tab" aria-controls="book-start" aria-selected="true" tabindex="0">البداية والأهداف</button><button type="button" data-book-tab="book-motion" id="book-tab-book-motion" role="tab" aria-controls="book-motion" aria-selected="false" tabindex="-1">الحركة والسكون</button><button type="button" data-book-tab="book-path" id="book-tab-book-path" role="tab" aria-controls="book-path" aria-selected="false" tabindex="-1">المسار والمسافة</button><button type="button" data-book-tab="book-graphs" id="book-tab-book-graphs" role="tab" aria-controls="book-graphs" aria-selected="false" tabindex="-1">المسافة والزمن</button><button type="button" data-book-tab="book-speed" id="book-tab-book-speed" role="tab" aria-controls="book-speed" aria-selected="false" tabindex="-1">السرعة</button><button type="button" data-book-tab="book-application" id="book-tab-book-application" role="tab" aria-controls="book-application" aria-selected="false" tabindex="-1">التطبيق المحلول</button><button type="button" data-book-tab="book-review" id="book-tab-book-review" role="tab" aria-controls="book-review" aria-selected="false" tabindex="-1">تعلمت وأختبر نفسي</button>
     </nav>
 
-    <div id="book-start">
+    <div id="book-start" role="tabpanel" aria-labelledby="book-tab-book-start" tabindex="0">
     ${section('3', 'الوحدة الأولى: الحركة والتحريك — الدرس الأول: الحركة والسكون', `
       <div class="book-columns"><div><h4>الأهداف</h4><ul class="check-list"><li>يميّز الجسم الساكن والمتحرك.</li><li>يحدّد علاقة السرعة بمفهوم المسافة والزمن.</li><li>يستنتج قانون السرعة.</li><li>يحسب السرعة الوسطية لجسم سرعته متغيّرة.</li></ul></div>
       <div><h4>الكلمات المفتاحية</h4><p class="keywords">الحركة – الجسم المرجع – الجسم الساكن – الجسم المتحرك – المسار – المسافة – السرعة الوسطية.</p></div></div>`)}
     </div>
 
-    <div id="book-motion">
+    <div id="book-motion" role="tabpanel" aria-labelledby="book-tab-book-motion" tabindex="0" hidden>
     ${section('4', 'مفهوم الحركة', `
       <p>تعتبر الحركة بمفهومها الواسع السمة العامة للأجسام ومكوناتها، فما يخيّل لنا أنه ساكن إنما هو في حركة دائمة ومستمرة، سواء على اعتبار أنها جزء من مكونات الأرض المتحركة أو مكونات تلك الأجسام من ذرات أو جزيئات. وهناك أشكال مختلفة فمنها الحركة الدائرية، والحركة المستقيمة التي تعتبر أبسط أنواع الحركة.</p>
       <div class="experiment"><h4>أجرّب وأستنتج</h4><p><strong>أدوات التجربة:</strong> سيارة لعب أطفال مزودة بجهاز تحكم، أشكال هندسية مختلفة (كرة، أسطوانة، مكعب).</p>
@@ -45,7 +45,7 @@ export function bookContent() {
       <p><strong>الحركة والسكون مفهومان نسبيان،</strong> فقد يكون الجسم متحركاً بالنسبة لجسم ما، وساكناً بالنسبة لجسم آخر.</p>`)}
     </div>
 
-    <div id="book-path">
+    <div id="book-path" role="tabpanel" aria-labelledby="book-tab-book-path" tabindex="0" hidden>
     ${section('6', 'مفهوم المسار', `
       <p>ألاحظ آثار التزلج، وحركة السيارات حول الدوار، والدخان المنفوث من الطائرات.</p>
       <ul><li>ما الشكل الذي يرسمه الدخان المنفوث من الطائرات؟</li><li>ماذا تسمى النقاط (المواضع) التي يمر بها جسم متحرك؟</li></ul>
@@ -56,7 +56,7 @@ export function bookContent() {
       ${definition('المسافة', 'طول المسار الذي يسلكه جسم معين خلال حركته، وانتقاله من مكان لآخر، يسمى المسافة التي يقطعها المتحرك.')}`)}
     </div>
 
-    <div id="book-graphs">
+    <div id="book-graphs" role="tabpanel" aria-labelledby="book-tab-book-graphs" tabindex="0" hidden>
     ${section('7', 'تصنيف الحركة وفق مسارها', `
       <p>أصنّف الحركة في الصور: عجلة دوارة، وسيارة على طريق مستقيم، وطائرات تترك مساراً منحنياً.</p>
       <div class="path-grid">${pathSketch('circular', { id: 'wheel-path' })}${pathSketch('straight', { id: 'car-path' })}${pathSketch('curved', { id: 'plane-path' })}</div>
@@ -87,7 +87,7 @@ export function bookContent() {
       <h4>أستنتج</h4><p>إذا لم تتغيّر المسافات المقطوعة بمرور الزمن فإن الجسم يكون ساكناً بالنسبة للجسم المرجع، ويكون الخط البياني مستقيماً يوازي محور الزمن.</p>`)}
     </div>
 
-    <div id="book-speed">
+    <div id="book-speed" role="tabpanel" aria-labelledby="book-tab-book-speed" tabindex="0" hidden>
     ${section('10', 'مفهوم السرعة', `
       <p>ما العلاقة بين المسافة والزمن؟ وكيف تقاس سرعة جسم متحرك؟</p><p>تختلف المسافات التي تقطعها أجسام متحركة خلال فترة زمنية محددة من جسم لآخر، وللمقارنة بين هذه المسافات نلجأ إلى مفهوم السرعة.</p>
       ${definition('السرعة الوسطية', `تُعرَّف السرعة الوسطية ${formula('v_{avg}')} بأنها قسمة المسافة المقطوعة على الزمن المستغرق في قطع هذه المسافة. ويُعبَّر عنها رياضياً بالعلاقة:`)}
@@ -116,7 +116,7 @@ export function bookContent() {
       <div class="did-you-know"><strong>هل تعلم؟</strong><p>سرعة انتشار الصوت في الهواء الجاف تبلغ ${quantity('340', units.metrePerSecond)} عند الدرجة ${formula('20^\\circ\\mathrm{C}')}</p><p>سرعة انتشار الضوء في الخلاء تبلغ ${quantity('3\\times10^{8}', units.metrePerSecond)}</p></div>`)}
     </div>
 
-    <div id="book-application">
+    <div id="book-application" role="tabpanel" aria-labelledby="book-tab-book-application" tabindex="0" hidden>
     ${section('13', 'تطبيق محلول', `
       <p>يقود سائق سيارته بسرعة ثابتة ${quantity('36', units.kilometrePerHour)} على طريق أفقية مستقيمة. وتترك عجلات السيارة أثراً على الطريق.</p>
       <h4>المطلوب</h4>${questionList(['ماذا تسمّى حركة السيارة (طبيعة الحركة)؟', 'ماذا يُسمّى أثر العجلات على الطريق؟', `احسب سرعة السيارة مقدرة بـ ${formula('\\mathrm{m}\\cdot\\mathrm{s}^{-1}')}.`, 'احسب المسافة التي تقطعها السيارة خلال نصف ساعة.'])}
@@ -125,7 +125,7 @@ export function bookContent() {
       <div class="think-box"><strong>أتفكّر:</strong> كيف يتم تحديد مراتب الفائزين في السباقات الرياضية؟</div>`)}
     </div>
 
-    <div id="book-review">
+    <div id="book-review" role="tabpanel" aria-labelledby="book-tab-book-review" tabindex="0" hidden>
     ${section('14', 'تعلمت', `<ul class="check-list"><li>يمكن تحديد الحالة الحركية (متحرك أو ساكن) لجسم أول بالنسبة لجسم ثانٍ يُسمى الجسم المرجع، بمقارنة موضع الجسم الأول بموضع الجسم الثاني الذي نفترضه ثابتاً.</li><li>الحركة والسكون مفهومان نسبيان، فقد يكون الجسم متحركاً بالنسبة لجسم ما، وساكناً بالنسبة لجسم آخر.</li><li>عند تغيّر المرجع يمكن أن تتغيّر حالة حركة الجسم أو سكونه.</li><li>مسار الجسم المتحرك هو مجموعة النقاط التي يمر بها الجسم المتحرك في أثناء حركته.</li><li>لكل جسم متحرك مسار خاص به، قد يكون منحنياً أو مستقيماً أو دائرياً.</li><li>طول المسار الذي يسلكه جسم معين خلال حركته، وانتقاله من مكان لآخر، يسمى المسافة التي يقطعها المتحرك.</li><li>تُعرّف السرعة الوسطية ${formula('v_{avg}')} بأنها قسمة المسافة المقطوعة على الزمن المستغرق في قطع هذه المسافة، ويُعبّر عنها رياضياً بالعلاقة ${formula('v_{avg}=\\frac{d\\,(m)}{t\\,(s)}')}، وتقدر بالجملة الدولية ${formula('SI')} بـ ${formula('\\mathrm{m}\\cdot\\mathrm{s}^{-1}')}.</li><li>تكون حركة جسم منتظمة، عندما يقطع مسافات متساوية خلال أزمنة متساوية، أي أن سرعته ثابتة.</li><li>تكون حركة جسم مستقيمة منتظمة، إذا كانت سرعته ثابتة، ومسار حركته مستقيماً.</li><li>الخط البياني الممثّل للمسافة المقطوعة بدلالة الزمن، في الحركة المستقيمة المنتظمة، يكون خطاً مستقيماً.</li><li>السرعة اللحظية تساوي السرعة المتوسطة في الحركات المنتظمة.</li></ul>`)}
 
     ${section('14–16', 'أختبر نفسي وحل المسائل', `

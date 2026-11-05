@@ -123,7 +123,7 @@ h1:focus, h2:focus { outline: none; }
 .lesson-go { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--blue-ink); white-space: nowrap; }
 .lesson-go svg { width: 18px; height: 18px; }
 
-/* هيكل الدرس والمراحل العشر */
+/* هيكل الدرس ومراحله التعليمية */
 .lesson-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 26px; align-items: start; margin-top: 24px; }
 .lesson-layout > *, .stage, .book-content, .lab-panel { min-width: 0; }
 .stage-nav { background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 16px; position: sticky; top: 12px; }
@@ -413,4 +413,21 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* Compact, keyboard-operable book navigation and the added standalone zones. */
+.book-index [role="tab"] { cursor: pointer; }
+.book-index [aria-selected="true"] { color: #fff; background: var(--blue); border-color: var(--blue); }
+.book-index [role="tab"]:focus-visible, .main-nav a:focus-visible { outline: 3px solid #f2b84b; outline-offset: 3px; }
+[hidden] { display: none !important; }
+.header-engineer { color: var(--blue-ink); font-size: 12px; font-weight: 700; }
+.assessment-tabs { display: flex; gap: 8px; margin: 16px 0; }
+.assessment-tabs button { min-height: 44px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 14px; padding: 8px 16px; font-weight: 700; }
+.assessment-tabs button[aria-selected="true"] { background: var(--blue-soft); border-color: var(--blue); }
+@media (max-width: 700px) { .book-index { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; } .book-index button { flex: 0 0 auto; } }
+@media (max-width: 700px) {
+  .header-inner { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+  .brand { max-width: 100%; }
+  .header-engineer { display: block; white-space: nowrap; font-size: 11px; }
+  .main-nav { max-width: 100%; }
 }

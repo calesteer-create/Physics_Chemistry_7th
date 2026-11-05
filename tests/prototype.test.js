@@ -5,7 +5,7 @@ import { WHATSAPP_URL, ENGINEER_NAME, ENGINEER_PHONE } from '../src/demo-data.js
 import { units, lessons, stages, notebookSections, SUBJECT_LABELS } from '../src/course.js';
 import { formula, quantity, units as mathUnits } from '../src/math.js';
 import { bookContent } from '../src/book-content.js';
-import { explainContent, examplesContent, summaryContent, notebookContent, testPendingContent } from '../src/lesson-content.js';
+import { explainContent, examplesContent, summaryContent, notebookContent } from '../src/lesson-content.js';
 import { parseNumeric, practiceContent, understandingContent, understandingQuestions, trueFalseQuestions, bookChoiceQuestions, numericQuestions } from '../src/assessments.js';
 import { REFERENCE_GEOMETRY, referenceSnapshot, graphSnapshot, GRAPH_SYMBOLS } from '../src/motion-lab.js';
 import { miniComparisonGraph } from '../src/diagrams.js';
@@ -28,15 +28,16 @@ test('one approved unit and one approved lesson, with subject only as a tag', ()
   assert.doesNotMatch(sourceText, /رحلة في عالم الاكتشاف|درس تجريبي/);
 });
 
-test('lesson has the ten required stages in order, notebook last', () => {
-  assert.deepEqual(stages.map(stage => stage.id), ['discover', 'book', 'explain', 'examples', 'activity', 'questions', 'practice', 'test', 'summary', 'notebook']);
+test('lesson has nine stages after moving assessment outside the lesson; notebook remains last', () => {
+  assert.deepEqual(stages.map(stage => stage.id), ['discover', 'book', 'explain', 'examples', 'activity', 'questions', 'practice', 'summary', 'notebook']);
   assert.equal(stages.at(-1).kind, 'notebook');
-  assert.equal(new Set(stages.map(stage => stage.id)).size, 10);
+  assert.equal(new Set(stages.map(stage => stage.id)).size, 9);
+  assert.ok(!stages.some(stage => stage.id === 'test'));
 });
 
-test('final lesson test is pending content approval, not secretly authored', () => {
-  assert.match(testPendingContent(), /لم يُؤلَّف بعد/);
-  assert.doesNotMatch(testPendingContent(), /question-card|answer-option/);
+test('test content is not embedded in the lesson stage module', () => {
+  const course = readFileSync('src/course.js', 'utf8');
+  assert.doesNotMatch(course, /id: 'test'|kind: 'test'/);
 });
 
 test('notebook has all nine required sections and no teacher answers', () => {
@@ -186,4 +187,21 @@ test('numeric answers accept decimal commas and Arabic-Indic digits', () => {
 test('no prototype marketing text or split subject sections returns', () => {
   assert.doesNotMatch(sourceText, /نور|بعودتك|تواصل عبر واتساب|بشغف|ابدأ الاستكشاف/);
   assert.doesNotMatch(sourceText, /name:\s*'الفيزياء'|name:\s*'الكيمياء'/);
+});
+
+test('standalone areas and tab structures keep teacher-only material out of student lesson content', () => {
+  const main = readFileSync('src/main.js', 'utf8');
+  assert.match(main, /function assessmentsView/);
+  assert.match(main, /role="tablist" aria-label="اختبارات الدروس"/);
+  assert.match(main, /role="tabpanel"/);
+  assert.match(main, /function teacherView/);
+  assert.match(main, /حلول أسئلة نهاية الدروس/);
+  assert.match(main, /GitHub Pages لا يوفر مصادقة خادمية/);
+  assert.doesNotMatch(main.match(/function lessonView[\s\S]*?function assessmentsView/)?.[0] || '', /teacher-panel|حلول أسئلة/);
+  const html = bookContent();
+  assert.match(html, /role="tablist"/);
+  assert.equal((html.match(/role="tab"/g) || []).length, 7);
+  assert.equal((html.match(/role="tabpanel"/g) || []).length, 7);
+  assert.match(main, /data-book-tab/);
+  assert.match(main, /ArrowLeft/);
 });
