@@ -9,7 +9,7 @@ const production = process.env.PRODUCTION === '1';
 const port = production ? 4176 : 4175;
 const base = `http://127.0.0.1:${port}${production ? '/Physics_Chemistry_7th' : ''}/`;
 const viewports = [[1366, 768], [1920, 1080], [768, 1024], [390, 844]];
-const stageTitles = ['اكتشاف وتمهيد', 'محتوى الكتاب', 'شرح مبسط وموسع', 'أمثلة مفصلة', 'نشاط أو محاكاة', 'أسئلة لفهم الطالب', 'تدريب متدرج', 'اختبار الدرس', 'ملخص الدرس', 'دفتر الطالب'];
+const stageTitles = ['اكتشاف وتمهيد', 'محتوى الكتاب', 'شرح مبسط وموسع', 'أمثلة مفصلة', 'نشاط أو محاكاة', 'أسئلة لفهم الطالب', 'تدريب متدرج', 'ملخص الدرس', 'دفتر الطالب'];
 
 let executablePath = process.env.CHROMIUM_PATH || '/usr/bin/chromium';
 let launchArgs = ['--no-sandbox', '--disable-dev-shm-usage', '--single-process', '--no-zygote'];
@@ -39,7 +39,7 @@ const assertBusInsideSvg = async page => {
     `bus must not clip horizontally: ${JSON.stringify({ svg, bus })}`);
 };
 
-test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four responsive sizes', { timeout: 300000 }, async () => {
+test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four responsive sizes', { timeout: 300000 }, async () => {
   const serverArgs = production
     ? ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort']
     : ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', String(port), '--strictPort'];
@@ -74,6 +74,14 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
     assert.equal(await page.locator('html').getAttribute('lang'), 'ar');
     assert.equal(await page.locator('html').getAttribute('dir'), 'rtl');
     assert.equal(await page.locator('.lesson-card').count(), 0);
+    assert.equal(await page.locator('.header-engineer').innerText(), 'المهندس سومر شاهين · 0930215022');
+    for (const [label, hash] of [['منطقة الاختبارات', '#/assessments'], ['منطقة المعلم', '#/teacher']]) {
+      await page.goto(`${base}${hash}`);
+      assert.equal(await page.locator('.main-nav a', { hasText: label }).count(), 1);
+      assert.equal(await page.locator('[role=tablist]').count() > 0, true);
+      await noOverflow(label);
+    }
+    await page.goto(base);
     assert.equal(await page.locator('.main-nav a', { hasText: 'الوحدة الأولى: الحركة والتحريك' }).count(), 1);
     await page.locator('.main-nav a', { hasText: 'الوحدة الأولى: الحركة والتحريك' }).click();
     await page.waitForURL(/#\/unit\/motion$/);
@@ -84,7 +92,7 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1');
     await noOverflow('unit');
 
-    // الدخول إلى الدرس والتنقل المتتابع بين المراحل العشر.
+    // الدخول إلى الدرس والتنقل المتتابع بين المراحل التسع.
     await page.locator('.lesson-card').click();
     await page.waitForURL(/#\/lesson\/motion-rest$/);
     await page.locator('#stage-title').waitFor();
@@ -107,13 +115,17 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
         }
         await noMathErrors();
       }
-      if (i === 7) assert.equal(await page.locator('.stage-test .question-card').count(), 0, 'final test is not authored before approval');
-      if (i === 9) assert.equal(await page.locator('.note-card').count(), 9);
+      if (i === 8) assert.equal(await page.locator('.note-card').count(), 9);
     }
 
     // أزرار فهرس الكتاب لا تكسر مسار المرحلة.
     await page.goto(`${base}#/lesson/motion-rest/book`);
-    await page.locator('[data-scroll-to="book-speed"]').click();
+    await page.locator('[data-book-tab="book-speed"]').click();
+    assert.equal(await page.locator('#book-speed').isVisible(), true);
+    assert.equal(await page.locator('#book-start').isVisible(), false);
+    assert.equal(await page.locator('[data-book-tab="book-speed"]').getAttribute('aria-selected'), 'true');
+    await page.locator('[data-book-tab="book-speed"]').press('ArrowLeft');
+    assert.equal(await page.locator('[data-book-tab="book-application"]').getAttribute('aria-selected'), 'true');
     assert.ok(page.url().endsWith('#/lesson/motion-rest/book'));
     await noMathErrors();
 
@@ -213,9 +225,16 @@ test('Chromium: navigation, ten stages, real lab, assessments, KaTeX and four re
     if (process.env.SCREENSHOTS === '1') mkdirSync('artifacts/screenshots', { recursive: true });
     for (const [width, height] of viewports) {
       await page.setViewportSize({ width, height });
-      for (const [name, hash] of [['home', ''], ['unit', '#/unit/motion'], ['book', '#/lesson/motion-rest/book'], ['activity', '#/lesson/motion-rest/activity'], ['examples', '#/lesson/motion-rest/examples'], ['notebook', '#/lesson/motion-rest/notebook']]) {
+      for (const [name, hash] of [['home', ''], ['unit', '#/unit/motion'], ['book', '#/lesson/motion-rest/book'], ['activity', '#/lesson/motion-rest/activity'], ['examples', '#/lesson/motion-rest/examples'], ['notebook', '#/lesson/motion-rest/notebook'], ['assessments', '#/assessments'], ['teacher', '#/teacher']]) {
         await page.goto(`${base}${hash}`, { waitUntil: 'domcontentloaded' });
         await noOverflow(`${name} responsive`);
+        assert.equal(await page.locator('.header-engineer').innerText(), 'المهندس سومر شاهين · 0930215022', 'engineer identity remains visible at every viewport');
+        if (name === 'assessments' || name === 'teacher') {
+          const tab = page.locator('[role="tab"]').first();
+          assert.equal(await tab.isVisible(), true, `${name} has a visible independent tab`);
+          await tab.click();
+          assert.equal(await page.locator('[role="tabpanel"]').first().isVisible(), true);
+        }
         await noMathErrors();
         if (name === 'activity') {
           await page.locator('[data-lab-action="tab-reference"]').click();

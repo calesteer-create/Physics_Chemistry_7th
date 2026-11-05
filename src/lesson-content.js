@@ -95,7 +95,3 @@ const notebookBodies = {
 export function notebookContent() {
   return `<p class="notebook-note">مواد للمراجعة والدراسة. لا يحتوي الدفتر على إجابات المعلم.</p><div class="note-grid">${notebookSections.map(section => `<article class="note-card ${['checklist', 'definitions', 'mistakes'].includes(section.id) ? 'note-wide' : ''}"><h3>${section.title}</h3>${notebookBodies[section.id]}</article>`).join('')}</div>`;
 }
-
-export function testPendingContent() {
-  return `<div class="state-panel" data-state="empty"><span class="state-icon" aria-hidden="true">🔒</span><div><strong>اختبار الدرس لم يُؤلَّف بعد</strong><p>التزاماً بترتيب الاعتماد، سيُنشأ الاختبار المستقل بعد موافقة صاحب المشروع على المحتوى التعليمي. هذه المرحلة محفوظة في ترتيبها الثامن، ولا تحتوي حالياً على أسئلة أو نتيجة.</p></div></div>`;
-}

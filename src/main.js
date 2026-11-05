@@ -4,7 +4,7 @@ import { WHATSAPP_URL, ENGINEER_NAME, ENGINEER_PHONE } from './demo-data.js';
 import { SUBJECT_LABELS, units, stages, getUnit, getLesson } from './course.js';
 import { icons, heroArt } from './icons.js';
 import { bookContent } from './book-content.js';
-import { discoverContent, explainContent, examplesContent, summaryContent, notebookContent, testPendingContent } from './lesson-content.js';
+import { discoverContent, explainContent, examplesContent, summaryContent, notebookContent } from './lesson-content.js';
 import { understandingContent, practiceContent, chooseAnswer, checkNumeric, checkMatching } from './assessments.js';
 import { motionLabShell, mountMotionLab } from './motion-lab.js';
 
@@ -55,13 +55,13 @@ function homeView() {
 }
 
 function studentView() {
-  return `<section class="wrap page-section"><header class="page-head"><p class="kicker">مساحة الطالب</p><h1 data-focus="page" tabindex="-1">اختر وحدتك وابدأ التعلم</h1><p class="lead">ادخل إلى الوحدة أولاً، ثم اختر الدرس، وتنقّل بين مراحله العشر.</p></header>
+  return `<section class="wrap page-section"><header class="page-head"><p class="kicker">مساحة الطالب</p><h1 data-focus="page" tabindex="-1">اختر وحدتك وابدأ التعلم</h1><p class="lead">ادخل إلى الوحدة أولاً، ثم اختر الدرس، وتنقّل بين مراحله التعليمية.</p></header>
   <div class="card-grid student-grid"><a class="card card-link" href="#/unit/motion"><span class="tile tile-blue">${icons.path}</span><h2>الوحدة الأولى: الحركة والتحريك</h2><p>افتح صفحة الوحدة والدرس المتاح فيها.</p></a></div>
   <div class="notice" role="note"><span class="notice-icon">${icons.info}</span><p>لا يتم حفظ تقدمك في هذه النسخة. يمكنك العودة إلى الوحدة في أي وقت من روابط التنقل.</p></div></section>`;
 }
 
 function lessonCard(lesson) {
-  return `<li><a class="lesson-card" href="#/lesson/${lesson.id}"><span class="lesson-index">الدرس ${esc(lesson.number)}</span><span class="lesson-body"><span class="tag tag-${lesson.tag}">${esc(SUBJECT_LABELS[lesson.tag])}</span><strong>${esc(lesson.title)}</strong><small>صفحات الكتاب ${esc(lesson.pages)} · عشر مراحل</small></span><span class="lesson-go">افتح الدرس ${icons.arrowLeft}</span></a></li>`;
+  return `<li><a class="lesson-card" href="#/lesson/${lesson.id}"><span class="lesson-index">الدرس ${esc(lesson.number)}</span><span class="lesson-body"><span class="tag tag-${lesson.tag}">${esc(SUBJECT_LABELS[lesson.tag])}</span><strong>${esc(lesson.title)}</strong><small>صفحات الكتاب ${esc(lesson.pages)} · مراحل تعليمية</small></span><span class="lesson-go">افتح الدرس ${icons.arrowLeft}</span></a></li>`;
 }
 
 function unitView({ unit }) {
@@ -109,10 +109,18 @@ function lessonView({ lesson, unit, index }) {
 }
 
 function assessmentsView() {
-  return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة الاختبارات</p><h1 data-focus="page" tabindex="-1">اختبارات الدروس</h1><p class="lead">اختبار الدرس النهائي غير منشأ قبل اعتماد المحتوى. لا توجد اختبارات وحدات معتمدة حالياً.</p></header><div class="assessment-tabs" role="tablist" aria-label="اختبارات الدروس"><button role="tab" aria-selected="true" class="active">الحركة والسكون</button></div><section class="notice" role="status"><h2>اختبار الحركة والسكون</h2><p>بانتظار اعتماد المحتوى التعليمي قبل إعداد الاختبار.</p></section><h2>اختبارات الوحدات</h2><p>لا توجد اختبارات وحدات منشأة.</p><h2>حلول الاختبارات</h2><p>قسم تنظيمي للمعلم فقط. لا يحتوي حلولاً؛ GitHub Pages لا يوفر مصادقة آمنة، ولا تُستخدم كلمة مرور شكلية لحماية محتوى عام.</p></section>`;
+  const lessonTabs = lessons.map((lesson, i) => `<button id="assessment-tab-${lesson.id}" role="tab" aria-selected="${i === 0}" aria-controls="assessment-panel-${lesson.id}" tabindex="${i === 0 ? 0 : -1}" data-zone-tab>${esc(lesson.title)}</button>`).join('');
+  const lessonPanels = lessons.map((lesson, i) => `<section id="assessment-panel-${lesson.id}" role="tabpanel" aria-labelledby="assessment-tab-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h2>اختبار ${esc(lesson.title)}</h2><p>لم يُنشأ الاختبار بعد؛ ينتظر اعتماد محتوى الدرس. لا توجد أسئلة أو إجابات نهائية منشورة.</p></section>`).join('');
+  return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة الاختبارات</p><h1 data-focus="page" tabindex="-1">اختبارات الدروس</h1><p class="lead">اختبار مستقل لكل درس معتمد؛ لا يُنشأ الاختبار قبل اعتماد محتواه.</p></header><div class="zone-tablist" role="tablist" aria-label="اختبارات الدروس">${lessonTabs}</div>${lessonPanels}<section class="zone-section"><h2>اختبارات الوحدات</h2><p>لا توجد اختبارات وحدات منشأة؛ يُضاف اختبار الوحدة فقط بعد تأكيد اكتمال دروسها واعتمادها.</p></section><section class="zone-section"><h2>حلول الاختبارات</h2><div class="zone-tablist" role="tablist" aria-label="حلول اختبارات الدروس">${lessons.map((lesson, i) => `<button id="solution-tab-${lesson.id}" role="tab" aria-selected="${i === 0}" aria-controls="solution-panel-${lesson.id}" tabindex="${i === 0 ? 0 : -1}" data-zone-tab>${esc(lesson.title)}</button>`).join('')}</div>${lessons.map((lesson, i) => `<section id="solution-panel-${lesson.id}" role="tabpanel" aria-labelledby="solution-tab-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h3>${esc(lesson.title)}</h3><p>لا توجد حلول اختبار منشورة؛ لم يُنشأ الاختبار قبل اعتماد المحتوى.</p></section>`).join('')}<p>هذا المستودع عام وGitHub Pages لا يوفر مصادقة خادمية؛ لا يمكن اعتبار إخفاء المحتوى أو واجهة الدخول حماية أمنية.</p></section></section>`;
 }
 function teacherView() {
- return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة المعلم</p><h1 data-focus="page" tabindex="-1">حلول أسئلة نهاية الدرس</h1><p class="lead">لا تتوفر صفحات أسئلة نهاية الدرس موثقة في بيانات المشروع لإعداد حلول موثوقة.</p></header><div class="notice"><p>لا توجد حلول منشورة. لا تُعرض هنا حلول داخل تجربة الطالب. GitHub Pages لا يوفر مصادقة خادمية؛ أي محتوى مضاف إلى المشروع العام سيكون قابلاً للوصول.</p></div></section>`;
+ const unitSections = units.map(unit => {
+   const unitLessons = unit.lessons.map(lesson => ({ ...lesson, unitId: unit.id }));
+   const tabs = unitLessons.map((lesson, i) => `<button id="teacher-tab-${unit.id}-${lesson.id}" role="tab" aria-selected="${i === 0}" aria-controls="teacher-panel-${unit.id}-${lesson.id}" tabindex="${i === 0 ? 0 : -1}" data-zone-tab>${esc(lesson.title)}</button>`).join('');
+   const panels = unitLessons.map((lesson, i) => `<section id="teacher-panel-${unit.id}-${lesson.id}" role="tabpanel" aria-labelledby="teacher-tab-${unit.id}-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h3>${esc(lesson.title)}</h3><p>لا توجد حلول معروضة: لم تتوفر نسخة موثقة من أسئلة نهاية الدرس للتحقق منها.</p></section>`).join('');
+   return `<section class="zone-section"><h2>${esc(unit.fullTitle)}</h2><div class="zone-tablist" role="tablist" aria-label="دروس ${esc(unit.title)}">${tabs}</div>${panels}</section>`;
+ }).join('');
+ return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة المعلم</p><h1 data-focus="page" tabindex="-1">حلول أسئلة نهاية الدروس</h1><p class="lead">منظمة بحسب الوحدة ثم الدرس. لا تُعرض الحلول في صفحات الطالب أو دفتره.</p></header>${unitSections}<p class="notice">GitHub Pages لا يوفر مصادقة خادمية. أي محتوى مضاف إلى المستودع العام سيكون قابلاً للوصول؛ لا توجد حماية أمنية هنا.</p></section>`;
 }
 
 function missingView() {
@@ -146,6 +154,27 @@ function render(route = parseRoute()) {
   disposeLab = null;
   app.innerHTML = `<button type="button" class="skip-link" data-skip>تخطَّ إلى المحتوى</button>${header(route)}<main id="main" tabindex="-1">${view(route)}</main>${footer()}`;
   document.title = `${titleFor(route)} | الفيزياء الممتعة`;
+  app.querySelectorAll('.zone-tablist').forEach(tablist => {
+    const tabs = [...tablist.querySelectorAll('[data-zone-tab]')];
+    const selectTab = tab => {
+      tabs.forEach(item => {
+        const active = item === tab;
+        item.setAttribute('aria-selected', String(active)); item.tabIndex = active ? 0 : -1;
+        const panel = app.querySelector(`#${item.getAttribute('aria-controls')}`);
+        if (panel) panel.hidden = !active;
+      });
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(tab));
+      tab.addEventListener('keydown', event => {
+        const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (event.key === 'Home') { event.preventDefault(); tabs[0].focus(); selectTab(tabs[0]); return; }
+        if (event.key === 'End') { event.preventDefault(); tabs.at(-1).focus(); selectTab(tabs.at(-1)); return; }
+        if (!offset) return;
+        event.preventDefault(); const next = tabs[(index + offset + tabs.length) % tabs.length]; next.focus(); selectTab(next);
+      });
+    });
+  });
   const bookTabs = [...app.querySelectorAll('[data-book-tab]')];
   if (bookTabs.length) {
     const activateBookTab = id => {
@@ -161,6 +190,7 @@ function render(route = parseRoute()) {
     bookTabs.forEach((button, index) => {
       button.addEventListener('click', () => activateBookTab(button.dataset.bookTab));
       button.addEventListener('keydown', event => {
+        if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); const next = event.key === 'Home' ? 0 : bookTabs.length - 1; bookTabs[next].focus(); bookTabs[next].click(); return; }
         if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
         event.preventDefault();
         const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + bookTabs.length) % bookTabs.length;
