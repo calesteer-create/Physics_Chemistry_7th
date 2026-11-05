@@ -471,6 +471,8 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
 .judgement { font-weight: 800; margin-bottom: 6px; }
 .mark { display: inline-flex; align-items: center; min-height: 28px; margin-inline-end: 8px; padding: 2px 12px; border-radius: 999px; font-size: 14px; font-weight: 800; }
 .mark-false { background: var(--red-soft); color: var(--red-ink); }
+.mark-pending { background: var(--blue-soft); color: var(--blue-ink); }
+.solution-pending { background: var(--surface-soft); color: var(--ink-2); }
 .solution-answer { margin: 10px 0; padding: 10px 14px; border-radius: 12px; background: var(--green-soft); color: var(--green-ink); }
 .solution-answer:last-child { margin-bottom: 0; }
 .solution-reason { margin: 6px 0 0; color: var(--ink-2); font-size: 16px; }

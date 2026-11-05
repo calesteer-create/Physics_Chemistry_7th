@@ -133,10 +133,17 @@ test('question two marks all six statements as false and gives a correction for 
   assert.match(judgements, /في <strong>الحركات المنتظمة<\/strong>/);
 });
 
-test('question three answers are (c) uniform, (b) tree, (c) 30 m/s and (b) 25 s with working', () => {
+test('question three items 1 and 2 stay pending and show no guessed answer or figure description', () => {
   const html = teacherSolutionsView();
-  assert.match(html, /\(c\) منتظمة\./);
-  assert.match(html, /\(b\) الشجرة\./);
+  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 2, 'both figure items are marked pending');
+  assert.doesNotMatch(html, /\(c\) منتظمة\./);
+  assert.doesNotMatch(html, /\(b\) الشجرة\./);
+  assert.match(html, /حركة المتزلج الممثلة بالصورة الآتية/);
+  assert.match(html, /يمكن اعتبار الجسم المرجع في الصورة الآتية/);
+});
+
+test('question three items 3 and 4 keep their answers (c) 30 m/s and (b) 25 s with working', () => {
+  const html = teacherSolutionsView();
   assert.match(html, /\(c\) <span dir="ltr">30 m·s⁻¹<\/span>\./);
   assert.match(html, /\(b\) <span dir="ltr">25 s<\/span>\./);
   assert.match(html, /class="katex"/);
@@ -168,8 +175,9 @@ test('every formula in the solutions is rendered by KaTeX without fallback', () 
 test('verification notes disclose the unresolved points instead of hiding them', () => {
   const html = teacherSolutionsView();
   assert.match(html, /ملاحظة للتحقق:/);
-  assert.match(html, /مفتاح إجابات متداول على الإنترنت يعدّ العبارة الأولى صحيحة/);
-  assert.match(html, /الصورتان .* غير متاحتين للتحقق/);
+  assert.match(html, /الحركة والسكون مفهومان نسبيان يتعلقان بالجسم المتحرك/);
+  assert.match(html, /مفتاح إجابات متداول على الإنترنت يعدّ العبارة صحيحة/);
+  assert.match(html, /البندان 1 و2 معلّقان بانتظار الصورتين الأصليتين/);
   assert.match(html, /عند تغيّر المرجع يمكن أن تتغيّر حالة حركة الجسم أو سكونه/);
 });
 
