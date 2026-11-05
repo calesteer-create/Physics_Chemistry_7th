@@ -12,6 +12,7 @@ export const icons = {
   arrowLeft: svg('<path d="M19 12H5m6-6-6 6 6 6"/>'),
   arrowRight: svg('<path d="M5 12h14m-6-6 6 6-6 6"/>'),
   info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
+  lock: svg('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
 };
 
 // Light illustration for the home page. Flat shapes only, no gradients.

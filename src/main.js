@@ -7,6 +7,7 @@ import { bookContent } from './book-content.js';
 import { discoverContent, explainContent, examplesContent, summaryContent, notebookContent } from './lesson-content.js';
 import { understandingContent, practiceContent, chooseAnswer, checkNumeric, checkMatching } from './assessments.js';
 import { motionLabShell, mountMotionLab } from './motion-lab.js';
+import { teacherView, submitTeacherPassword, lockTeacherZone } from './teacher-zone.js';
 
 const app = document.querySelector('#app');
 const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -113,16 +114,6 @@ function assessmentsView() {
   const lessonPanels = lessons.map((lesson, i) => `<section id="assessment-panel-${lesson.id}" role="tabpanel" aria-labelledby="assessment-tab-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h2>اختبار ${esc(lesson.title)}</h2><p>لم يُنشأ الاختبار بعد؛ ينتظر اعتماد محتوى الدرس. لا توجد أسئلة أو إجابات نهائية منشورة.</p></section>`).join('');
   return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة الاختبارات</p><h1 data-focus="page" tabindex="-1">اختبارات الدروس</h1><p class="lead">اختبار مستقل لكل درس معتمد؛ لا يُنشأ الاختبار قبل اعتماد محتواه.</p></header><div class="zone-tablist" role="tablist" aria-label="اختبارات الدروس">${lessonTabs}</div>${lessonPanels}<section class="zone-section"><h2>اختبارات الوحدات</h2><p>لا توجد اختبارات وحدات منشأة؛ يُضاف اختبار الوحدة فقط بعد تأكيد اكتمال دروسها واعتمادها.</p></section><section class="zone-section"><h2>حلول الاختبارات</h2><div class="zone-tablist" role="tablist" aria-label="حلول اختبارات الدروس">${lessons.map((lesson, i) => `<button id="solution-tab-${lesson.id}" role="tab" aria-selected="${i === 0}" aria-controls="solution-panel-${lesson.id}" tabindex="${i === 0 ? 0 : -1}" data-zone-tab>${esc(lesson.title)}</button>`).join('')}</div>${lessons.map((lesson, i) => `<section id="solution-panel-${lesson.id}" role="tabpanel" aria-labelledby="solution-tab-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h3>${esc(lesson.title)}</h3><p>لا توجد حلول اختبار منشورة؛ لم يُنشأ الاختبار قبل اعتماد المحتوى.</p></section>`).join('')}<p>هذا المستودع عام وGitHub Pages لا يوفر مصادقة خادمية؛ لا يمكن اعتبار إخفاء المحتوى أو واجهة الدخول حماية أمنية.</p></section></section>`;
 }
-function teacherView() {
- const unitSections = units.map(unit => {
-   const unitLessons = unit.lessons.map(lesson => ({ ...lesson, unitId: unit.id }));
-   const tabs = unitLessons.map((lesson, i) => `<button id="teacher-tab-${unit.id}-${lesson.id}" role="tab" aria-selected="${i === 0}" aria-controls="teacher-panel-${unit.id}-${lesson.id}" tabindex="${i === 0 ? 0 : -1}" data-zone-tab>${esc(lesson.title)}</button>`).join('');
-   const panels = unitLessons.map((lesson, i) => `<section id="teacher-panel-${unit.id}-${lesson.id}" role="tabpanel" aria-labelledby="teacher-tab-${unit.id}-${lesson.id}" tabindex="0"${i ? ' hidden' : ''}><h3>${esc(lesson.title)}</h3><p>لا توجد حلول معروضة: لم تتوفر نسخة موثقة من أسئلة نهاية الدرس للتحقق منها.</p></section>`).join('');
-   return `<section class="zone-section"><h2>${esc(unit.fullTitle)}</h2><div class="zone-tablist" role="tablist" aria-label="دروس ${esc(unit.title)}">${tabs}</div>${panels}</section>`;
- }).join('');
- return `<section class="wrap page-section"><header class="page-head"><p class="kicker">منطقة المعلم</p><h1 data-focus="page" tabindex="-1">حلول أسئلة نهاية الدروس</h1><p class="lead">منظمة بحسب الوحدة ثم الدرس. لا تُعرض الحلول في صفحات الطالب أو دفتره.</p></header>${unitSections}<p class="notice">GitHub Pages لا يوفر مصادقة خادمية. أي محتوى مضاف إلى المستودع العام سيكون قابلاً للوصول؛ لا توجد حماية أمنية هنا.</p></section>`;
-}
-
 function missingView() {
   return `<section class="wrap page-section"><div class="state-panel" data-state="error"><span class="state-icon">${icons.info}</span><div><h1 data-focus="page" tabindex="-1">الصفحة غير متوفرة</h1><p>الرابط غير صحيح، أو لم تعد هذه الصفحة موجودة.</p><a class="btn btn-primary" href="#/">العودة إلى الرئيسية</a></div></div></section>`;
 }
@@ -167,7 +158,8 @@ function render(route = parseRoute()) {
     tabs.forEach((tab, index) => {
       tab.addEventListener('click', () => selectTab(tab));
       tab.addEventListener('keydown', event => {
-        const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        // RTL: التبويبات تمتد من اليمين إلى اليسار، فسهم اليسار ينتقل إلى التبويب التالي.
+        const offset = event.key === 'ArrowLeft' ? 1 : event.key === 'ArrowRight' ? -1 : 0;
         if (event.key === 'Home') { event.preventDefault(); tabs[0].focus(); selectTab(tabs[0]); return; }
         if (event.key === 'End') { event.preventDefault(); tabs.at(-1).focus(); selectTab(tabs.at(-1)); return; }
         if (!offset) return;
@@ -193,7 +185,7 @@ function render(route = parseRoute()) {
         if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); const next = event.key === 'Home' ? 0 : bookTabs.length - 1; bookTabs[next].focus(); bookTabs[next].click(); return; }
         if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
         event.preventDefault();
-        const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + bookTabs.length) % bookTabs.length;
+        const next = (index + (event.key === 'ArrowLeft' ? 1 : -1) + bookTabs.length) % bookTabs.length;
         bookTabs[next].focus(); bookTabs[next].click();
       });
     });
@@ -232,6 +224,13 @@ app.addEventListener('click', event => {
     return;
   }
 
+  if (event.target.closest('[data-teacher-logout]')) {
+    lockTeacherZone();
+    render();
+    app.querySelector('[data-focus="page"]')?.focus({ preventScroll: true });
+    return;
+  }
+
   const choice = event.target.closest('[data-assessment-choice]');
   if (choice) {
     chooseAnswer(choice.dataset.qid, choice.dataset.value);
@@ -261,10 +260,22 @@ app.addEventListener('click', event => {
   }
 });
 
+app.addEventListener('submit', event => {
+  const form = event.target.closest('[data-teacher-login]');
+  if (!form) return;
+  event.preventDefault();
+  const unlocked = submitTeacherPassword(form.elements.password.value);
+  render();
+  const target = unlocked ? '[data-focus="page"]' : '#teacher-password';
+  app.querySelector(target)?.focus({ preventScroll: true });
+});
+
 let lastRoute = parseRoute();
 window.addEventListener('hashchange', () => {
   const previous = lastRoute;
   lastRoute = parseRoute();
+  // كل فتح لمنطقة المعلم يبدأ بشاشة الدخول، ولا تبقى محتوياتها ظاهرة بعد مغادرتها.
+  if (previous.name === 'teacher' && lastRoute.name !== 'teacher') lockTeacherZone();
   render(lastRoute);
   afterNavigation(previous, lastRoute);
 });

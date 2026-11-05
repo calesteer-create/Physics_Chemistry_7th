@@ -75,7 +75,7 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     assert.equal(await page.locator('html').getAttribute('dir'), 'rtl');
     assert.equal(await page.locator('.lesson-card').count(), 0);
     assert.equal(await page.locator('.header-engineer').innerText(), 'المهندس سومر شاهين · 0930215022');
-    for (const [label, hash] of [['منطقة الاختبارات', '#/assessments'], ['منطقة المعلم', '#/teacher']]) {
+    for (const [label, hash] of [['منطقة الاختبارات', '#/assessments']]) {
       await page.goto(`${base}${hash}`);
       assert.equal(await page.locator('.main-nav a', { hasText: label }).count(), 1);
       assert.equal(await page.locator('[role=tablist]').count() > 0, true);
@@ -210,6 +210,86 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     assert.match(await page.locator('[data-numeric-card="child-distance"] .answer-feedback.incorrect').innerText(), /1800/);
     await noOverflow('practice');
 
+    // منطقة المعلم: بوابة شكلية قبل أي محتوى، ثم الحلول، ثم تسجيل الخروج، دون تأثير في بقية الصفحات.
+    const teacherSubmit = page.locator('[data-teacher-login] button[type="submit"]');
+    await page.goto(`${base}#/student`);
+    await page.locator('.main-nav a', { hasText: 'منطقة المعلم' }).click();
+    await page.waitForSelector('[data-teacher-login]');
+    assert.equal((await page.locator('main h1').innerText()).trim(), 'منطقة المعلم');
+    assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1', 'focus on the gate heading when opening the zone');
+    assert.equal(await page.locator('#teacher-password').getAttribute('type'), 'password');
+    assert.equal((await teacherSubmit.innerText()).trim(), 'دخول');
+    assert.equal(await page.locator('.solution-question').count(), 0, 'no solution is rendered before the password');
+    assert.equal(await page.locator('[data-teacher-logout]').count(), 0);
+    assert.doesNotMatch(await page.locator('main').innerText(), /السؤال الأول|المسألة الأولى|الجواب:/);
+    await noOverflow('teacher gate');
+
+    await page.locator('#teacher-password').fill('somer174');
+    await teacherSubmit.click();
+    await page.waitForSelector('.gate-error:not([hidden])');
+    assert.match(await page.locator('.gate-error').innerText(), /كلمة المرور غير صحيحة/);
+    assert.equal(await page.evaluate(() => document.activeElement?.id), 'teacher-password', 'focus returns to the password field');
+    assert.equal(await page.locator('.solution-question').count(), 0, 'wrong password keeps content hidden');
+
+    await page.locator('#teacher-password').fill('');
+    await teacherSubmit.click();
+    await page.waitForFunction(() => /أدخل كلمة المرور/.test(document.querySelector('.gate-error')?.textContent || ''));
+    assert.equal(await page.locator('.solution-question').count(), 0);
+
+    await page.locator('#teacher-password').fill('somer173');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-teacher-logout]');
+    assert.equal(await page.locator('[data-teacher-login]').count(), 0, 'gate disappears after the correct password');
+    assert.equal(await page.locator('.gate-error').count(), 0);
+    assert.equal((await page.locator('main h1').innerText()).trim(), 'حلول أسئلة نهاية الدروس');
+    assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1', 'focus moves to the solutions heading');
+    assert.equal(await page.locator('.teacher-unit h2').innerText(), 'الوحدة الأولى: الحركة والتحريك');
+    assert.equal(await page.locator('.teacher-zone [role="tab"][aria-selected="true"]').innerText(), 'الحركة والسكون');
+    const solutionTitles = await page.locator('.solution-question h4').allInnerTexts();
+    assert.deepEqual(solutionTitles.map(title => title.trim()), ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']);
+    const solutionText = await page.locator('.teacher-zone').innerText();
+    assert.match(solutionText, /المسار/);
+    assert.match(solutionText, /السرعة الوسطية/);
+    assert.match(solutionText, /المسافة/);
+    assert.match(solutionText, /10 m·s⁻¹/);
+    assert.match(solutionText, /200 m/);
+    assert.match(solutionText, /18 min/);
+    assert.match(solutionText, /3\.75 km/);
+    assert.match(solutionText, /1800 m/);
+    assert.match(solutionText, /2 m·s⁻¹/);
+    assert.doesNotMatch(solutionText, /لا توجد حلول معروضة|لم تتوفر نسخة موثقة|لم يُنشأ/);
+    assert.ok(await page.locator('.teacher-zone .katex').count() >= 12, 'solution formulas render with KaTeX');
+    assert.equal(await page.locator('.math-fallback').count(), 0);
+    assert.equal(await page.locator('.teacher-zone .formula').first().getAttribute('dir'), 'ltr');
+    await page.locator('.solution-chip', { hasText: 'السؤال الرابع' }).click();
+    await page.waitForFunction(() => {
+      const target = document.getElementById('solution-motion-rest-q4')?.getBoundingClientRect();
+      return target && target.top < innerHeight && target.bottom > 0;
+    });
+    await page.locator('[data-teacher-logout]').click();
+    await page.waitForSelector('[data-teacher-login]');
+    assert.equal(await page.locator('.solution-question').count(), 0, 'logout hides every solution');
+    assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1');
+
+    // مغادرة المنطقة تقفلها: العودة تعرض بوابة الدخول من جديد.
+    await page.locator('.main-nav a', { hasText: 'منطقة الاختبارات' }).click();
+    await page.waitForFunction(() => document.querySelector('main h1')?.textContent === 'اختبارات الدروس');
+    await page.locator('.main-nav a', { hasText: 'منطقة المعلم' }).click();
+    await page.waitForSelector('[data-teacher-login]');
+    assert.equal(await page.locator('.solution-question').count(), 0, 'returning to the zone requires the password again');
+    await page.locator('#teacher-password').fill('somer173');
+    await teacherSubmit.click();
+    await page.waitForSelector('[data-teacher-logout]');
+    await page.locator('.main-nav a', { hasText: 'الوحدة الأولى: الحركة والتحريك' }).click();
+    await page.waitForFunction(() => document.querySelector('main h1')?.textContent === 'الوحدة الأولى: الحركة والتحريك');
+    assert.equal(await page.locator('.solution-question, [data-teacher-login], .teacher-gate').count(), 0, 'leaving the zone removes it from the DOM');
+    await page.goto(`${base}#/lesson/motion-rest/book`);
+    assert.equal(await page.locator('.solution-question, [data-teacher-login], .teacher-gate').count(), 0);
+    await page.goto(`${base}#/teacher`);
+    await page.waitForSelector('[data-teacher-login]');
+    await page.goto(`${base}#/`);
+    await noOverflow('home after teacher zone');
+
     // لوحة المفاتيح وتقليل الحركة.
     await page.goto(base);
     await page.keyboard.press('Tab');
@@ -229,6 +309,21 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
         await page.goto(`${base}${hash}`, { waitUntil: 'domcontentloaded' });
         await noOverflow(`${name} responsive`);
         assert.equal(await page.locator('.header-engineer').innerText(), 'المهندس سومر شاهين · 0930215022', 'engineer identity remains visible at every viewport');
+        if (name === 'teacher') {
+          await page.waitForSelector('[data-teacher-login]');
+          assert.equal(await page.locator('.solution-question').count(), 0, 'gate hides solutions at every viewport');
+          if (process.env.SCREENSHOTS === '1') {
+            mkdirSync('artifacts/screenshots', { recursive: true });
+            await page.screenshot({ path: `artifacts/screenshots/teacher-gate-${width}x${height}.png`, fullPage: false });
+          }
+          await page.locator('#teacher-password').fill('somer173');
+          await page.locator('[data-teacher-login] button[type="submit"]').click();
+          await page.waitForSelector('[data-teacher-logout]');
+          await noOverflow('teacher solutions responsive');
+          if (process.env.SCREENSHOTS === '1') {
+            await page.screenshot({ path: `artifacts/screenshots/teacher-solutions-${width}x${height}.png`, fullPage: false });
+          }
+        }
         if (name === 'assessments' || name === 'teacher') {
           const tab = page.locator('[role="tab"]').first();
           assert.equal(await tab.isVisible(), true, `${name} has a visible independent tab`);
