@@ -168,8 +168,9 @@ test('every formula in the solutions is rendered by KaTeX without fallback', () 
 test('verification notes disclose the unresolved points instead of hiding them', () => {
   const html = teacherSolutionsView();
   assert.match(html, /ملاحظة للتحقق:/);
-  assert.match(html, /مفاتيح الإجابة المتداولة تعدّ العبارة الأولى صحيحة/);
-  assert.match(html, /الشكلان .* غير منقولين إلى المستودع/);
+  assert.match(html, /مفتاح إجابات متداول على الإنترنت يعدّ العبارة الأولى صحيحة/);
+  assert.match(html, /الصورتان .* غير متاحتين للتحقق/);
+  assert.match(html, /عند تغيّر المرجع يمكن أن تتغيّر حالة حركة الجسم أو سكونه/);
 });
 
 test('no placeholder or apology text remains in the teacher zone source', () => {
