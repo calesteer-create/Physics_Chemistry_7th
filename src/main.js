@@ -1,7 +1,7 @@
 import 'katex/dist/katex.min.css';
 import './style.css';
 import { WHATSAPP_URL, ENGINEER_NAME, ENGINEER_PHONE } from './demo-data.js';
-import { SUBJECT_LABELS, units, stages, getUnit, getLesson } from './course.js';
+import { SUBJECT_LABELS, units, lessons, stages, getUnit, getLesson } from './course.js';
 import { icons, heroArt } from './icons.js';
 import { bookContent } from './book-content.js';
 import { discoverContent, explainContent, examplesContent, summaryContent, notebookContent } from './lesson-content.js';
