@@ -194,9 +194,9 @@ test('standalone areas and tab structures keep teacher-only material out of stud
   assert.match(main, /function assessmentsView/);
   assert.match(main, /role="tablist" aria-label="اختبارات الدروس"/);
   assert.match(main, /role="tabpanel"/);
-  assert.match(main, /function teacherView/);
-  assert.match(main, /حلول أسئلة نهاية الدروس/);
-  assert.match(main, /GitHub Pages لا يوفر مصادقة خادمية/);
+  assert.match(main, /teacherView/);
+  assert.match(readFileSync('src/teacher-zone.js', 'utf8'), /حلول أسئلة نهاية الدروس/);
+  assert.match(readFileSync('src/teacher-zone.js', 'utf8'), /GitHub Pages لا يوفر مصادقة خادمية/);
   assert.doesNotMatch(main.match(/function lessonView[\s\S]*?function assessmentsView/)?.[0] || '', /teacher-panel|حلول أسئلة/);
   const html = bookContent();
   assert.match(html, /role="tablist"/);
