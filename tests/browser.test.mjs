@@ -87,8 +87,9 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     await page.waitForURL(/#\/unit\/motion$/);
     await page.waitForFunction(() => document.querySelector('main h1')?.textContent === 'الوحدة الأولى: الحركة والتحريك');
     assert.equal((await page.locator('main h1').innerText()).trim(), 'الوحدة الأولى: الحركة والتحريك');
-    assert.equal(await page.locator('.path-list > li').count(), 1);
-    assert.equal((await page.locator('.lesson-card').innerText()).includes('الحركة والسكون'), true);
+    assert.equal(await page.locator('.path-list > li').count(), 2);
+    assert.equal((await page.locator('.lesson-card').first().innerText()).includes('الحركة والسكون'), true);
+    assert.equal((await page.locator('.lesson-card').last().innerText()).includes('القوة والحركة'), true);
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1');
     await noOverflow('unit');
 
@@ -210,6 +211,69 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     assert.match(await page.locator('[data-numeric-card="child-distance"] .answer-feedback.incorrect').innerText(), /1800/);
     await noOverflow('practice');
 
+    // الدرس الثاني: القوة والحركة — التنقل بين المراحل التسع نفسها.
+    await page.goto(`${base}#/lesson/force-motion`);
+    await page.locator('#stage-title').waitFor();
+    assert.equal((await page.locator('main h1').innerText()).trim(), 'القوة والحركة');
+    for (let i = 0; i < stageTitles.length; i++) {
+      const link = page.locator('.stage-nav ol a').nth(i);
+      if (i) await link.click();
+      await page.waitForFunction(index => document.querySelectorAll('.stage-nav ol a')[index]?.getAttribute('aria-current') === 'step', i);
+      assert.equal((await page.locator('#stage-title').innerText()).trim(), stageTitles[i]);
+      await noOverflow(`force stage ${i + 1}`);
+    }
+    if (process.env.SCREENSHOTS === '1') await page.screenshot({ path: 'artifacts/screenshots/force-discover.png', fullPage: false });
+
+    // تبويبات محتوى الكتاب في الدرس الثاني مع معادلات KaTeX.
+    await page.goto(`${base}#/lesson/force-motion/book`);
+    await page.locator('[data-book-tab="force-relation"]').click();
+    assert.equal(await page.locator('#force-relation').isVisible(), true);
+    assert.equal(await page.locator('#force-start').isVisible(), false);
+    assert.ok(await page.locator('.stage-book .katex').count() > 20, 'force book equations use KaTeX');
+    await page.locator('[data-book-tab="force-relation"]').press('ArrowLeft');
+    assert.equal(await page.locator('[data-book-tab="force-review"]').getAttribute('aria-selected'), 'true');
+    await noMathErrors();
+
+    // مختبر القوة: عناصر القوة تتغير بالتحكم، والكتلة والثقل يتبعان المنطقة، والرسم بالمقياس.
+    await page.goto(`${base}#/lesson/force-motion/activity`);
+    await range(page, 'force', 8);
+    assert.ok((await page.locator('.force-lab .force-scene-svg').textContent()).includes('F = 8 N'), 'arrow label follows the slider');
+    await page.locator('[data-lab-input="point"]').selectOption('back');
+    assert.match(await page.locator('.force-lab .force-readout').innerText(), /مؤخرة السيارة/);
+    await page.locator('[data-lab-action="elements-answer-more"]').click();
+    assert.equal(await page.locator('.force-lab .answer-feedback.correct').count(), 1);
+    await page.locator('[data-lab-action="tab-weight"]').click();
+    await range(page, 'mass', 0.1);
+    assert.match(await page.locator('.force-lab').innerText(), /0\.98/);
+    await page.locator('[data-lab-input="region"]').selectOption('pole');
+    assert.match(await page.locator('.force-lab').innerText(), /0\.983/);
+    await page.locator('[data-lab-action="weight-answer-mass"]').click();
+    assert.equal(await page.locator('.force-lab .answer-feedback.correct').count(), 1);
+    await page.locator('[data-lab-action="tab-draw"]').click();
+    await range(page, 'draw-length', 4);
+    await page.locator('[data-lab-action="draw-check"]').click();
+    assert.match(await page.locator('.force-lab .answer-feedback').innerText(), /رسم صحيح/);
+    await noOverflow('force lab');
+
+    // أسئلة الفهم والتدريب المتدرج في الدرس الثاني.
+    await page.goto(`${base}#/lesson/force-motion/questions`);
+    await page.locator('[data-qid="fm-u-elements"][data-value="الكتلة"]').click();
+    assert.equal(await page.locator('[data-question-card="fm-u-elements"] .answer-feedback.correct').count(), 1);
+    await page.goto(`${base}#/lesson/force-motion/practice`);
+    await page.locator('[data-match-select="fm-point"]').selectOption('نقطة التأثير');
+    await page.locator('[data-match-select="fm-line"]').selectOption('الحامل');
+    await page.locator('[data-match-select="fm-side"]').selectOption('الجهة');
+    await page.locator('[data-match-select="fm-mag"]').selectOption('الشدة');
+    await page.locator('[data-check-matching]').click();
+    assert.match(await page.locator('.practice-level').first().innerText(), /4 من 4/);
+    await page.locator('#input-fm-num-weight').fill('١٠٠');
+    await page.locator('[data-check-numeric="fm-num-weight"]').click();
+    assert.equal(await page.locator('[data-numeric-card="fm-num-weight"] .answer-feedback.correct').count(), 1);
+    await page.locator('#input-fm-num-ball').fill('10');
+    await page.locator('[data-check-numeric="fm-num-ball"]').click();
+    assert.match(await page.locator('[data-numeric-card="fm-num-ball"] .answer-feedback.incorrect').innerText(), /0\.1×10=1/);
+    await noOverflow('force practice');
+
     // منطقة المعلم: بوابة شكلية قبل أي محتوى، ثم الحلول، ثم تسجيل الخروج، دون تأثير في بقية الصفحات.
     const teacherSubmit = page.locator('[data-teacher-login] button[type="submit"]');
     await page.goto(`${base}#/student`);
@@ -244,9 +308,13 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     assert.equal((await page.locator('main h1').innerText()).trim(), 'حلول أسئلة نهاية الدروس');
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1', 'focus moves to the solutions heading');
     assert.equal(await page.locator('.teacher-unit h2').innerText(), 'الوحدة الأولى: الحركة والتحريك');
-    assert.equal(await page.locator('.teacher-zone [role="tab"][aria-selected="true"]').innerText(), 'الحركة والسكون');
-    const solutionTitles = await page.locator('.solution-question h4').allInnerTexts();
+    assert.equal((await page.locator('.teacher-zone [role="tab"][aria-selected="true"]').innerText()).trim(), 'الحركة والسكون');
+    const solutionTitles = await page.locator('.teacher-zone [role="tabpanel"]:not([hidden]) .solution-question h4').allInnerTexts();
     assert.deepEqual(solutionTitles.map(title => title.trim()), ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']);
+    await page.locator('#teacher-tab-motion-force-motion').click();
+    const forceSolutionTitles = await page.locator('.teacher-zone [role="tabpanel"]:not([hidden]) .solution-question h4').allInnerTexts();
+    assert.deepEqual(forceSolutionTitles.map(title => title.trim()), ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع', 'السؤال الخامس']);
+    await page.locator('#teacher-tab-motion-motion-rest').click();
     const solutionText = await page.locator('.teacher-zone').innerText();
     assert.match(solutionText, /المسار/);
     assert.match(solutionText, /السرعة الوسطية/);
@@ -305,7 +373,7 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     if (process.env.SCREENSHOTS === '1') mkdirSync('artifacts/screenshots', { recursive: true });
     for (const [width, height] of viewports) {
       await page.setViewportSize({ width, height });
-      for (const [name, hash] of [['home', ''], ['unit', '#/unit/motion'], ['book', '#/lesson/motion-rest/book'], ['activity', '#/lesson/motion-rest/activity'], ['examples', '#/lesson/motion-rest/examples'], ['notebook', '#/lesson/motion-rest/notebook'], ['assessments', '#/assessments'], ['teacher', '#/teacher']]) {
+      for (const [name, hash] of [['home', ''], ['unit', '#/unit/motion'], ['book', '#/lesson/motion-rest/book'], ['activity', '#/lesson/motion-rest/activity'], ['examples', '#/lesson/motion-rest/examples'], ['notebook', '#/lesson/motion-rest/notebook'], ['force-book', '#/lesson/force-motion/book'], ['force-activity', '#/lesson/force-motion/activity'], ['assessments', '#/assessments'], ['teacher', '#/teacher']]) {
         await page.goto(`${base}${hash}`, { waitUntil: 'domcontentloaded' });
         await noOverflow(`${name} responsive`);
         assert.equal(await page.locator('.header-engineer').innerText(), 'المهندس سومر شاهين · 0930215022', 'engineer identity remains visible at every viewport');
