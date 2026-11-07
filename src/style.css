@@ -525,3 +525,21 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
   .figure-and-text { grid-template-columns: 1fr; }
   .figure-and-text .spring-figure, .figure-and-text .hanging-ball-figure { max-width: 130px; }
 }
+
+/* ————— الدرس الثالث: رسوم القوى على حامل واحد ومختبر المحصّلة ————— */
+/* الرسوم الإحدى عشرة كلها SVG بعرض تلقائي؛ تُقيَّد هنا حتى لا تخرج عن الصفحة على الهاتف. */
+.force-pair-figure, .tug-figure, .car-push-figure, .pair-aligned-figure, .pair-opposite-figure,
+.resultant-figure, .force-ray-figure, .action-reaction-figure, .team-forces-figure, .recoil-figure {
+  display: block; width: 100%; max-width: 660px; height: auto; margin: 14px auto;
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 8px;
+}
+/* ربيعة القراءة تُعرض أصغر لأنها تمثّل أداة تجربة لا مشهداً كاملاً. */
+.spring-reading-figure { display: block; width: 100%; max-width: 190px; height: auto; margin-inline: auto; }
+.resultant-lab .lab-tabs { flex-wrap: wrap; }
+.resultant-lab .measurement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+.resultant-lab .measurement-grid label { display: grid; gap: 6px; font-size: 15px; }
+.resultant-lab .measurement-grid input[type="range"] { width: 100%; accent-color: #2563eb; }
+.resultant-lab .measurement-grid strong { font-variant-numeric: tabular-nums; }
+@media (max-width: 650px) {
+  .resultant-lab .measurement-grid { grid-template-columns: 1fr; }
+}

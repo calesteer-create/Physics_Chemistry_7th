@@ -20,16 +20,20 @@ test('owner identity and WhatsApp destination remain unchanged', () => {
   assert.equal(ENGINEER_PHONE, '0930215022');
 });
 
-test('one approved unit with two approved lessons, with subject only as a tag', () => {
+test('one approved unit with three approved lessons, with subject only as a tag', () => {
   assert.equal(units.length, 1);
   assert.equal(units[0].fullTitle, 'الوحدة الأولى: الحركة والتحريك');
-  assert.equal(lessons.length, 2);
-  assert.deepEqual(lessons.map(lesson => lesson.title), ['الحركة والسكون', 'القوة والحركة']);
+  assert.equal(lessons.length, 3);
+  assert.deepEqual(lessons.map(lesson => lesson.title), ['الحركة والسكون', 'القوة والحركة', 'القوى على حامل واحد']);
   assert.equal(lessons[0].number, 1);
   assert.equal(lessons[0].pages, '3–16');
   assert.equal(lessons[1].number, 2);
   assert.equal(lessons[1].pages, '17–28');
   assert.equal(lessons[1].id, 'force-motion');
+  assert.equal(lessons[2].number, 3);
+  assert.equal(lessons[2].pages, '29–40');
+  assert.equal(lessons[2].id, 'forces-one-carrier');
+  assert.equal(lessons[2].unitId, 'motion');
   assert.deepEqual(Object.keys(SUBJECT_LABELS).sort(), ['chemistry', 'physics']);
   assert.doesNotMatch(sourceText, /رحلة في عالم الاكتشاف|درس تجريبي/);
 });

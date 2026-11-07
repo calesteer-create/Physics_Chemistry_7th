@@ -10,8 +10,13 @@ import {
   forceQuestionsContent, forcePracticeContentStage, forceSummaryContent, forceNotebookContent,
 } from './force-motion.js';
 import { understandingContent, practiceContent, chooseAnswer, checkNumeric, checkMatching } from './assessments.js';
+import {
+  forcesDiscoverContent, forcesBookContent, forcesExplainContent, forcesExamplesContent, forcesActivityContent,
+  forcesQuestionsContent, forcesPracticeContentStage, forcesSummaryContent, forcesNotebookContent,
+} from './forces-one-carrier.js';
 import { motionLabShell, mountMotionLab } from './motion-lab.js';
 import { mountForceLab } from './force-lab.js';
+import { mountResultantLab } from './resultant-lab.js';
 import { teacherView, submitTeacherPassword, lockTeacherZone } from './teacher-zone.js';
 
 const app = document.querySelector('#app');
@@ -98,6 +103,20 @@ function stageBody(stage, lesson) {
       case 'practice': return forcePracticeContentStage();
       case 'summary': return forceSummaryContent();
       case 'notebook': return forceNotebookContent();
+      default: return '';
+    }
+  }
+  if (lesson.id === 'forces-one-carrier') {
+    switch (stage.kind) {
+      case 'discover': return forcesDiscoverContent();
+      case 'book': return forcesBookContent();
+      case 'explain': return forcesExplainContent();
+      case 'examples': return forcesExamplesContent();
+      case 'activity': return forcesActivityContent();
+      case 'questions': return forcesQuestionsContent();
+      case 'practice': return forcesPracticeContentStage();
+      case 'summary': return forcesSummaryContent();
+      case 'notebook': return forcesNotebookContent();
       default: return '';
     }
   }
@@ -214,6 +233,8 @@ function render(route = parseRoute()) {
   if (labRoot) disposeLab = mountMotionLab(labRoot);
   const forceLabRoot = app.querySelector('#force-lab');
   if (forceLabRoot) disposeLab = mountForceLab(forceLabRoot);
+  const resultantLabRoot = app.querySelector('#resultant-lab');
+  if (resultantLabRoot) disposeLab = mountResultantLab(resultantLabRoot);
   const nav = app.querySelector('.stage-nav ol');
   const current = nav?.querySelector('[aria-current="step"]');
   if (nav && current && nav.scrollWidth > nav.clientWidth) current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
