@@ -105,7 +105,7 @@ test('motion-rest solutions cover all four end-of-lesson questions in book order
   assert.deepEqual(lesson.questions.map(question => question.title), ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']);
   assert.deepEqual(lesson.questions.map(question => question.id), ['q1', 'q2', 'q3', 'q4']);
   const html = teacherSolutionsView();
-  assert.equal((html.match(/class="solution-question"/g) || []).length, 9, 'four motion-rest questions plus five force-motion questions');
+  assert.equal((html.match(/class="solution-question"/g) || []).length, 13, 'four motion-rest, five force-motion and four forces-one-carrier questions');
   for (const title of ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']) assert.match(html, new RegExp(title));
   assert.ok(html.indexOf('السؤال الأول') < html.indexOf('السؤال الثاني'));
   assert.ok(html.indexOf('السؤال الثالث') < html.indexOf('السؤال الرابع'));
@@ -155,7 +155,7 @@ test('question four gives the correct numeric results for all three problems', (
   for (const expected of ['36 km·h⁻¹ = 10 m·s⁻¹', '200 m', '18 min', '3750 m، أي 3.75 km', '1800 m، أي 1.8 km', '2 m·s⁻¹، أي 7.2 km·h⁻¹']) {
     assert.ok(text.includes(expected), `missing answer: ${expected}`);
   }
-  assert.equal((teacherSolutionsView().match(/class="solution-problem"/g) || []).length, 6, 'three motion-rest problems plus three force-motion problems');
+  assert.equal((teacherSolutionsView().match(/class="solution-problem"/g) || []).length, 8, 'three motion-rest, three force-motion and two forces-one-carrier problems');
 });
 
 test('the distance in the round-trip problem is path length and speed uses the book definition', () => {
