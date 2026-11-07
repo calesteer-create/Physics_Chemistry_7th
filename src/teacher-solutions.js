@@ -150,12 +150,12 @@ const forceQuestionFour = problem('السؤال الرابع: الكرة الم�
 
 const forceQuestionFive = `<div class="solution-problem">
   <h5>المسألة الأولى</h5>
-  <p class="solution-question-text">جسم كتلته <span dir="ltr">m=10 kg</span>، وباعتبار أنّ <span dir="ltr">g=10 N·kg⁻¹</span>. المطلوب حساب شدة ثقله.</p>
+  <p class="solution-question-text">جسم كتلته <span dir="ltr">m=10 kg</span>، باعتبار أنّ <span dir="ltr">g=10 N·kg⁻¹</span>، المطلوب حساب شدة ثقله <span dir="ltr">w</span>.</p>
   ${display('w=mg=10\\times10=100\\,\\mathrm{N}')}${answer('شدة ثقل الجسم <span dir="ltr">100 N</span>.')}
 </div>
 <div class="solution-problem">
   <h5>المسألة الثانية</h5>
-  <p class="solution-question-text">جسم شدة ثقله <span dir="ltr">w=3000 N</span>، وباعتبار أنّ تسارع الجاذبية الأرضية <span dir="ltr">g=10 N·kg⁻¹</span>. المطلوب حساب كتلة الجسم.</p>
+  <p class="solution-question-text">جسم شدة ثقله <span dir="ltr">w=3000 N</span>، باعتبار أنّ تسارع الجاذبية الأرضية <span dir="ltr">g=10 N·kg⁻¹</span>، المطلوب حساب كتلة الجسم.</p>
   ${display('w=mg\\Rightarrow m=\\frac{w}{g}=\\frac{3000}{10}=300\\,\\mathrm{kg}')}${answer('كتلة الجسم <span dir="ltr">300 kg</span>.')}${enrich('يمكن التحقق بالتعويض العكسي: الكتلة 300 kg في العلاقة تعيد الثقل 3000 N.')}
 </div>`;
 
@@ -179,7 +179,7 @@ Object.assign(teacherSolutions, {
       {
         id: 'q3',
         title: 'السؤال الثالث',
-        instruction: 'مثِّل بالرمز القوى الآتية المؤثرة في نقطة B باستخدام مقياس رسم مناسب (كل 1 cm يقابل 10 N).',
+        instruction: 'مثِّل بالرمز عند B القوى الآتية باستخدام مقياس رسم مناسب (كل 1 cm يقابل 10 N).',
         body: forceQuestionThree,
       },
       {
