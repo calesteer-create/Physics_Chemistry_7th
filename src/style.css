@@ -493,3 +493,35 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
   .solution-parts { padding-inline-start: 22px; }
 }
 .teacher-zone span[dir="ltr"] { unicode-bidi: isolate; }
+
+/* ————— درس القوة والحركة: صناديق الكتاب، الرسوم المتجهية، ومختبر القوة ————— */
+.learn-box { background: var(--blue-soft); border: 2px solid var(--blue); border-radius: 18px; padding: 18px 20px; margin: 16px 0; }
+.learn-box h4 { margin: 0 0 10px; color: var(--blue-ink); font-size: 20px; }
+.learn-box .book-questions { margin: 8px 0; }
+.car-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 14px 0; }
+.car-grid .car-force-scene { width: 100%; height: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 6px; }
+.figure-and-text { display: grid; grid-template-columns: minmax(150px, 200px) minmax(0, 1fr); gap: 18px; align-items: start; margin: 14px 0; }
+.figure-and-text .spring-figure, .figure-and-text .hanging-ball-figure { width: 100%; max-width: 180px; height: auto; margin-inline: auto; display: block; }
+.scientist-card { display: flex; align-items: center; gap: 14px; background: var(--surface-soft); border: 1px dashed var(--line-strong); border-radius: 16px; padding: 12px 16px; margin: 14px 0; }
+.scientist-portrait { width: 58px; height: 58px; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 30px; flex: none; }
+.scientist-card p { margin: 0; }
+.force-vector-figure { width: 100%; max-width: 640px; height: auto; display: block; margin: 14px auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 8px; }
+.vector-axis { stroke: #334155; stroke-width: 3; }
+.vector-tick { font: 600 13px Cairo, sans-serif; fill: #475569; }
+.svg-label { font: 700 14px Cairo, sans-serif; fill: #1f2937; }
+.spring-figure, .hanging-ball-figure { width: 100%; max-width: 170px; height: auto; }
+.lab-intro { margin-bottom: 14px; }
+.lab-intro h3 { margin: 0 0 6px; }
+.lab-intro p { margin: 0; color: var(--ink-2); }
+.force-lab-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.force-scene-svg { width: 100%; height: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 6px; }
+.force-readout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0; padding: 12px 14px; background: var(--surface-soft); border-radius: 14px; font-size: 15px; }
+.force-readout span { min-height: 24px; }
+@media (max-width: 900px) {
+  .car-grid, .force-lab-grid, .force-readout { grid-template-columns: 1fr; }
+  .figure-and-text { grid-template-columns: minmax(120px, 150px) minmax(0, 1fr); }
+}
+@media (max-width: 650px) {
+  .figure-and-text { grid-template-columns: 1fr; }
+  .figure-and-text .spring-figure, .figure-and-text .hanging-ball-figure { max-width: 130px; }
+}

@@ -101,3 +101,99 @@ export const teacherSolutions = {
     ],
   },
 };
+
+// ————— حلول أسئلة درس القوة والحركة (الصفحات 27–28) —————
+const forceQuestionOneItems = [
+  choiceItem('لتمثيل القوة هندسياً (شعاعياً) يجب تحديد: (a) حامل القوة فقط (b) نقطة تأثير القوة فقط (c) جهة القوة فقط (d) جميع عناصر القوة.', '(d) جميع عناصر القوة.', `<p class="solution-reason">التمثيل الشعاعي يحتاج المبدأ (نقطة التأثير) والحامل والجهة والطول المناسب للشدة؛ أي العناصر الأربعة مجتمعة كما في تعلمت ص21.</p>`),
+  choiceItem('عند قذف جسم للأعلى فإنه يصل إلى ارتفاع معين ثم يعود إلى سطح الأرض، بسبب: (a) كتلة الجسم (b) ثقل الجسم (c) حجم الجسم (d) طول الجسم.', '(b) ثقل الجسم.', `<p class="solution-reason">قوة الثقل تتجه نحو الأسفل دائماً (باتجاه سطح الأرض)؛ فهي تبطئ الجسم الصاعد حتى يتوقف ثم تعيده إلى الأرض.</p>`),
+  choiceItem(`جسم كتلته <span dir="ltr">4 kg</span> وتسارع الجاذبية الأرضية <span dir="ltr">10 m·s⁻²</span>، فإنّ شدة قوة ثقله تساوي: (a) <span dir="ltr">400 N</span> (b) <span dir="ltr">40 N</span> (c) <span dir="ltr">0.4 N</span> (d) <span dir="ltr">4 N</span>.`, `(b) <span dir="ltr">40 N</span>.`, `${display('w=mg=4\\times10=40\\,\\mathrm{N}')}<p class="solution-reason">التعويض المباشر في علاقة الكتاب، مع الانتباه إلى أن المضاعفة تعطي النيوتن مباشرة.</p>`),
+  choiceItem('شدة قوة ثقل جسم تتناسب طردياً مع: (a) طول الجسم (b) لون الجسم (c) كتلة الجسم (d) ارتفاع الجسم عن سطح البحر.', '(c) كتلة الجسم.', `<p class="solution-reason">نص تعلمت ص23: الشدة تتناسب طردياً مع الكتلة؛ ويوافقه القانون ${formula('w=mg')} عند ثبات ${formula('g')} في المكان الواحد.</p>`),
+  choiceItem('لقياس شدة قوة الثقل، نستخدم: (a) ميزان ذي كفتين (b) شريط مطاطي (c) ربيعة (d) ميزان حرارة.', '(c) ربيعة.', `<p class="solution-reason">الربيعة نابض يدل مؤشرها على شدة ثقل الجسم (أستنتج ص22)، بينما الميزان ذو الكفتين أداة مقارنة كتل.</p>`),
+];
+
+const forceQuestionTwo = `<ol class="solution-list">
+  <li>
+    <p class="solution-question-text">عندما نعلّق جسماً ثقيلاً نسبياً بحبل، يصبح الحبل مشدوداً شاقولياً.</p>
+    <p class="solution-answer"><strong>التفسير العلمي:</strong> يجذب ثقلُ الجسم الحبلَ بقوة شاقولية نحو الأسفل، فيتمدد الحبل ويتشدد، ويستقر على الشاقول المار بنقطة التعليق لأنه اتجاه قوة الثقل؛ ويتوازن شدُّ الحبل مع الثقل فتبقى قائمة الجسم.</p>
+  </li>
+  <li>
+    <p class="solution-question-text">تتساقط الأمطار وتمار الأشجار نحو سطح الأرض.</p>
+    <p class="solution-answer"><strong>التفسير العلمي:</strong> قطرات المطر وأغصان الأشجار أجسام تخضع لقوة ثقلها التي تتجه دائماً نحو الأسفل (باتجاه سطح الأرض)؛ فتسقط القطرات على الحامل الشاقول، وتنحني الأغصان تحت تأثير أثقالها.</p>
+  </li>
+  <li>
+    <p class="solution-question-text">تختلف شدة ثقل الجسم من مكان إلى آخر على سطح الأرض.</p>
+    <p class="solution-answer"><strong>التفسير العلمي:</strong> العلاقة ${formula('w=mg')} تربط الثقل بقيمة ${formula('g')} في مكان الجسم، وقيمة ${formula('g')} تختلف من مكان لآخر على سطح الأرض (ملاحظة ص25)؛ فإذا بقيت الكتلة ثابتة تغيّر الثقل بتغير المكان.</p>
+  </li>
+</ol>`;
+
+const forceQuestionThree = `<ol class="solution-list">
+  <li>
+    <p class="solution-question-text">قوة أفقية متجهة نحو اليمين وشدتها <span dir="ltr">40 N</span>.</p>
+    ${answer(`سهم طوله <span dir="ltr">4 cm</span> أفقياً نحو اليمين انطلاقاً من النقطة B.`)}${display('40\\,\\mathrm{N}\\times\\frac{1\\,\\mathrm{cm}}{10\\,\\mathrm{N}}=4\\,\\mathrm{cm}')}
+  </li>
+  <li>
+    <p class="solution-question-text">قوة شاقولية متجهة نحو الأعلى شدتها <span dir="ltr">30 N</span>.</p>
+    ${answer(`سهم طوله <span dir="ltr">3 cm</span> شاقولياً نحو الأعلى من النقطة B.`)}${display('30\\,\\mathrm{N}\\times\\frac{1\\,\\mathrm{cm}}{10\\,\\mathrm{N}}=3\\,\\mathrm{cm}')}
+  </li>
+  <li>
+    <p class="solution-question-text">قوة شدتها <span dir="ltr">50 N</span> تميل عن الأفق نحو الأعلى بزاوية <span dir="ltr">45°</span>.</p>
+    ${answer(`سهم طوله <span dir="ltr">5 cm</span> يصنع زاوية <span dir="ltr">45°</span> مع الأفق نحو الأعلى، مرسوماً من النقطة B.`)}${display('50\\,\\mathrm{N}\\times\\frac{1\\,\\mathrm{cm}}{10\\,\\mathrm{N}}=5\\,\\mathrm{cm}')}
+    ${enrich('عناصر الرسم الثلاثة: المبدأ هو النقطة B، والحامل هو المستقيم المائل بالزاوية نفسها، والجهة نحو رأس السهم، والطول يناسب الشدة وفق المقياس.')}
+  </li>
+</ol>`;
+
+const forceQuestionFour = problem('السؤال الرابع: الكرة المعلقة بحبل', `يمثّل الشكل كرة كتلتها <span dir="ltr">100 g</span> معلَّقةً بحبل، وتؤثر فيها قوتان، وباعتبار <span dir="ltr">g=10 m·s⁻²</span>.`, [
+  { title: 'اسم القوتين المؤثرتين في الكرة', body: `${answer('قوة ثقل الكرة (الثقل) التي تجذبها الأرض، وقوة شد الحبل التي يمارسها الحبل على الكرة.')}<p class="solution-reason">نحوّل الكتلة أولاً: ${display('100\\,\\mathrm{g}=0.1\\,\\mathrm{kg}')}.</p>` },
+  { title: 'القوة التي تحاول تحريك الكرة نحو الأرض وعناصرها', body: `${answer('هي قوة الثقل. عناصرها: نقطة التأثير مركز ثقل الكرة، والحامل الشاقول المار بنقطة التأثير، والجهة نحو الأسفل (باتجاه سطح الأرض)، والشدة:')} ${display('w=mg=0.1\\times10=1\\,\\mathrm{N}')}` },
+  { title: 'القوة التي تمنع سقوط الكرة نحو الأرض وعناصرها', body: `${answer('هي قوة شد الحبل. عناصرها: نقطة التأثير نقطة اتصال الحبل بالكرة، والحامل الشاقول نفسه، والجهة نحو الأعلى، والشدة تساوي شدة الثقل:')} ${display('t=w=1\\,\\mathrm{N}')}${enrich('لأن الكرة تبقى معلقة (ساكنة) فإن للقوتين الحامل نفسه والجهتين متعاكستين والشدين متساويين؛ فتتوازن القوتان وتبقى الكرة في مكانها.')}<p class="solution-reason">قيمة ${formula('g')} في نص السؤال بوحدة <span dir="ltr">m·s⁻²</span> وهي مكافئة عددياً لـ <span dir="ltr">N·kg⁻¹</span>.</p>` },
+]);
+
+const forceQuestionFive = `<div class="solution-problem">
+  <h5>المسألة الأولى</h5>
+  <p class="solution-question-text">جسم كتلته <span dir="ltr">m=10 kg</span>، باعتبار أنّ <span dir="ltr">g=10 N·kg⁻¹</span>، المطلوب حساب شدة ثقله <span dir="ltr">w</span>.</p>
+  ${display('w=mg=10\\times10=100\\,\\mathrm{N}')}${answer('شدة ثقل الجسم <span dir="ltr">100 N</span>.')}
+</div>
+<div class="solution-problem">
+  <h5>المسألة الثانية</h5>
+  <p class="solution-question-text">جسم شدة ثقله <span dir="ltr">w=3000 N</span>، باعتبار أنّ تسارع الجاذبية الأرضية <span dir="ltr">g=10 N·kg⁻¹</span>، المطلوب حساب كتلة الجسم.</p>
+  ${display('w=mg\\Rightarrow m=\\frac{w}{g}=\\frac{3000}{10}=300\\,\\mathrm{kg}')}${answer('كتلة الجسم <span dir="ltr">300 kg</span>.')}${enrich('يمكن التحقق بالتعويض العكسي: الكتلة 300 kg في العلاقة تعيد الثقل 3000 N.')}
+</div>`;
+
+Object.assign(teacherSolutions, {
+  'force-motion': {
+    sourceTitle: 'أختبر نفسي وحل المسائل',
+    sourceNote: 'نص الأسئلة منقول حرفياً من صفحات الكتاب 27–28 كما وردت في المحتوى المعتمد للدرس. الشكل المجاور للسؤال الرابع مثّل برسم متجهي للكرة والحبل وفق وصف نص السؤال.',
+    questions: [
+      {
+        id: 'q1',
+        title: 'السؤال الأول',
+        instruction: 'اختر الإجابة الصحيحة لكلّ ممّا يأتي.',
+        body: `<ol class="solution-list">\n          ${forceQuestionOneItems.join('\n          ')}\n        </ol>`,
+      },
+      {
+        id: 'q2',
+        title: 'السؤال الثاني',
+        instruction: 'أعط تفسيراً علمياً لكلّ ممّا يأتي.',
+        body: forceQuestionTwo,
+      },
+      {
+        id: 'q3',
+        title: 'السؤال الثالث',
+        instruction: 'مثِّل بالرمز عند B القوى الآتية باستخدام مقياس رسم مناسب (كل 1 cm يقابل 10 N).',
+        body: forceQuestionThree,
+      },
+      {
+        id: 'q4',
+        title: 'السؤال الرابع',
+        instruction: 'كرة كتلتها 100 g معلَّقة بحبل وتؤثر فيها قوتان؛ حدد القوتين وعناصر كل منهما.',
+        body: forceQuestionFour,
+      },
+      {
+        id: 'q5',
+        title: 'السؤال الخامس',
+        instruction: 'حلِّ المسألتين الآتيتين.',
+        body: forceQuestionFive,
+      },
+    ],
+  },
+});

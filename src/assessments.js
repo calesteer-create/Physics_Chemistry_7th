@@ -105,3 +105,62 @@ export function checkMatching(values) {
   assessmentState.matching = values;
   assessmentState.matchingChecked = true;
 }
+
+// ————— بنوك أسئلة درس القوة والحركة (بمعرّفات fm- حتى لا تختلط ببنوك الدرس الأول) —————
+export const forceUnderstandingQuestions = [
+  choice('fm-u-definition', 'أيّ العبارات يعرّف القوة تعريفاً صحيحاً؟', ['كل مؤثر قادر على تغيير الحالة الحركية للجسم أو تغيير شكله', 'كل جسم يتحرك من مكان لآخر', 'مقدار ثابت لا يتغير بالتأثير', 'الأثر الذي يتركه الجسم على السطح'], 'كل مؤثر قادر على تغيير الحالة الحركية للجسم أو تغيير شكله', 'هذا نص تعريف الكتاب ص18: القوة كل مؤثر قادر على تغيير الحالة الحركية للجسم أو تغيير شكله.'),
+  choice('fm-u-elements', 'أيٌّ مما يأتي ليس من عناصر القوة؟', ['نقطة التأثير', 'الحامل', 'الجهة', 'الكتلة'], 'الكتلة', 'عناصر القوة أربعة: نقطة التأثير والحامل والجهة والشدة. الكتلة مقدار مستقل بوحدة الكيلو غرام وليست عنصر قوة.'),
+  choice('fm-u-newton', 'وحدة قياس شدة القوة في الجملة الدولية هي:', ['النيوتن', 'الكيلو غرام', 'المتر لكل ثانية', 'المتر'], 'النيوتن', 'يُرمز لشدة القوة بـ F وتقدَّر في الجملة الدولية بوحدة النيوتن N كما في الكتاب ص21.'),
+  choice('fm-u-travel', 'انتقل جسم من سوريا إلى القطب الشمالي. أيُّ العبارات صحيحة؟', ['كتلته تتغير وثقله ثابت', 'كتلته ثابتة وثقله يتغير', 'الكتلة والثقل يتغيران معاً', 'لا يتغير أيٌّ منهما'], 'كتلته ثابتة وثقله يتغير', 'الكتلة كمية المادة فتبقى ثابتة، أما الثقل فيتبع قيمة g التي تختلف من مكان لآخر كما في ملاحظة الكتاب ص25.'),
+  choice('fm-u-spring', 'يدلّ مؤشر الربيعة المعلَّق بها جسم على:', ['كتلة الجسم', 'شدة ثقل الجسم', 'حجم الجسم', 'كثافة الجسم'], 'شدة ثقل الجسم', 'استنتاج الكتاب ص22: يدل مؤشر الربيعة على شدة ثقل الجسم، والتي تختلف من جسم لآخر.'),
+  choice('fm-u-double', `قوة شدتها ${quantity('6', units.newton)} وأخرى شدتها ${quantity('3', units.newton)} لهما الحامل والجهة ونقطة التأثير نفسيهما على سيارة. أيّهما تأثيرها أكبر في الحركة؟`, [`الأولى لأن شدتها أكبر`, `الثانية لأنها أخف`, 'التأثير متساوٍ لأن الجهة واحدة', 'لا تأثير لأي منهما'], 'الأولى لأن شدتها أكبر', 'استنتاج الكتاب ص20: إنّ تأثير القوة يتعلق بشدّتها؛ فبتساوي العناصر الأخرى تكون الشدة الأكبر أثراً في الحركة.'),
+];
+
+export const forceTrueFalseQuestions = [
+  tf('fm-tf-1', 'القوة مقدار قياسي لا تحتاج إلى جهة لتحديدها.', 'خطأ', 'القوة مقدار متجه (شعاعي) لها أربعة عناصر: نقطة التأثير والحامل والجهة والشدة؛ فتحديدها يتطلب الجهة كما في الكتاب ص21.'),
+  tf('fm-tf-2', 'تبقى شدة ثقل الجسم ثابتة عند انتقاله بين مكانين مختلفين على سطح الأرض.', 'خطأ', 'قيمة تسارع الجاذبية g تختلف من مكان لآخر، ممّا يؤدي إلى اختلاف شدة قوة الثقل مع بقاء الكتلة ثابتة.'),
+  tf('fm-tf-3', 'الشدة مقدار قابل للقياس يعبر عن القيمة العددية للقوة.', 'صح', 'هذا نص تعريف الشدة في الكتاب ص21، وتقدَّر بوحدة النيوتن في الجملة الدولية.'),
+  tf('fm-tf-4', 'ثقل الجسم هو القوة التي تجذب بها الأرض الأجسام إليها.', 'صح', 'هذا تعريف ثقل الجسم في الكتاب ص23، وهو يختلف من مكان لآخر.'),
+];
+
+export const forceBookChoiceQuestions = [
+  choice('fm-mc-1', 'لتمثيل القوة هندسياً (شعاعياً) يجب تحديد:', ['حامل القوة فقط', 'نقطة تأثير القوة فقط', 'جهة القوة فقط', 'جميع عناصر القوة'], 'جميع عناصر القوة', 'التمثيل الشعاعي يحتاج المبدأ (نقطة التأثير) والحامل والجهة والطول المناسب للشدة؛ أي جميع العناصر.'),
+  choice('fm-mc-2', 'عند قذف جسم للأعلى فإنه يصل إلى ارتفاع معين ثم يعود إلى سطح الأرض، بسبب:', ['كتلة الجسم', 'ثقل الجسم', 'حجم الجسم', 'طول الجسم'], 'ثقل الجسم', 'قوة الثقل نحو الأسفل دائماً، فهي التي تبطئ الجسم الصاعد ثم تعيده إلى الأرض.'),
+  choice('fm-mc-3', `جسم كتلته ${quantity('4', units.kilogram)} وتسارع الجاذبية ${formula('g=10\\,\\mathrm{m}\\cdot\\mathrm{s}^{-2}')}، فإن شدة قوة ثقله:`, ['400 N', '40 N', '0.4 N', '4 N'], '40 N', `من العلاقة ${formula('w=mg')}: ${formula('w=4\\times10=40\\,\\mathrm{N}')}.`),
+  choice('fm-mc-4', 'شدة قوة ثقل الجسم تتناسب طردياً مع:', ['طول الجسم', 'لون الجسم', 'كتلة الجسم', 'ارتفاع الجسم عن سطح البحر'], 'كتلة الجسم', `من ${formula('w=mg')} تكون الشدة طردياً مع الكتلة عند ثبات g، وهذا نص بند تعلمت في الكتاب ص23: الشدة تتناسب طردياً مع الكتلة.`),
+  choice('fm-mc-5', 'لقياس شدة قوة الثقل نستخدم:', ['ميزان ذي كفتين', 'شريط مطاطي', 'ربيعة', 'ميزان حرارة'], 'ربيعة', 'الربيعة (ميزان نابض) تدل مؤشرها على شدة ثقل الجسم، بينما الميزان ذو الكفتين لقياس الكتلة.'),
+];
+
+export const forceNumericQuestions = [
+  { id: 'fm-num-weight', level: 3, title: 'حساب الثقل', prompt: `جسم كتلته ${quantity('10', units.kilogram)} و${formula('g=10\\,\\mathrm{N}\\cdot\\mathrm{kg}^{-1}')}. احسب شدة ثقله.`, expected: 100, unit: units.newton, explanation: `العلاقة ${formula('w=mg')}: ${formula('w=10\\times10=100\\,\\mathrm{N}')} (المسألة الأولى ص28).` },
+  { id: 'fm-num-mass', level: 3, title: 'حساب الكتلة من الثقل', prompt: `جسم شدة ثقله ${quantity('3000', units.newton)} و${formula('g=10\\,\\mathrm{N}\\cdot\\mathrm{kg}^{-1}')}. احسب كتلته.`, expected: 300, unit: units.kilogram, explanation: `من ${formula('w=mg')} نحسب ${formula('m=\\frac{w}{g}=\\frac{3000}{10}=300\\,\\mathrm{kg}')} (المسألة الثانية ص28).` },
+  { id: 'fm-num-equator', level: 4, title: 'الثقل عند خط الاستواء', prompt: `جسم كتلته ${quantity('10', units.kilogram)} عند خط الاستواء حيث ${formula('g=9.78\\,\\mathrm{N}\\cdot\\mathrm{kg}^{-1}')}. احسب شدة ثقله.`, expected: 97.8, unit: units.newton, explanation: `${formula('w=10\\times9.78=97.8\\,\\mathrm{N}')} كما في تطبيق الكتاب ص25.` },
+  { id: 'fm-num-pole', level: 4, title: 'الثقل عند القطب الشمالي', prompt: `الجسم نفسه كتلته ${quantity('10', units.kilogram)} عند القطب الشمالي حيث ${formula('g=9.83\\,\\mathrm{N}\\cdot\\mathrm{kg}^{-1}')}. احسب شدة ثقله.`, expected: 98.3, unit: units.newton, explanation: `${formula('w=10\\times9.83=98.3\\,\\mathrm{N}')}؛ القيمة أكبر من خط الاستواء لأن g أكبر هناك.` },
+  { id: 'fm-num-ball', level: 4, title: 'ثقل الكرة المعلقة', prompt: `كرة كتلتها ${quantity('100', units.gram)} معلقة بحبل و${formula('g=10\\,\\mathrm{m}\\cdot\\mathrm{s}^{-2}')}. احسب شدة ثقلها بالنيوتن.`, expected: 1, unit: units.newton, explanation: `نحوّل أولاً: ${formula('100\\,\\mathrm{g}=0.1\\,\\mathrm{kg}')}، ثم ${formula('w=0.1\\times10=1\\,\\mathrm{N}')} (السؤال الرابع ص28).` },
+];
+
+const forceMatchingDefinitions = [
+  { id: 'fm-point', text: 'النقطة التي تُطبَّق فيها القوة.', answer: 'نقطة التأثير' },
+  { id: 'fm-line', text: 'المستقيم الذي تؤثر وفقه القوة.', answer: 'الحامل' },
+  { id: 'fm-side', text: 'الجهة التي تؤثر وفقه القوة.', answer: 'الجهة' },
+  { id: 'fm-mag', text: 'مقدار قابل للقياس يعبر عن القيمة العددية للقوة.', answer: 'الشدة' },
+];
+
+function forceMatchingView() {
+  const terms = ['نقطة التأثير', 'الحامل', 'الجهة', 'الشدة', 'الكتلة'];
+  const checked = assessmentState.matchingChecked;
+  const correctCount = forceMatchingDefinitions.filter(item => assessmentState.matching[item.id] === item.answer).length;
+  return `<section class="practice-level"><span class="level-chip">المستوى 1 · أساسي</span><h2>الوصل بين التعريف والعنصر — من الكتاب ص21</h2>${forceMatchingDefinitions.map(item => `<div class="matching-row"><p>${item.text}</p><label>العنصر<select data-match-select="${item.id}" aria-label="اختر العنصر المناسب"><option value="">اختر…</option>${terms.map(term => `<option value="${term}" ${assessmentState.matching[item.id] === term ? 'selected' : ''}>${term}</option>`).join('')}</select></label></div>`).join('')}
+  <button class="btn btn-primary" type="button" data-check-matching>تحقق من الوصل</button>${checked ? `<div class="answer-feedback ${correctCount === 4 ? 'correct' : 'incorrect'}" role="status"><strong>أجبت عن ${correctCount} من 4 بصورة صحيحة.</strong><p>نقطة التأثير: موضع التطبيق. الحامل: المستقيم. الجهة: اتجاه التأثير. الشدة: القيمة العددية المقيسة بالنيوتن. ويبقى مصطلح «الكتلة» دون ربط.</p></div>` : ''}</section>`;
+}
+
+export function forceUnderstandingContent() {
+  return forceUnderstandingQuestions.map(question => questionView(question, 'understanding')).join('');
+}
+
+export function forcePracticeContent() {
+  return `${forceMatchingView()}
+  <section class="practice-level"><span class="level-chip">المستوى 2 · تطبيق</span><h2>صح وخطأ مع التصحيح — على مناهج الكتاب</h2>${forceTrueFalseQuestions.map(question => questionView(question, 'practice')).join('')}</section>
+  <section class="practice-level"><span class="level-chip">المستوى 3 · أسئلة الكتاب</span><h2>اختر الإجابة الصحيحة — السؤال الأول ص27</h2>${forceBookChoiceQuestions.map(question => questionView(question, 'practice')).join('')}</section>
+  <section class="practice-level"><span class="level-chip">المستوى 4 · حساب</span><h2>مسائل الثقل والكتلة — من الكتاب ص25 وص28</h2>${forceNumericQuestions.map(numericView).join('')}</section>`;
+}

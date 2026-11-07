@@ -6,8 +6,10 @@ import { units, lessons, stages, notebookSections, SUBJECT_LABELS } from '../src
 import { formula, quantity, units as mathUnits } from '../src/math.js';
 import { bookContent } from '../src/book-content.js';
 import { explainContent, examplesContent, summaryContent, notebookContent } from '../src/lesson-content.js';
-import { parseNumeric, practiceContent, understandingContent, understandingQuestions, trueFalseQuestions, bookChoiceQuestions, numericQuestions } from '../src/assessments.js';
+import { parseNumeric, practiceContent, understandingContent, understandingQuestions, trueFalseQuestions, bookChoiceQuestions, numericQuestions, forceUnderstandingQuestions, forceTrueFalseQuestions, forceBookChoiceQuestions, forceNumericQuestions } from '../src/assessments.js';
 import { REFERENCE_GEOMETRY, referenceSnapshot, graphSnapshot, GRAPH_SYMBOLS } from '../src/motion-lab.js';
+import { FORCE_REGIONS, weightSnapshot, drawTargets } from '../src/force-lab.js';
+import { forceDiscoverContent, forceBookContent, forceExplainContent, forceExamplesContent, forceActivityContent, forceQuestionsContent, forcePracticeContentStage, forceSummaryContent, forceNotebookContent } from '../src/force-motion.js';
 import { miniComparisonGraph } from '../src/diagrams.js';
 
 const sourceText = readdirSync('src').filter(file => /\.(js|css)$/.test(file)).map(file => readFileSync(`src/${file}`, 'utf8')).join('\n');
@@ -18,12 +20,16 @@ test('owner identity and WhatsApp destination remain unchanged', () => {
   assert.equal(ENGINEER_PHONE, '0930215022');
 });
 
-test('one approved unit and one approved lesson, with subject only as a tag', () => {
+test('one approved unit with two approved lessons, with subject only as a tag', () => {
   assert.equal(units.length, 1);
   assert.equal(units[0].fullTitle, 'الوحدة الأولى: الحركة والتحريك');
-  assert.equal(lessons.length, 1);
-  assert.deepEqual(lessons.map(lesson => lesson.title), ['الحركة والسكون']);
+  assert.equal(lessons.length, 2);
+  assert.deepEqual(lessons.map(lesson => lesson.title), ['الحركة والسكون', 'القوة والحركة']);
   assert.equal(lessons[0].number, 1);
+  assert.equal(lessons[0].pages, '3–16');
+  assert.equal(lessons[1].number, 2);
+  assert.equal(lessons[1].pages, '17–28');
+  assert.equal(lessons[1].id, 'force-motion');
   assert.deepEqual(Object.keys(SUBJECT_LABELS).sort(), ['chemistry', 'physics']);
   assert.doesNotMatch(sourceText, /رحلة في عالم الاكتشاف|درس تجريبي/);
 });
@@ -140,6 +146,57 @@ test('reviewed choice, understanding and numeric answer keys remain scientifical
     'bike-time': 18, 'bike-distance': 3.75, 'child-distance': 1800, 'child-speed': 2,
   });
   for (const question of [...bookChoiceQuestions, ...understandingQuestions]) assert.ok(question.options.includes(question.answer));
+});
+
+test('force lesson keeps the book wording verbatim, including its print typos, and separates enrichment', () => {
+  const book = forceBookContent();
+  for (const text of ['توصلنا سابقاً', 'نايض من الحديد', 'أُضعُ النايض', 'أسدُّ خطّافها', 'نايث الربيعة', 'سيارات العاب أطفال، مجموعة خيوط، سطح أملس', 'أشُدّ الخيط', 'أعلّق حلقة الربيعة', 'بكثلتها', 'أيهما أسهل تغييرُا لجهة حركته', 'من جسم لأخر', 'المسحود', 'باهمال قوة جذب الكواكب', 'تمار الأشجار', 'الطولة: تناسب طولاً مع شدة القوة', 'مقدار متجهه', 'طُبِّقت وقعة القوة', 'w_1', 'المطلوب حساب شدة ثقله', 'تسارع الجاذبية الأرضية']) assert.match(book, new RegExp(text));
+  assert.match(book, /هي كل مؤثر قادر على تغيير الحالة الحركية للجسم، أو تغيير شكله\./);
+  assert.match(book, /إنّ مقدار ممانعة الجسم لتغيير حالته الحركية، يتوقف على كتلته، فكلما كانت كتلة الجسم أكبر كانت الممانعة أكبر\./);
+  assert.match(book, /يدلّ مؤشر الربيعة على شدة ثقل الجسم، والتي تختلف من جسم لأخر\./);
+  assert.match(book, /عدد حقيقي موجب يعبر عمّا يحويه الجسم من مادة/);
+  assert.match(book, /w_1\}\{/);
+  assert.match(book, /إنّ النسبة .* في المكان ذاته هي مقدار ثابت يُسمّى تسارع الجاذبية الأرضية/);
+  const enrichment = forceExplainContent() + forceExamplesContent() + forceSummaryContent() + forceNotebookContent() + forceDiscoverContent();
+  for (const typo of ['باهمال', 'الطولة', 'المسحود']) assert.doesNotMatch(enrichment, new RegExp(typo), `typo stays inside book content only: ${typo}`);
+  assert.match(enrichment, /توضيح إثرائي/);
+});
+
+test('force lesson covers all nine stages with the fixed ids and book structure', () => {
+  const stagesHtml = forceDiscoverContent() + forceBookContent() + forceExplainContent() + forceExamplesContent() + forceActivityContent() + forceQuestionsContent() + forcePracticeContentStage() + forceSummaryContent() + forceNotebookContent();
+  for (const text of ['أسئلة الكتاب قبل التجارب', 'البداية والأهداف', 'توضيح إثرائي', 'طريقة التفكير والحل', 'مختبر القوة التفاعلي', 'جرّب ثم افهم', 'المستوى 4 · حساب', 'الفكرة المحورية', 'الفكرة الأساسية']) assert.match(stagesHtml, new RegExp(text));
+  assert.equal((forceBookContent().match(/role="tabpanel"/g) || []).length, 7);
+  assert.equal((forceNotebookContent().match(/class="note-card/g) || []).length, 9);
+  assert.doesNotMatch(forceNotebookContent(), /إجابة المعلم:|حل المعلم/);
+  assert.match(forceActivityContent(), /id="force-lab"/);
+  assert.doesNotMatch(stagesHtml, /math-fallback/);
+});
+
+test('force lab weight readings follow w = mg with the book regional values', () => {
+  assert.deepEqual(Object.fromEntries(Object.entries(FORCE_REGIONS).map(([key, data]) => [key, data.g])), { equator: 9.78, syria: 9.796, pole: 9.83 });
+  assert.equal(weightSnapshot(10, 'equator').weight, 97.8);
+  assert.equal(weightSnapshot(10, 'syria').weight, 97.96);
+  assert.equal(weightSnapshot(10, 'pole').weight, 98.3);
+  assert.equal(weightSnapshot(0.1, 'syria').weight, 0.98);
+  const clamped = weightSnapshot(500, 'syria');
+  assert.equal(clamped.mass, 100, 'lab input clamps to a sane positive range');
+  assert.deepEqual(drawTargets['right-4'], { text: 'قوة أفقية نحو اليمين شدتها 4 N', newtons: 4, direction: 'right', cm: 4 });
+});
+
+test('force assessment banks are graduated and keyed with fm- ids', () => {
+  const html = forcePracticeContentStage();
+  for (const level of ['المستوى 1', 'المستوى 2', 'المستوى 3', 'المستوى 4']) assert.match(html, new RegExp(level));
+  assert.deepEqual(forceBookChoiceQuestions.map(question => question.answer), ['جميع عناصر القوة', 'ثقل الجسم', '40 N', 'كتلة الجسم', 'ربيعة']);
+  assert.deepEqual(Object.fromEntries(forceNumericQuestions.map(question => [question.id, question.expected])), {
+    'fm-num-weight': 100, 'fm-num-mass': 300, 'fm-num-equator': 97.8, 'fm-num-pole': 98.3, 'fm-num-ball': 1,
+  });
+  assert.deepEqual(forceTrueFalseQuestions.map(question => question.answer), ['خطأ', 'خطأ', 'صح', 'صح']);
+  for (const question of [...forceUnderstandingQuestions, ...forceTrueFalseQuestions, ...forceBookChoiceQuestions]) {
+    assert.ok(question.options.includes(question.answer));
+    assert.ok(question.id.startsWith('fm-'));
+    assert.ok(question.explanation.length > 30);
+  }
+  for (const question of forceNumericQuestions) assert.ok(question.id.startsWith('fm-'));
 });
 
 test('KaTeX renders vertical fractions, subscripts and superscripts in LTR', () => {

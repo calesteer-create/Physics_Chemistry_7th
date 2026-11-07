@@ -31,4 +31,11 @@ export const units = {
   metrePerSecond: '\\mathrm{m}\\cdot\\mathrm{s}^{-1}',
   kilometrePerHour: '\\mathrm{km}\\cdot\\mathrm{h}^{-1}',
   celsius: '^\\circ\\mathrm{C}',
+  // وحدات درس القوة والحركة (إضافة لا تغيّر وحدات الدرس الأول).
+  newton: '\\mathrm{N}',
+  kilogram: '\\mathrm{kg}',
+  gram: '\\mathrm{g}',
+  centimetre: '\\mathrm{cm}',
+  newtonPerKilogram: '\\mathrm{N}\\cdot\\mathrm{kg}^{-1}',
+  metrePerSquareSecond: '\\mathrm{m}\\cdot\\mathrm{s}^{-2}',
 };

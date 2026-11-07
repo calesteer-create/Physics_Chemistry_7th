@@ -5,8 +5,13 @@ import { SUBJECT_LABELS, units, lessons, stages, getUnit, getLesson } from './co
 import { icons, heroArt } from './icons.js';
 import { bookContent } from './book-content.js';
 import { discoverContent, explainContent, examplesContent, summaryContent, notebookContent } from './lesson-content.js';
+import {
+  forceDiscoverContent, forceBookContent, forceExplainContent, forceExamplesContent, forceActivityContent,
+  forceQuestionsContent, forcePracticeContentStage, forceSummaryContent, forceNotebookContent,
+} from './force-motion.js';
 import { understandingContent, practiceContent, chooseAnswer, checkNumeric, checkMatching } from './assessments.js';
 import { motionLabShell, mountMotionLab } from './motion-lab.js';
+import { mountForceLab } from './force-lab.js';
 import { teacherView, submitTeacherPassword, lockTeacherZone } from './teacher-zone.js';
 
 const app = document.querySelector('#app');
@@ -80,7 +85,22 @@ function badgeClass(kind) {
   return 'badge-neutral';
 }
 
-function stageBody(stage) {
+// محتوى كل مرحلة يُبنى وفق الدرس المعتمد؛ الدرس الأول يبقى على بناّته الأصلية دون تغيير.
+function stageBody(stage, lesson) {
+  if (lesson.id === 'force-motion') {
+    switch (stage.kind) {
+      case 'discover': return forceDiscoverContent();
+      case 'book': return forceBookContent();
+      case 'explain': return forceExplainContent();
+      case 'examples': return forceExamplesContent();
+      case 'activity': return forceActivityContent();
+      case 'questions': return forceQuestionsContent();
+      case 'practice': return forcePracticeContentStage();
+      case 'summary': return forceSummaryContent();
+      case 'notebook': return forceNotebookContent();
+      default: return '';
+    }
+  }
   switch (stage.kind) {
     case 'discover': return discoverContent();
     case 'book': return bookContent();
@@ -105,7 +125,7 @@ function lessonView({ lesson, unit, index }) {
   return `<section class="wrap page-section"><nav class="crumbs" aria-label="مسار التنقل"><a href="#/">الرئيسية</a> / <a href="${unitHref(unit)}">${esc(unit.fullTitle)}</a> / <span aria-current="page">${esc(lesson.title)}</span></nav>
   <header class="page-head lesson-head"><p class="kicker"><span class="tag tag-physics">فيزياء</span> · الدرس ${lesson.number}</p><h1 data-focus="page" tabindex="-1">${esc(lesson.title)}</h1><p class="lead">الوحدة الأولى: الحركة والتحريك · صفحات الكتاب ${lesson.pages}</p><a class="back-to-unit" href="${unitHref(unit)}">${icons.arrowRight} العودة إلى صفحة الوحدة</a></header>
   <div class="lesson-layout"><nav class="stage-nav" aria-label="مراحل الدرس"><div class="stage-progress"><span>المرحلة ${n} من ${total}</span><progress max="${total}" value="${n}" aria-label="تقدمك في مراحل الدرس"></progress></div><ol>${stageLinks}</ol></nav>
-  <article class="stage stage-${stage.kind}" aria-labelledby="stage-title"><div class="stage-top"><span class="badge ${badgeClass(stage.kind)}">${esc(stage.badge)}</span><span>المرحلة ${n} من ${total}</span></div><h2 id="stage-title" data-focus="stage" tabindex="-1">${esc(stage.title)}</h2><p class="stage-text">${esc(stage.intro)}</p>${stageBody(stage)}
+  <article class="stage stage-${stage.kind}" aria-labelledby="stage-title"><div class="stage-top"><span class="badge ${badgeClass(stage.kind)}">${esc(stage.badge)}</span><span>المرحلة ${n} من ${total}</span></div><h2 id="stage-title" data-focus="stage" tabindex="-1">${esc(stage.title)}</h2><p class="stage-text">${esc(lesson.stageIntros?.[stage.id] || stage.intro)}</p>${stageBody(stage, lesson)}
   <div class="stage-actions">${prev ? `<a class="btn btn-secondary" href="${stageHref(lesson, prev)}">${icons.arrowRight} السابق: ${esc(prev.label)}</a>` : '<span></span>'}${next ? `<a class="btn btn-primary" href="${stageHref(lesson, next)}">التالي: ${esc(next.label)} ${icons.arrowLeft}</a>` : `<a class="btn btn-primary" href="${unitHref(unit)}">العودة إلى الوحدة ${icons.arrowLeft}</a>`}</div></article></div></section>`;
 }
 
@@ -192,6 +212,8 @@ function render(route = parseRoute()) {
   }
   const labRoot = app.querySelector('#motion-lab');
   if (labRoot) disposeLab = mountMotionLab(labRoot);
+  const forceLabRoot = app.querySelector('#force-lab');
+  if (forceLabRoot) disposeLab = mountForceLab(forceLabRoot);
   const nav = app.querySelector('.stage-nav ol');
   const current = nav?.querySelector('[aria-current="step"]');
   if (nav && current && nav.scrollWidth > nav.clientWidth) current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -219,7 +241,8 @@ app.addEventListener('click', event => {
   if (discovery) {
     app.querySelectorAll('[data-discovery-answer]').forEach(button => button.setAttribute('aria-pressed', String(button === discovery)));
     const feedback = app.querySelector('[data-discovery-feedback]');
-    feedback.textContent = discovery.dataset.discoveryAnswer === 'both' ? 'توقع جيد! يعتمد الوصف على الجسم المرجع. سجل ملاحظتك ثم انتقل إلى محتوى الكتاب.' : 'هذا وصف صحيح بالنسبة إلى المرجع المذكور. هل يمكن أن يكون الوصفان صحيحين معاً؟ اختبر ذلك في المختبر.';
+    // الدرس الثاني يرفق نص التغذية الراجعة بكل زر؛ الدرس الأول يحتفظ بمنطقه الأصلي دون تغيير.
+    feedback.textContent = discovery.dataset.discoveryFeedback || (discovery.dataset.discoveryAnswer === 'both' ? 'توقع جيد! يعتمد الوصف على الجسم المرجع. سجل ملاحظتك ثم انتقل إلى محتوى الكتاب.' : 'هذا وصف صحيح بالنسبة إلى المرجع المذكور. هل يمكن أن يكون الوصفان صحيحين معاً؟ اختبر ذلك في المختبر.');
     feedback.classList.add('feedback-visible');
     return;
   }

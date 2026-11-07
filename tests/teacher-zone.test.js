@@ -105,7 +105,7 @@ test('motion-rest solutions cover all four end-of-lesson questions in book order
   assert.deepEqual(lesson.questions.map(question => question.title), ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']);
   assert.deepEqual(lesson.questions.map(question => question.id), ['q1', 'q2', 'q3', 'q4']);
   const html = teacherSolutionsView();
-  assert.equal((html.match(/class="solution-question"/g) || []).length, 4);
+  assert.equal((html.match(/class="solution-question"/g) || []).length, 9, 'four motion-rest questions plus five force-motion questions');
   for (const title of ['السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع']) assert.match(html, new RegExp(title));
   assert.ok(html.indexOf('السؤال الأول') < html.indexOf('السؤال الثاني'));
   assert.ok(html.indexOf('السؤال الثالث') < html.indexOf('السؤال الرابع'));
@@ -155,7 +155,7 @@ test('question four gives the correct numeric results for all three problems', (
   for (const expected of ['36 km·h⁻¹ = 10 m·s⁻¹', '200 m', '18 min', '3750 m، أي 3.75 km', '1800 m، أي 1.8 km', '2 m·s⁻¹، أي 7.2 km·h⁻¹']) {
     assert.ok(text.includes(expected), `missing answer: ${expected}`);
   }
-  assert.equal((teacherSolutionsView().match(/class="solution-problem"/g) || []).length, 3);
+  assert.equal((teacherSolutionsView().match(/class="solution-problem"/g) || []).length, 6, 'three motion-rest problems plus three force-motion problems');
 });
 
 test('the distance in the round-trip problem is path length and speed uses the book definition', () => {
@@ -198,4 +198,56 @@ test('solution anchors are unique so index buttons scroll to the right question'
 test('teacher solution data stays out of the student lesson and notebook content', () => {
   const studentSource = readFileSync('src/lesson-content.js', 'utf8') + readFileSync('src/book-content.js', 'utf8');
   assert.doesNotMatch(studentSource, /teacher-solutions|teacherSolutions/);
+});
+
+// ————— حلول درس القوة والحركة —————
+test('force-motion solutions cover all five end-of-lesson questions in book order', () => {
+  const lesson = teacherSolutions['force-motion'];
+  assert.equal(lesson.sourceTitle, 'أختبر نفسي وحل المسائل');
+  assert.deepEqual(lesson.questions.map(question => question.id), ['q1', 'q2', 'q3', 'q4', 'q5']);
+  const html = teacherSolutionsView();
+  assert.match(html, /صفحات الكتاب 17–28 · أختبر نفسي وحل المسائل/);
+  for (const id of ['solution-force-motion-q1', 'solution-force-motion-q2', 'solution-force-motion-q3', 'solution-force-motion-q4', 'solution-force-motion-q5']) assert.ok(html.includes(id));
+});
+
+test('force-motion question one keys all five choices with reasons', () => {
+  const html = teacherSolutionsView();
+  for (const expected of ['(d) جميع عناصر القوة.', '(b) ثقل الجسم.', '(b) <span dir="ltr">40 N</span>.', '(c) كتلة الجسم.', '(c) ربيعة.']) assert.ok(html.includes(expected), `missing: ${expected}`);
+});
+
+test('force-motion question two explains the three phenomena from the book facts', () => {
+  const html = teacherSolutionsView();
+  assert.match(html, /يصبح الحبل مشدوداً شاقولياً/);
+  assert.match(html, /قطرات المطر وأغصان الأشجار/);
+  assert.match(html, /قيمة .* تختلف من مكان لآخر على سطح الأرض/);
+});
+
+test('force-motion question three converts 40, 30 and 50 newtons to centimetres at 1 cm = 10 N', () => {
+  const html = teacherSolutionsView();
+  assert.match(html, /سهم طوله <span dir="ltr">4 cm<\/span> أفقياً نحو اليمين/);
+  assert.match(html, /سهم طوله <span dir="ltr">3 cm<\/span> شاقولياً نحو الأعلى/);
+  assert.match(html, /سهم طوله <span dir="ltr">5 cm<\/span> يصنع زاوية <span dir="ltr">45°<\/span>/);
+  assert.match(html, /عناصر الرسم الثلاثة: المبدأ هو النقطة B/);
+});
+
+test('force-motion question four names both forces with elements and w = 1 N', () => {
+  const text = plain(teacherSolutionsView());
+  assert.match(text, /هي قوة الثقل\. عناصرها: نقطة التأثير مركز ثقل الكرة/);
+  assert.match(text, /هي قوة شد الحبل\. عناصرها: نقطة التأثير نقطة اتصال الحبل بالكرة/);
+  assert.match(text, /= 1 N/);
+  assert.match(text, /فتتوازن القوتان وتبقى الكرة في مكانها/);
+});
+
+test('force-motion question five solves both problems: w = 100 N and m = 300 kg', () => {
+  const text = plain(teacherSolutionsView());
+  assert.match(text, /شدة ثقل الجسم 100 N\./);
+  assert.match(text, /كتلة الجسم 300 kg\./);
+  assert.match(text, /التحقق بالتعويض العكسي: الكتلة 300 kg/);
+});
+
+test('force-motion solutions add no pending items and render every formula with KaTeX', () => {
+  const html = teacherSolutionsView();
+  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 1, 'only the legacy motion-rest item stays pending');
+  assert.doesNotMatch(html, /math-fallback|تعذّر عرض المعادلة/);
+  assert.doesNotMatch(plain(html), /\\frac|\\mathrm|\\times/);
 });
