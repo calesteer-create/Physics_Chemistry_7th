@@ -222,3 +222,29 @@ test('main.js routes lesson three to its own stage renderers and lab', () => {
   assert.match(main, /mountMotionLab/);
   assert.match(main, /mountForceLab/);
 });
+
+test('lesson three vector diagrams keep proportional lengths and vertical arrowheads', async () => {
+  const { resultantScaleFigure, oppositePairFigure, actionReactionFigure } = await import('../src/diagrams.js');
+  const html = resultantScaleFigure({ rows: [{ label: 'F', newton: 50 }, { label: 'F₁', newton: 20 }] });
+  const arrows = [...html.matchAll(/<line x1="62" y1="[^"]+" x2="([^"]+)"/g)].map(match => Number(match[1]) - 62);
+  assert.deepEqual(arrows, [240, 96]);
+  const pair = oppositePairFigure({ left: 30, right: 20 });
+  assert.match(pair, /x1="240" y1="78" x2="66"/);
+  assert.match(pair, /x1="240" y1="112" x2="356"/);
+  const balloon = actionReactionFigure({ mode: 'balloon' });
+  assert.match(balloon, /points="0,0 8\.5,15 -8\.5,15"/);
+});
+
+test('interactive same-direction vectors fit and share a scale at maximum and zero', async () => {
+  const { labState } = await import('../src/resultant-lab.js');
+  const saved = { ...labState };
+  try {
+    Object.assign(labState, { active: 'same', sameFirst: 60, sameSecond: 60 });
+    const max = resultantLabContent();
+    assert.match(max, /x1="85" y1="168" x2="365"/);
+    assert.match(max, />120 N<\/text>/);
+    Object.assign(labState, { sameFirst: 0, sameSecond: 0 });
+    const zero = resultantLabContent();
+    assert.doesNotMatch(zero, /<polygon/);
+  } finally { Object.assign(labState, saved); }
+});

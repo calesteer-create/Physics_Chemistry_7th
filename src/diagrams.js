@@ -175,8 +175,9 @@ export function hangingBallFigure({ id = 'hanging-ball' } = {}) {
 const lessonArrow = ({ x1, y1, x2, y2, color = '#dc2626', width = 7, label = '', labelX, labelY, dash = '', opacity = 1 }) => {
   const head = 15;
   const headWing = 8.5;
-  const onRight = x2 >= x1;
-  const headPoints = `${x2},${y2} ${x2 - (onRight ? head : -head)},${y2 - headWing} ${x2 - (onRight ? head : -head)},${y2 + headWing}`;
+  const length = Math.hypot(x2 - x1, y2 - y1) || 1;
+  const ux = (x2 - x1) / length, uy = (y2 - y1) / length;
+  const headPoints = `${x2},${y2} ${x2 - head * ux - headWing * uy},${y2 - head * uy + headWing * ux} ${x2 - head * ux + headWing * uy},${y2 - head * uy - headWing * ux}`;
   return `<g>
     <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" ${dash ? `stroke-dasharray="${dash}"` : ''} opacity="${opacity}"/>
     <polygon points="${headPoints}" fill="${color}" opacity="${opacity}"/>
@@ -186,7 +187,7 @@ const lessonArrow = ({ x1, y1, x2, y2, color = '#dc2626', width = 7, label = '',
 
 // كتاب على طاولة تؤثر فيه قوتان أفقيّتان متعاكستان (ص29).
 export function bookForcePairFigure({ id = 'book-force-pair', labelLeft = 'F₁', labelRight = 'F₂', caption = 'كتاب ساكن على طاولة، تؤثر فيه قوتان أفقيّتان متعاكستان' } = {}) {
-  return `<svg class="force-pair-figure" viewBox="0 0 520 210" role="img" aria-labelledby="${id}-title" dir="ltr">
+  return `<svg class="force-pair-figure" viewBox="0 0 520 225" role="img" aria-labelledby="${id}-title" dir="ltr">
     <title id="${id}-title">${caption}</title>
     <rect x="40" y="150" width="440" height="16" rx="6" fill="#a97142"/>
     <rect x="70" y="166" width="16" height="42" rx="4" fill="#8d5b31"/>
@@ -206,7 +207,7 @@ export function tugOfWarFigure({ id = 'tug-of-war', leftLabel = 'F₁', rightLab
     <g fill="#22c55e"><circle cx="104" cy="72" r="17"/><rect x="88" y="92" width="32" height="42" rx="12"/><rect x="76" y="100" width="18" height="11" rx="5"/></g>
     <g fill="#3b82f6"><circle cx="456" cy="72" r="17"/><rect x="440" y="92" width="32" height="42" rx="12"/><rect x="466" y="100" width="18" height="11" rx="5"/></g>
     <path d="M124 100 q40 -14 80 0 t80 0 t80 0 t80 0 t80 0" fill="none" stroke="#7c5a3a" stroke-width="4" stroke-linecap="round"/>
-    ${lessonArrow({ x1: 150, y1: 150, x2: 78, y2: 150, color: '#f59e0b', label: leftLabel, labelY: 178 })}
+    ${lessonArrow({ x1: 150, y1: 150, x2: 78, y2: 150, color: '#b45309', label: leftLabel, labelY: 178 })}
     ${lessonArrow({ x1: 410, y1: 150, x2: 482, y2: 150, color: '#dc2626', label: rightLabel, labelY: 178 })}
   </svg>`;
 }
@@ -235,9 +236,8 @@ export function sameDirectionPairFigure({ id = 'same-direction-pair', first = 20
     <line x1="40" y1="${y}" x2="462" y2="${y}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"/>
     <circle cx="${base}" cy="${y}" r="6" fill="#1e40af"/>
     <text x="${base}" y="${y - 40}" class="svg-label" text-anchor="middle">O</text>
-    ${lessonArrow({ x1: base, y1: y - 16, x2: x1, y2: y - 16, color: '#f59e0b', width: 6, label: 'F₁', labelX: (base + x1) / 2, labelY: y - 28 })}
+    ${lessonArrow({ x1: base, y1: y - 16, x2: x1, y2: y - 16, color: '#b45309', width: 6, label: 'F₁', labelX: (base + x1) / 2, labelY: y - 28 })}
     ${lessonArrow({ x1: base, y1: y + 22, x2: x2, y2: y + 22, color: '#2563eb', width: 6, label: 'F₂', labelX: (base + x2) / 2, labelY: y + 48 })}
-    <line x1="${base}" y1="${y - 16}" x2="${x2}" y2="${y + 22}" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.7"/>
   </svg>`;
 }
 
@@ -253,8 +253,8 @@ export function oppositePairFigure({ id = 'opposite-pair', left = 30, right = 20
     <line x1="30" y1="${y}" x2="450" y2="${y}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"/>
     <circle cx="${center}" cy="${y}" r="6" fill="#1e40af"/>
     <text x="${center}" y="${y - 30}" class="svg-label" text-anchor="middle">O</text>
-    ${lessonArrow({ x1: center - 12, y1: y - 14, x2: leftEnd, y2: y - 14, color: '#f59e0b', width: 6, label: 'F₁', labelX: leftEnd - 6, labelY: y - 40 })}
-    ${lessonArrow({ x1: center + 12, y1: y + 20, x2: rightEnd, y2: y + 20, color: '#dc2626', width: 6, label: 'F₂', labelX: rightEnd + 8, labelY: y + 50 })}
+    ${lessonArrow({ x1: center, y1: y - 14, x2: leftEnd, y2: y - 14, color: '#b45309', width: 6, label: 'F₁', labelX: leftEnd - 6, labelY: y - 40 })}
+    ${lessonArrow({ x1: center, y1: y + 20, x2: rightEnd, y2: y + 20, color: '#dc2626', width: 6, label: 'F₂', labelX: rightEnd + 8, labelY: y + 50 })}
   </svg>`;
 }
 
@@ -267,12 +267,12 @@ export function resultantScaleFigure({ id = 'resultant-figure', rows = [], capti
   const pxPerCm = 48;
   const rowMarkup = rows.map((row, index) => {
     const y = y0 + index * gap;
-    const px = Math.min(330, Math.max(16, (row.newton / newtonPerCm) * pxPerCm));
+    const px = (row.newton / newtonPerCm) * pxPerCm;
     const color = row.color || '#dc2626';
     return `<g>
       <text x="16" y="${y + 5}" class="vector-tick" text-anchor="start">${row.label}</text>
       <circle cx="${base}" cy="${y}" r="4" fill="${row.marker ? '#1e40af' : 'transparent'}"/>
-      ${lessonArrow({ x1: base, y1: y, x2: base + px, y2: y, color, width: 6, label: `${row.newton} N`, labelX: base + px + 40, labelY: y + 5 })}
+      ${lessonArrow({ x1: base, y1: y, x2: base + px, y2: y, color, width: 6, label: `${row.newton} N`, labelX: 415, labelY: y + 5 })}
     </g>`;
   }).join('');
   const height = 40 + Math.max(1, rows.length) * gap;
@@ -334,9 +334,9 @@ export function actionReactionFigure({ id = 'action-reaction', mode = 'magnets' 
 
 // خط أفقي لعرض مخطط القوى المتتالية على الحامل نفسه (يجمع الفريقين في ص36).
 export function teamForcesFigure({ id = 'team-forces', team = 'team1', values = [], sum = 0 } = {}) {
-  const dirColor = team === 'team1' ? '#f59e0b' : '#dc2626';
+  const dirColor = team === 'team1' ? '#b45309' : '#dc2626';
   const perUnit = 0.16;
-  const base = 70;
+  const base = 95;
   const y0 = 52;
   const rows = values.map((value, index) => {
     const y = y0 + index * 40;
@@ -353,7 +353,7 @@ export function teamForcesFigure({ id = 'team-forces', team = 'team1', values = 
     ${rows}
     <line x1="60" y1="${sumY - 16}" x2="452" y2="${sumY - 16}" stroke="#cbd5e1" stroke-width="1.5"/>
     ${lessonArrow({ x1: base, y1: sumY + 4, x2: base + sumPx, y2: sumY + 4, color: '#2563eb', width: 8 })}
-    <text x="${base + sumPx + 30}" y="${sumY + 10}" class="svg-label" text-anchor="start">F = ${sum} N</text>
+    <text x="${base + sumPx + 18}" y="${sumY + 10}" class="svg-label" text-anchor="start">F = ${sum} N</text>
   </svg>`;
 }
 
@@ -366,7 +366,7 @@ export function riflePerpFigure({ id = 'rifle-recoil', caption = 'بندقية �
     <path d="M126 108 q24 -16 48 0 l10 66 h-68 z" fill="#4d7c3f"/>
     <path d="M168 112 l86 -20 l8 14 l-84 22 z" fill="#c7a06a"/>
     <rect x="248" y="88" width="72" height="12" rx="6" fill="#94a3b8"/>
-    ${lessonArrow({ x1: 320, y1: 94, x2: 400, y2: 94, color: '#f59e0b', width: 6, label: 'الرصاصة', labelX: 360, labelY: 74 })}
+    ${lessonArrow({ x1: 320, y1: 94, x2: 400, y2: 94, color: '#b45309', width: 6, label: 'الرصاصة', labelX: 360, labelY: 74 })}
     <text x="196" y="196" class="vector-tick" text-anchor="middle">أين القوة المفقودة في الرسم؟</text>
   </svg>`;
 }
