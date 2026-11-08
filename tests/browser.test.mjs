@@ -87,14 +87,16 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     await page.waitForURL(/#\/unit\/motion$/);
     await page.waitForFunction(() => document.querySelector('main h1')?.textContent === 'الوحدة الأولى: الحركة والتحريك');
     assert.equal((await page.locator('main h1').innerText()).trim(), 'الوحدة الأولى: الحركة والتحريك');
-    assert.equal(await page.locator('.path-list > li').count(), 2);
-    assert.equal((await page.locator('.lesson-card').first().innerText()).includes('الحركة والسكون'), true);
-    assert.equal((await page.locator('.lesson-card').last().innerText()).includes('القوة والحركة'), true);
+    assert.equal(await page.locator('.path-list > li').count(), 3);
+    const lessonCards = page.locator('.lesson-card');
+    for (const [index, title] of ['الحركة والسكون', 'القوة والحركة', 'القوى على حامل واحد'].entries()) {
+      assert.match(await lessonCards.nth(index).innerText(), new RegExp(title));
+    }
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'H1');
     await noOverflow('unit');
 
     // الدخول إلى الدرس والتنقل المتتابع بين المراحل التسع.
-    await page.locator('.lesson-card').click();
+    await page.locator('.lesson-card[href="#/lesson/motion-rest"]').click();
     await page.waitForURL(/#\/lesson\/motion-rest$/);
     await page.locator('#stage-title').waitFor();
     for (let i = 0; i < stageTitles.length; i++) {
@@ -236,6 +238,8 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
 
     // مختبر القوة: عناصر القوة تتغير بالتحكم، والكتلة والثقل يتبعان المنطقة، والرسم بالمقياس.
     await page.goto(`${base}#/lesson/force-motion/activity`);
+    await page.waitForSelector('#force-lab', { state: 'attached' });
+    assert.deepEqual(errors, [], 'no browser errors before exercising the force lab');
     await range(page, 'force', 8);
     assert.ok((await page.locator('.force-lab .force-scene-svg').textContent()).includes('F = 8 N'), 'arrow label follows the slider');
     await page.locator('[data-lab-input="point"]').selectOption('back');
