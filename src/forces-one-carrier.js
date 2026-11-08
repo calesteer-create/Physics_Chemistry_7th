@@ -5,7 +5,7 @@ import { formula, quantity, units } from './math.js';
 import {
   bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure, verticalWeightsFigure, bookOppositeResultFigure,
   oppositePairFigure, resultantScaleFigure, springPairFigure, springScaleReadingFigure, actionReactionFigure,
-  teamForcesFigure, riflePerpFigure, carPushFigure,
+  teamForcesFigure, riflePerpFigure, carPushFigure, actionReactionExamplesFigure, parachuteFigure,
 } from './diagrams.js';
 import { notebookSections } from './course.js';
 import { resultantLabShell } from './resultant-lab.js';
@@ -29,7 +29,7 @@ export function forcesDiscoverContent() {
     <span class="discovery-icon" aria-hidden="true">📚</span>
     <div><h3>هل تتحرّك الأجسام بشرط وجود قوة مؤثّرة فيها؟</h3><p>هذا سؤال الكتاب ص29 نفسه. في الصورة كتاب ساكن على طاولة، أُثّر فيه بقوة أفقيّة نحو اليمين فتحرّك إلى اليمين، ثم أُثّر فيه بقوة نحو اليسار فتحرّك إلى اليسار. لكن ماذا لو أثّرنا فيه بالقوتين معاً؟ وإذا تحرّك، فبأي اتجاه؟</p></div>
   </div>
-  ${bookForcePairFigure({ id: 'discover-pair' })}
+  <figure class="discovery-force-figure">${bookForcePairFigure({ id: 'discover-pair' })}<figcaption>الرسم يوضح الاتجاهين فقط؛ لا يُستدل من طولي السهمين على شدتي القوتين في سؤال التوقع.</figcaption></figure>
   <div class="prediction" data-discovery>
     <h3>توقّع قبل أن تبدأ</h3><p>كتاب ساكن على طاولة أُثّر فيه بقوتين أفقيّتين متعاكستين شدّتاهما مختلفتان. إلى أي اتجاه يتحرّك؟</p>
     <div class="choice-row" role="group" aria-label="توقع اتجاه حركة الكتاب تحت قوتين متعاكستين">
@@ -169,7 +169,7 @@ export function forcesBookContent() {
         <details class="book-exercises"><summary>السؤال الأول: اختر الإجابة الصحيحة لكلّ ممّا يأتي</summary>
         <p>1. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> على حامل واحد وبجهة واحدة، فإنّ شدّة محصّلتهما تعطى بالعلاقة:</p>
         ${table(['(a)', '(b)', '(c)', '(d)'], [['<span dir="ltr">F=F₁-F₂</span>', '<span dir="ltr">F=F₁+F₂</span>', '<span dir="ltr">F=F₁÷F₂</span>', '<span dir="ltr">F=√(F₁²+F₂²)</span>']], 'خيارات السؤال الأول — البند 1')}
-        <p>2. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> حيث <span class="formula" dir="ltr">F₁ &lt; F₂</span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما تُعطى بالعلاقة:</p>
+        <p>2. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> حيث <span class="formula" dir="ltr">F₁ &gt; F₂</span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما تُعطى بالعلاقة:</p>
         ${table(['(a)', '(b)', '(c)', '(d)'], [['<span dir="ltr">F=F₁-F₂</span>', '<span dir="ltr">F=F₂-F₁</span>', '<span dir="ltr">F=F₁+F₂</span>', '<span dir="ltr">F=F₁÷F₂</span>']], 'خيارات السؤال الأول — البند 2')}</details>`)}`)}
     ${section('38', 'أختبر نفسي: السؤال الأول (تابع)', `
       <details class="book-exercises" open><summary>السؤال الأول: البنود 3 إلى 8</summary>
@@ -184,13 +184,13 @@ export function forcesBookContent() {
       <p>7. القوتان المتعاكستان مباشرة هما قوتان:</p>
       ${table(['(a)', '(b)', '(c)', '(d)'], [['متوازيتان حاملاً ومتعاكستان جهةً ومختلفتان شدّةً', 'منطبقتان حاملاً ومتّفقتان جهةً ومتساويتان شدّةً', 'منطبقتان حاملاً ومتّفقتان جهةً ومختلفتان شدّةً', 'منطبقتان حاملاً ومتعاكستان جهةً ومتساويتان شدّةً']], 'خيارات السؤال الأول — البند 7')}
       <p>8. لكلّ فعل ردّ فعل:</p>
-      ${table(['(a)', '(b)', '(c)', '(d)'], [['يساويه بالقيمة وبماثله بالاتجاه.', 'يساويه بالقيمة ويعاكسه بالاتجاه.', 'يوازيه بالحامل وبماثله بالاتجاه', 'لا يساويه بالقيمة ويعاكسه بالاتجاه.']], 'خيارات السؤال الأول — البند 8')}</details>`)}
+      ${table(['(a)', '(b)', '(c)', '(d)'], [['يساويه بالقيمة ويماثله بالاتجاه.', 'يساويه بالقيمة ويعاكسه بالاتجاه.', 'يوازيه بالحامل ويماثله بالاتجاه', 'لا يساويه بالقيمة ويعاكسه بالاتجاه.']], 'خيارات السؤال الأول — البند 8')}</details>`)}
     </div>
 
     <div id="forces-problems" role="tabpanel" aria-labelledby="forces-tab-problems" tabindex="0" hidden>
     ${section('39', 'أختبر نفسي: السؤال الثاني والثالث والرابع', `
       <details class="book-exercises"><summary>السؤال الثاني: حدّد كلاً من قوة الفعل وقوة ردّ الفعل في كلّ من الصور الآتية</summary>
-      ${questionList(['صاروخ ينطلق ويخرج منه الغاز نحو الأسفل.', 'يد تدفع حافة طاولة فتندفع الطاولة، وتردّ الطاولة على اليد.', 'كتاب موضوع على طاولة: ثقله نحو الأسفل وقوة الطاولة عليه نحو الأعلى.'])}
+      ${actionReactionExamplesFigure({ id: 'book-p39-examples' })}
       </details>
       <details class="book-exercises"><summary>السؤال الثالث: لاحظ الرسم أدناه، ثم أجب عن السؤال الآتي</summary>
       ${riflePerpFigure({ id: 'book-p39-rifle' })}
@@ -209,7 +209,7 @@ export function forcesBookContent() {
       <p><strong>المطلوب:</strong></p>
       ${questionList(['حدّد عناصر محصّلة القوتين <span class="formula" dir="ltr">F̄</span>.', 'ما قيمة شدّة القوة <span class="formula" dir="ltr">F̄′</span> التي إذا أثّرت في <span class="formula" dir="ltr">(O)</span> بقيت متوازنة؟', 'مثّل بالرسم كلاً من القوى <span class="formula" dir="ltr">(F̄₁، F̄₂، F̄، F̄′)</span> بمقياس رسم مناسب.', 'إذا كانت شدّة القوة الثانية <span class="formula" dir="ltr">F₂=25 N</span>، فما شدّة محصّلة القوتين عندئذ؟'])}
       </details>
-      ${inferBox('نشاط:', '<p>تؤثّر على المظلّي قوة ثقله للأسفل وقوة مقاومة الهواء على المظلّة للأعلى. أكتب موضوعاً مستعيناً بالشابكة تصف فيه كيف يتقدّم المظلّي في حركته؟ وماذا يحدث لو زادت مقاومة الهواء؟</p>')}
+      ${inferBox('نشاط:', `<p>تؤثّر على المظلّي قوة ثقله للأسفل وقوة مقاومة الهواء على المظلّة للأعلى. أكتب موضوعاً مستعيناً بالشابكة تصف فيه كيف يتحكّم المظلّي في حركته؟ وماذا يحدث لو زادت مقاومة الهواء؟</p>${parachuteFigure({ id: 'book-p40-parachute' })}`)}
     `)}
     </div>
   </div>`;

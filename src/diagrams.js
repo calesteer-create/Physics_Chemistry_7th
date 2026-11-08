@@ -393,17 +393,56 @@ export function teamForcesFigure({ id = 'team-forces', team = 'team1', values = 
   </svg>`;
 }
 
-// رسم السؤال الثالث ص39: بندقية تُطلق رصاصة، والقوة المفقودة هي ردّ فعل البندقية نحو الخلف.
-export function riflePerpFigure({ id = 'rifle-recoil', caption = 'بندقية تُطلق رصاصة: توجد في الرسم قوة مفقودة هي ردّ فعل البندقية نحو الخلف' } = {}) {
+// صور السؤال الثاني ص39: نحافظ على الاتجاهات المعروضة دون تسمية الحل.
+export function actionReactionExamplesFigure({ id = 'action-examples' } = {}) {
+  const frame = (name, title, scene) => `<svg class="recoil-figure" viewBox="0 0 300 240" role="img" aria-labelledby="${id}-${name}">
+    <title id="${id}-${name}">${title}</title>
+    <rect x="4" y="4" width="292" height="232" rx="15" fill="#f3f9fc"/>
+    ${scene}
+  </svg>`;
+  return `<div class="book-force-examples">
+    ${frame('book', 'كتاب على طاولة مع سهمين شاقوليين متعاكسين', `
+      <rect x="48" y="156" width="204" height="14" rx="5" fill="#a97142"/><path d="M66 170 v46 M234 170 v46" stroke="#895b37" stroke-width="10"/>
+      <rect x="116" y="140" width="68" height="16" rx="4" fill="#a21a43"/><rect x="122" y="143" width="56" height="8" rx="2" fill="#fff"/>
+      ${lessonArrow({ x1: 150, y1: 140, x2: 150, y2: 72, color: '#16886e', width: 5 })}
+      ${lessonArrow({ x1: 150, y1: 166, x2: 150, y2: 215, color: '#a33a91', width: 5 })}`)}
+    ${frame('hand', 'يد عند حافة طاولة مع سهمين قطريين متعاكسين', `
+      <rect x="154" y="152" width="116" height="15" rx="4" fill="#aa7852"/><rect x="175" y="167" width="13" height="49" fill="#8a5b3c"/>
+      <path d="M144 153 C113 146 92 135 73 117 C62 107 58 92 66 86 C73 80 82 91 91 98 L103 105 L88 74 C84 64 92 59 98 68 L117 95 L109 59 C107 48 117 46 121 57 L135 91 L132 56 C131 45 141 45 144 56 L151 92 L156 65 C158 54 169 56 168 68 L165 115 Q164 136 144 153 Z" fill="#f3c39d" stroke="#d99b74" stroke-width="2"/>
+      ${lessonArrow({ x1: 151, y1: 151, x2: 86, y2: 83, color: '#16886e', width: 5 })}
+      ${lessonArrow({ x1: 151, y1: 151, x2: 213, y2: 216, color: '#a33a91', width: 5 })}`)}
+    ${frame('rocket', 'صاروخ مع سهمين شاقوليين متعاكسين', `
+      <path d="M150 28 C138 42 133 59 133 78 V162 H167 V78 C167 59 162 42 150 28 Z" fill="#e6edf3" stroke="#738da0" stroke-width="3"/>
+      <path d="M150 28 C142 38 138 46 136 56 H164 C162 46 158 38 150 28 Z" fill="#e0524e"/>
+      <path d="M133 135 l-19 30 v20 l19-11 M167 135 l19 30 v20 l-19-11" fill="#a9bccb" stroke="#738da0" stroke-width="2"/>
+      <path d="M139 162 Q150 206 161 162" fill="#fbbf65"/>
+      ${lessonArrow({ x1: 150, y1: 160, x2: 150, y2: 115, color: '#16886e', width: 5 })}
+      ${lessonArrow({ x1: 150, y1: 168, x2: 150, y2: 216, color: '#a33a91', width: 5 })}`)}
+  </div>`;
+}
+
+// ص39: سهم الرصاصة مائل كما في الصورة، دون الكشف عن إجابة السؤال.
+export function riflePerpFigure({ id = 'rifle-recoil', caption = 'بندقية تُطلق رصاصة مع سهم مائل نحو أعلى اليمين' } = {}) {
   return `<svg class="recoil-figure" viewBox="0 0 420 220" role="img" aria-labelledby="${id}-title" dir="ltr">
     <title id="${id}-title">${caption}</title>
     <rect x="0" y="0" width="420" height="220" rx="16" fill="#eaf6fb"/>
-    <circle cx="150" cy="78" r="24" fill="#f8d3b8"/>
-    <path d="M126 108 q24 -16 48 0 l10 66 h-68 z" fill="#4d7c3f"/>
-    <path d="M168 112 l86 -20 l8 14 l-84 22 z" fill="#c7a06a"/>
-    <rect x="248" y="88" width="72" height="12" rx="6" fill="#94a3b8"/>
-    ${lessonArrow({ x1: 320, y1: 94, x2: 400, y2: 94, color: '#b45309', width: 6, label: 'الرصاصة', labelX: 360, labelY: 74 })}
-    <text x="196" y="196" class="vector-tick" text-anchor="middle">أين القوة المفقودة في الرسم؟</text>
+    <circle cx="130" cy="91" r="24" fill="#f2c19e"/>
+    <path d="M106 120 q24 -16 48 0 l10 76 h-68 z" fill="#4d7c3f"/>
+    <path d="M143 125 l83 -38 l8 15 l-79 39 z" fill="#d9a778"/>
+    <path d="M153 115 L302 58 L307 69 L160 127 Z" fill="#8799a7"/>
+    ${lessonArrow({ x1: 310, y1: 62, x2: 370, y2: 39, color: '#b45309', width: 6 })}
+    <ellipse cx="383" cy="34" rx="7" ry="4" fill="#64748b" transform="rotate(-21 383 34)"/>
+  </svg>`;
+}
+
+// صورة توضيحية للنشاط ص40 دون إضافة أسهم أو قيم غير موجودة في الصورة.
+export function parachuteFigure({ id = 'parachute' } = {}) {
+  return `<svg class="recoil-figure parachute-figure" viewBox="0 0 420 270" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">مظلّي تحت مظلته في السماء</title>
+    <rect width="420" height="270" rx="16" fill="#d8f2fb"/>
+    <path d="M65 105 Q72 28 210 28 Q348 28 355 105 Q322 88 290 105 Q250 86 210 105 Q170 86 130 105 Q98 88 65 105 Z" fill="#df4d4d" stroke="#b63840" stroke-width="3"/>
+    <path d="M65 105 L202 204 M130 105 L202 204 M210 105 L210 204 M290 105 L218 204 M355 105 L218 204" stroke="#728da2" stroke-width="2"/>
+    <circle cx="210" cy="207" r="9" fill="#eebd98"/><path d="M210 216 v22 m0-16 l-15-9 m15 9 l15-9 m-15 25 l-10 17 m10-17 l10 17" fill="none" stroke="#334b61" stroke-width="6" stroke-linecap="round"/>
   </svg>`;
 }
 

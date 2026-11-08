@@ -144,7 +144,8 @@ test('question banks are keyed with fh- ids and answers are consistent with the 
   }
   const byId = id => forcesBookChoiceQuestions.find(item => item.id === id);
   assert.equal(byId('fh-mc-1').answer, 'F = F₁ + F₂');
-  assert.equal(byId('fh-mc-2').answer, 'F = F₂ − F₁');
+  assert.equal(byId('fh-mc-2').answer, 'F = F₁ − F₂');
+  assert.match(byId('fh-mc-2').prompt, /F₁ > F₂/);
   assert.equal(byId('fh-mc-3').answer, 'F = 100 N وبجهة الفريق الأول');
   assert.equal(byId('fh-mc-5').answer, '40 N');
   assert.equal(byId('fh-mc-6').answer, '0 N');
@@ -276,4 +277,17 @@ test('book tug of war does not invent a force-length ratio', async () => {
   const book = forcesBookContent();
   assert.match(book, /نؤثّر على الحبل بقوتين مختلفتين بالشدّة/);
   assert.match(book, /نحو اليمين بجهة القوة الأكبر/);
+});
+
+
+test('book pages 37, 39 and 40 preserve source facts without revealing the missing force', async () => {
+  const html = forcesBookContent();
+  assert.match(html, /F₁ &gt; F₂<\/span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما/);
+  assert.match(html, /كيف يتحكّم المظلّي في حركته/);
+  assert.doesNotMatch(html, /وبماثله بالاتجاه/);
+  for (const id of ['book-p39-examples-book', 'book-p39-examples-hand', 'book-p39-examples-rocket', 'book-p40-parachute-title']) assert.match(html, new RegExp(id));
+  const { riflePerpFigure } = await import('../src/diagrams.js');
+  const rifle = riflePerpFigure();
+  assert.match(rifle, /x1="310" y1="62" x2="370" y2="39"/);
+  assert.doesNotMatch(rifle, /ردّ فعل البندقية نحو الخلف/);
 });
