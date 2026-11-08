@@ -333,7 +333,7 @@ test('Chromium: navigation, nine stages, real lab, assessments, KaTeX and four r
     assert.ok(await page.locator('.teacher-zone .katex').count() >= 12, 'solution formulas render with KaTeX');
     assert.equal(await page.locator('.math-fallback').count(), 0);
     assert.equal(await page.locator('.teacher-zone .formula').first().getAttribute('dir'), 'ltr');
-    await page.locator('.solution-chip', { hasText: 'السؤال الرابع' }).click();
+    await page.locator('[data-scroll-to="solution-motion-rest-q4"]').click();
     await page.waitForFunction(() => {
       const target = document.getElementById('solution-motion-rest-q4')?.getBoundingClientRect();
       return target && target.top < innerHeight && target.bottom > 0;
