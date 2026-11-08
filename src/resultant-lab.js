@@ -66,16 +66,16 @@ const button = (action, label, pressed = null, className = '') => `<button type=
 
 // سهم أفقي داخل مساحة ثابتة: يبدأ من النقطة 70 وطوله يتناسب مع الشدة.
 const arrowRow = ({ label, value, color, direction = 'right', max = 60, y }) => {
-  const px = Math.max(16, (value / max) * 300);
-  const start = direction === 'right' ? 70 : 70 + px;
-  const end = direction === 'right' ? 70 + px : 70;
-  const headX = direction === 'right' ? end - 15 : end + 15;
+  const px = (value / max) * 280;
+  const start = direction === 'right' ? 85 : 365;
+  const end = direction === 'right' ? start + px : start - px;
+  const headX = direction === 'right' ? end - 12 : end + 12;
   return `<g>
-    <text x="8" y="${y + 5}" class="vector-tick" text-anchor="start">${label}</text>
-    <line x1="70" y1="${y}" x2="370" y2="${y}" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="5 6"/>
-    <line x1="${start}" y1="${y}" x2="${end}" y2="${y}" stroke="${color}" stroke-width="8" stroke-linecap="round"/>
-    <polygon points="${end},${y} ${headX},${y - 9} ${headX},${y + 9}" fill="${color}"/>
-    <text x="${direction === 'right' ? end + 10 : end - 10}" y="${y - 14}" class="vector-tick" text-anchor="${direction === 'right' ? 'start' : 'end'}">${value} N</text>
+    <text x="24" y="${y + 5}" class="vector-tick" text-anchor="start">${label}</text>
+    <line x1="85" y1="${y}" x2="365" y2="${y}" stroke="#d8e2ed" stroke-width="2" stroke-dasharray="5 6"/>
+    ${value > 0 ? `<line x1="${start}" y1="${y}" x2="${end}" y2="${y}" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+    <polygon points="${end},${y} ${headX},${y - 8} ${headX},${y + 8}" fill="${color}"/>` : `<circle cx="${start}" cy="${y}" r="4" fill="${color}"/>`}
+    <text x="445" y="${y + 5}" class="vector-tick" text-anchor="end">${value} N</text>
   </g>`;
 };
 
@@ -86,9 +86,9 @@ const samePanel = () => {
     <p>غيّر شدّة كل قوة ولاحظ السهمين ثم المحصّلة. تذكّر عناصر القوة الأربعة: نقطة التأثير، والحامل، والجهة، والشدة.</p>
     <div class="lab-scene"><svg class="force-scene-svg" viewBox="0 0 470 210" role="img" aria-labelledby="lab-same-title" dir="ltr">
       <title id="lab-same-title">قوتان على حامل واحد بجهة واحدة، ومحصلتهما ${result.sum} نيوتن</title>
-      ${arrowRow({ label: 'F₁', value: result.f1, color: '#f59e0b', y: 42 })}
-      ${arrowRow({ label: 'F₂', value: result.f2, color: '#2563eb', y: 96 })}
-      ${arrowRow({ label: 'F', value: result.sum, color: '#dc2626', y: 168 })}
+      ${arrowRow({ label: 'F₁', value: result.f1, color: '#b45309', max: 120, y: 42 })}
+      ${arrowRow({ label: 'F₂', value: result.f2, color: '#2563eb', max: 120, y: 96 })}
+      ${arrowRow({ label: 'F', value: result.sum, color: '#dc2626', max: 120, y: 168 })}
     </svg></div>
     <div class="measurement-grid">
       <label>الشدة الأولى ${formula('F_1')} (N)<input data-lab-input="same-first" type="range" min="0" max="60" step="5" value="${state.sameFirst}" aria-valuetext="${state.sameFirst} نيوتن"><strong>${state.sameFirst} N</strong></label>
@@ -124,7 +124,7 @@ const oppositePanel = () => {
       <title id="lab-opposite-title">قوتان متعاكستان على الحامل نفسه: ${result.f1} نيوتن نحو اليسار و${result.f2} نيوتن نحو اليمين</title>
       <circle cx="235" cy="100" r="24" fill="none" stroke="#334155" stroke-width="7"/>
       <text x="235" y="70" class="svg-label" text-anchor="middle">o</text>
-      ${arrowRow({ label: 'F₁', value: result.f1, color: '#f59e0b', direction: 'left', y: 34 })}
+      ${arrowRow({ label: 'F₁', value: result.f1, color: '#b45309', direction: 'left', y: 34 })}
       ${arrowRow({ label: 'F₂', value: result.f2, color: '#dc2626', y: 160 })}
     </svg></div>
     <div class="measurement-grid">

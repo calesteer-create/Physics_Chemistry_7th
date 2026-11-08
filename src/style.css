@@ -543,3 +543,36 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
 @media (max-width: 650px) {
   .resultant-lab .measurement-grid { grid-template-columns: 1fr; }
 }
+
+/* Lesson three diagrams: keep drawings legible when a figure shares a narrow column. */
+.figure-and-text:has(.pair-aligned-figure),
+.figure-and-text:has(.pair-opposite-figure),
+.figure-and-text:has(.action-reaction-figure) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.spring-reading-figure { max-width: 260px; }
+.graph-compare:has(.pair-aligned-figure) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 700px) {
+  .graph-compare:has(.pair-aligned-figure) { grid-template-columns: 1fr; }
+  .graph-compare:has(.pair-aligned-figure) > div { display: block; }
+}
+
+/* Isolate mathematical labels from the document's RTL direction. */
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) text {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) .vector-tick {
+  font-size: 20px;
+  font-weight: 700;
+  fill: #253a53;
+}
+
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) .svg-label { font-size: 20px; }
+
+/* رسومات سؤال الكتاب ص39: تبقى البطاقات واضحة بدلاً من ضغطها على الهاتف. */
+.book-force-examples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.book-force-examples .recoil-figure { margin: 0; }
+.discovery-force-figure { margin: 14px 0; }
+.discovery-force-figure figcaption { text-align: center; color: var(--ink-2); font-size: 14px; }
+@media (max-width: 700px) { .book-force-examples { grid-template-columns: 1fr; } }

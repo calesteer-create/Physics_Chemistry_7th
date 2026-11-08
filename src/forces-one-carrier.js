@@ -3,9 +3,9 @@
 // كل توضيح إضافي منفصل بعنوان «توضيح إثرائي»، وكل تدريب من إعداد المنصة موسوم «من إعداد المنصة».
 import { formula, quantity, units } from './math.js';
 import {
-  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure,
-  oppositePairFigure, resultantScaleFigure, springScaleReadingFigure, actionReactionFigure,
-  teamForcesFigure, riflePerpFigure, carPushFigure,
+  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure, verticalWeightsFigure, bookOppositeResultFigure,
+  oppositePairFigure, resultantScaleFigure, springPairFigure, springScaleReadingFigure, actionReactionFigure,
+  teamForcesFigure, riflePerpFigure, carPushFigure, actionReactionExamplesFigure, parachuteFigure,
 } from './diagrams.js';
 import { notebookSections } from './course.js';
 import { resultantLabShell } from './resultant-lab.js';
@@ -29,7 +29,7 @@ export function forcesDiscoverContent() {
     <span class="discovery-icon" aria-hidden="true">📚</span>
     <div><h3>هل تتحرّك الأجسام بشرط وجود قوة مؤثّرة فيها؟</h3><p>هذا سؤال الكتاب ص29 نفسه. في الصورة كتاب ساكن على طاولة، أُثّر فيه بقوة أفقيّة نحو اليمين فتحرّك إلى اليمين، ثم أُثّر فيه بقوة نحو اليسار فتحرّك إلى اليسار. لكن ماذا لو أثّرنا فيه بالقوتين معاً؟ وإذا تحرّك، فبأي اتجاه؟</p></div>
   </div>
-  ${bookForcePairFigure({ id: 'discover-pair' })}
+  <figure class="discovery-force-figure">${bookForcePairFigure({ id: 'discover-pair' })}<figcaption>الرسم يوضح الاتجاهين فقط؛ لا يُستدل من طولي السهمين على شدتي القوتين في سؤال التوقع.</figcaption></figure>
   <div class="prediction" data-discovery>
     <h3>توقّع قبل أن تبدأ</h3><p>كتاب ساكن على طاولة أُثّر فيه بقوتين أفقيّتين متعاكستين شدّتاهما مختلفتان. إلى أي اتجاه يتحرّك؟</p>
     <div class="choice-row" role="group" aria-label="توقع اتجاه حركة الكتاب تحت قوتين متعاكستين">
@@ -82,7 +82,7 @@ export function forcesBookContent() {
         ${questionList(['أعلّق الربيعة بمحور أفقي على اللوح المعدني.', 'أعلّق بالربيعة ثقلاً <span dir="ltr">w₁</span>. وأسجّل دلالة المؤشّر.', 'أعلّق بالربيعة إضافياً ثقلاً <span dir="ltr">w₂</span>. وأسجّل دلالة المؤشّر.', 'أعلّق بالربيعة ثقلاً <span dir="ltr">w=w₁+w₂</span>. وأسجّل دلالة المؤشّر. ماذا أستنتج؟'])}</div></div>`)}
       ${inferBox('أستنتج:', `<p>يمكن لقوة واحدة أن تترك ذاته الأثر الذي تركته قوّتان أو أكثر في الربيعة وتُسمى محصّلة القوى.</p>
         ${definition('محصّلة قوتين (F̄₁، F̄₂) على حامل واحد وبجهة واحدة هي قوة وحيدة عناصرها:', `<ol class="book-questions"><li><strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.</li><li><strong>الحامل:</strong> حامل القوتين.</li><li><strong>الجهة:</strong> بجهة القوتين.</li><li><strong>الشدة:</strong> مجموع شدّتي القوتين <span class="formula" dir="ltr">F=F₁+F₂</span>.</li></ol>`)}
-        <div class="figure-and-text"><div>${sameDirectionPairFigure({ id: 'book-p31-pair' })}</div><div><p>رسم الكتاب لثقلين متتاليين على نقطة تأثيرهما المشتركة، وبجهة واحدة نحو الأسفل، والمحصّلة <span class="formula" dir="ltr">F</span> بطولهما معاً.</p></div></div>`)}`)}
+        <div class="figure-and-text"><div>${verticalWeightsFigure({ id: 'book-p31-pair' })}</div><div><p>رسم الكتاب لثقلين متتاليين على نقطة تأثيرهما المشتركة، وبجهة واحدة نحو الأسفل، والمحصّلة <span class="formula" dir="ltr">F</span> بطولهما معاً.</p></div></div>`)}`)}
     ${section('32', 'تطبيق محلول: قوتان على حامل واحد وبجهة واحدة', `
       ${resultantScaleFigure({ id: 'book-p32-solution', newtonPerCm: 10, rows: [
         { label: 'F', newton: 50, color: '#dc2626', marker: true },
@@ -104,16 +104,16 @@ export function forcesBookContent() {
       ${experiment('أجرِبُ وأستنتجُ:', `
         <p><strong>أدوات التجربة:</strong> من حقيبة الميكانيك ربيعان، خيوط من علبة الملحقات.</p>
         ${questionList(['نأخذ أنا وزميلي ربيعتين مدرّجتين بالنيوتن، ونعلّق خطّيهما بحلقة كما في الشكل.', 'أدع زميلي يشدّ الربيعة الأولى بقوة <span class="formula" dir="ltr">F̄₁</span>، وأشدّ الربيعة الثانية بقوة <span class="formula" dir="ltr">F̄₂</span> وفق الحامل ذاته باتجاهين متعاكسين.', 'إلى أي جهة تتحرّك الحلقة في كلّ من الحالتين الآتيتين: إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>، إذا كانت <span class="formula" dir="ltr">F₁ &lt; F₂</span>.'])}`)}
-      ${oppositePairFigure({ id: 'book-p33-pair' })}
+      ${springPairFigure({ id: 'book-p33-pair' })}
       ${inferBox('أستنتج:', `${definition('محصّلة قوتين (F̄₁، F̄₂) على حامل واحد وبجهتين متعاكستين هي قوة وحيدة عناصرها:', `<ol class="book-questions"><li><strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.</li><li><strong>الحامل:</strong> حامل القوتين.</li><li><strong>الجهة:</strong> بجهة القوة الأكبر.</li><li><strong>الشدة:</strong> حاصل طرح شدّتي القوتين <span class="formula" dir="ltr">F=F₁-F₂</span> إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>.</li></ol>`)}
-        <div class="figure-and-text"><div>${oppositePairFigure({ id: 'book-p33-result', left: 30, right: 20 })}</div><div><p>رسم الكتاب: <span class="formula" dir="ltr">F̄</span> نحو اليسار بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₁</span>.</p></div></div>`)}`)}
+        <div class="figure-and-text"><div>${bookOppositeResultFigure({ id: 'book-p33-result' })}</div><div><p>رسم الكتاب: <span class="formula" dir="ltr">F̄</span> نحو اليمين بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₁</span>.</p></div></div>`)}`)}
     ${section('34', 'تطبيق محلول وقوتان متعاكستان مباشرة', `
       <p><strong>تطبيق محلول:</strong> قوتان <span class="formula" dir="ltr">F̄₁</span> و<span class="formula" dir="ltr">F̄₂</span> على حامل واحد وبجهتين متعاكستين، شدّتاهما <span class="formula" dir="ltr">F₁=20 N</span> و<span class="formula" dir="ltr">F₂=30 N</span>. تؤثّران في نقطة <span class="formula" dir="ltr">(o)</span>.</p>
       <p><strong>المطلوب:</strong></p>
       ${questionList(['أحدّد بالكتابة عناصر محصّلة هاتين القوتين وأحسب شدّتها.', 'أمثّل القوتين ومحصّلتهما بمقياس رسم مناسب.'])}
       <p><strong>الحل:</strong></p>
       ${questionList(['<strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.', '<strong>الحامل:</strong> حامل القوتين.', '<strong>الجهة:</strong> بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₂</span>.', `<strong>الشدة:</strong> حاصل طرح شدّتي القوتين: ${formula('F=F_2-F_1=30-20=10\\,\\mathrm{N}')}`])}
-      ${oppositePairFigure({ id: 'book-p34-result', left: 20, right: 30 })}
+      ${oppositePairFigure({ id: 'book-p34-result', left: 20, right: 30, showResult: true })}
       <h4>القوتان المتعاكستان مباشرة:</h4>
       <ul class="check-list"><li>أكرّر التجربة السابقة ولتكن <span class="formula" dir="ltr">F₁ = F₂</span>.</li><li>هل تتحرّك الحلقة؟</li><li>أفسّر ذلك.</li></ul>
       ${inferBox('أستنتج:', `${definition('القوتان المتعاكستان مباشرة:', 'قوتان منطبقتان حاملاً، متعاكستان جهةً، متساويتان شدّةً، لهما نقطة تأثير مشتركة.')}
@@ -169,7 +169,7 @@ export function forcesBookContent() {
         <details class="book-exercises"><summary>السؤال الأول: اختر الإجابة الصحيحة لكلّ ممّا يأتي</summary>
         <p>1. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> على حامل واحد وبجهة واحدة، فإنّ شدّة محصّلتهما تعطى بالعلاقة:</p>
         ${table(['(a)', '(b)', '(c)', '(d)'], [['<span dir="ltr">F=F₁-F₂</span>', '<span dir="ltr">F=F₁+F₂</span>', '<span dir="ltr">F=F₁÷F₂</span>', '<span dir="ltr">F=√(F₁²+F₂²)</span>']], 'خيارات السؤال الأول — البند 1')}
-        <p>2. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> حيث <span class="formula" dir="ltr">F₁ &lt; F₂</span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما تُعطى بالعلاقة:</p>
+        <p>2. تؤثّر في النقطة <span class="formula" dir="ltr">(o)</span> قوتان <span class="formula" dir="ltr">(F̄₁، F̄₂)</span> حيث <span class="formula" dir="ltr">F₁ &gt; F₂</span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما تُعطى بالعلاقة:</p>
         ${table(['(a)', '(b)', '(c)', '(d)'], [['<span dir="ltr">F=F₁-F₂</span>', '<span dir="ltr">F=F₂-F₁</span>', '<span dir="ltr">F=F₁+F₂</span>', '<span dir="ltr">F=F₁÷F₂</span>']], 'خيارات السؤال الأول — البند 2')}</details>`)}`)}
     ${section('38', 'أختبر نفسي: السؤال الأول (تابع)', `
       <details class="book-exercises" open><summary>السؤال الأول: البنود 3 إلى 8</summary>
@@ -184,17 +184,18 @@ export function forcesBookContent() {
       <p>7. القوتان المتعاكستان مباشرة هما قوتان:</p>
       ${table(['(a)', '(b)', '(c)', '(d)'], [['متوازيتان حاملاً ومتعاكستان جهةً ومختلفتان شدّةً', 'منطبقتان حاملاً ومتّفقتان جهةً ومتساويتان شدّةً', 'منطبقتان حاملاً ومتّفقتان جهةً ومختلفتان شدّةً', 'منطبقتان حاملاً ومتعاكستان جهةً ومتساويتان شدّةً']], 'خيارات السؤال الأول — البند 7')}
       <p>8. لكلّ فعل ردّ فعل:</p>
-      ${table(['(a)', '(b)', '(c)', '(d)'], [['يساويه بالقيمة وبماثله بالاتجاه.', 'يساويه بالقيمة ويعاكسه بالاتجاه.', 'يوازيه بالحامل وبماثله بالاتجاه', 'لا يساويه بالقيمة ويعاكسه بالاتجاه.']], 'خيارات السؤال الأول — البند 8')}</details>`)}
+      ${table(['(a)', '(b)', '(c)', '(d)'], [['يساويه بالقيمة ويماثله بالاتجاه.', 'يساويه بالقيمة ويعاكسه بالاتجاه.', 'يوازيه بالحامل ويماثله بالاتجاه', 'لا يساويه بالقيمة ويعاكسه بالاتجاه.']], 'خيارات السؤال الأول — البند 8')}</details>`)}
     </div>
 
     <div id="forces-problems" role="tabpanel" aria-labelledby="forces-tab-problems" tabindex="0" hidden>
     ${section('39', 'أختبر نفسي: السؤال الثاني والثالث والرابع', `
       <details class="book-exercises"><summary>السؤال الثاني: حدّد كلاً من قوة الفعل وقوة ردّ الفعل في كلّ من الصور الآتية</summary>
-      ${questionList(['صاروخ ينطلق ويخرج منه الغاز نحو الأسفل.', 'يد تدفع حافة طاولة فتندفع الطاولة، وتردّ الطاولة على اليد.', 'كتاب موضوع على طاولة: ثقله نحو الأسفل وقوة الطاولة عليه نحو الأعلى.'])}
+      ${actionReactionExamplesFigure({ id: 'book-p39-examples' })}
       </details>
       <details class="book-exercises"><summary>السؤال الثالث: لاحظ الرسم أدناه، ثم أجب عن السؤال الآتي</summary>
       ${riflePerpFigure({ id: 'book-p39-rifle' })}
       <p>في الرسم، توجد قوة مفقودة، وضّح هذه القوة على الرسم.</p>
+      <p class="notice" role="note">ملاحظة توضيحية: لا يسمّي الرسم السهم، ولا يحدّد نص السؤال القوة المفقودة أو الجسم الذي تؤثّر فيه؛ يلزم توضيح إضافي لتعيينها يقيناً.</p>
       </details>
       <details class="book-exercises"><summary>السؤال الرابع: حلّ المسألتين الآتيتين</summary>
       <h4>المسألة الأولى:</h4>
@@ -209,7 +210,7 @@ export function forcesBookContent() {
       <p><strong>المطلوب:</strong></p>
       ${questionList(['حدّد عناصر محصّلة القوتين <span class="formula" dir="ltr">F̄</span>.', 'ما قيمة شدّة القوة <span class="formula" dir="ltr">F̄′</span> التي إذا أثّرت في <span class="formula" dir="ltr">(O)</span> بقيت متوازنة؟', 'مثّل بالرسم كلاً من القوى <span class="formula" dir="ltr">(F̄₁، F̄₂، F̄، F̄′)</span> بمقياس رسم مناسب.', 'إذا كانت شدّة القوة الثانية <span class="formula" dir="ltr">F₂=25 N</span>، فما شدّة محصّلة القوتين عندئذ؟'])}
       </details>
-      ${inferBox('نشاط:', '<p>تؤثّر على المظلّي قوة ثقله للأسفل وقوة مقاومة الهواء على المظلّة للأعلى. أكتب موضوعاً مستعيناً بالشابكة تصف فيه كيف يتقدّم المظلّي في حركته؟ وماذا يحدث لو زادت مقاومة الهواء؟</p>')}
+      ${inferBox('نشاط:', `<p>تؤثّر على المظلّي قوة ثقله للأسفل وقوة مقاومة الهواء على المظلّة للأعلى. أكتب موضوعاً مستعيناً بالشابكة تصف فيه كيف يتحكّم المظلّي في حركته؟ وماذا يحدث لو زادت مقاومة الهواء؟</p>${parachuteFigure({ id: 'book-p40-parachute' })}`)}
     `)}
     </div>
   </div>`;

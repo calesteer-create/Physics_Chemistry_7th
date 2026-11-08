@@ -144,7 +144,8 @@ test('question banks are keyed with fh- ids and answers are consistent with the 
   }
   const byId = id => forcesBookChoiceQuestions.find(item => item.id === id);
   assert.equal(byId('fh-mc-1').answer, 'F = F₁ + F₂');
-  assert.equal(byId('fh-mc-2').answer, 'F = F₂ − F₁');
+  assert.equal(byId('fh-mc-2').answer, 'F = F₁ − F₂');
+  assert.match(byId('fh-mc-2').prompt, /F₁ > F₂/);
   assert.equal(byId('fh-mc-3').answer, 'F = 100 N وبجهة الفريق الأول');
   assert.equal(byId('fh-mc-5').answer, '40 N');
   assert.equal(byId('fh-mc-6').answer, '0 N');
@@ -221,4 +222,108 @@ test('main.js routes lesson three to its own stage renderers and lab', () => {
   assert.match(main, /lesson\.id === 'force-motion'/);
   assert.match(main, /mountMotionLab/);
   assert.match(main, /mountForceLab/);
+});
+
+test('lesson three vector diagrams keep proportional lengths and vertical arrowheads', async () => {
+  const { resultantScaleFigure, oppositePairFigure, actionReactionFigure } = await import('../src/diagrams.js');
+  const html = resultantScaleFigure({ rows: [{ label: 'F', newton: 50 }, { label: 'F₁', newton: 20 }] });
+  const arrows = [...html.matchAll(/<line x1="72" y1="[^"]+" x2="([^"]+)"/g)].map(match => Number(match[1]) - 72);
+  assert.deepEqual(arrows, [240, 96]);
+  const pair = oppositePairFigure({ left: 30, right: 20 });
+  assert.match(pair, /x1="240" y1="92" x2="66"/);
+  assert.match(pair, /x1="240" y1="92" x2="356"/);
+  const balloon = actionReactionFigure({ mode: 'balloon' });
+  assert.match(balloon, /points="0,0 8\.5,15 -8\.5,15"/);
+});
+
+test('interactive same-direction vectors fit and share a scale at maximum and zero', async () => {
+  const { labState } = await import('../src/resultant-lab.js');
+  const saved = { ...labState };
+  try {
+    Object.assign(labState, { active: 'same', sameFirst: 60, sameSecond: 60 });
+    const max = resultantLabContent();
+    assert.match(max, /x1="85" y1="168" x2="365"/);
+    assert.match(max, />120 N<\/text>/);
+    Object.assign(labState, { sameFirst: 0, sameSecond: 0 });
+    const zero = resultantLabContent();
+    assert.doesNotMatch(zero, /<polygon/);
+  } finally { Object.assign(labState, saved); }
+});
+
+test('page 31 weights and page 34 resultant retain the illustrated directions', async () => {
+  const { verticalWeightsFigure, bookOppositeResultFigure, oppositePairFigure, springPairFigure, actionReactionFigure, carPushFigure } = await import('../src/diagrams.js');
+  const weights = verticalWeightsFigure();
+  assert.match(weights, /الأسهم للاتجاه فقط، وليست مقياساً للشدة/);
+  for (const x of [90, 195, 300]) assert.match(weights, new RegExp(`x1="${x}" y1="85" x2="${x}" y2="166"`));
+  const bookResult = bookOppositeResultFigure();
+  assert.match(bookResult, /x1="220" y1="99" x2="278"/);
+  assert.match(bookResult, />F₁<\/text>/);
+  assert.doesNotMatch(bookResult, />F₂<\/text>/);
+  const result = oppositePairFigure({ left: 20, right: 30, showResult: true });
+  assert.match(result, /x1="240" y1="92" x2="298" y2="92"/);
+  assert.match(springPairFigure(), /ربيعتان تسحبان حلقة/);
+  assert.match(carPushFigure(), /يسحبون سيارة بحبل/);
+  const magnets = actionReactionFigure();
+  assert.match(magnets, /قطبين مختلفين/);
+  assert.equal((magnets.match(/>S<\/text>/g) || []).length, 4);
+  assert.equal((magnets.match(/>N<\/text>/g) || []).length, 4);
+});
+
+test('book tug of war does not invent a force-length ratio', async () => {
+  const { tugOfWarFigure } = await import('../src/diagrams.js');
+  const tug = tugOfWarFigure();
+  assert.doesNotMatch(tug, /<polygon/);
+  assert.doesNotMatch(tug, />F₁<\/text>|>F₂<\/text>/);
+  const book = forcesBookContent();
+  assert.match(book, /نؤثّر على الحبل بقوتين مختلفتين بالشدّة/);
+  assert.match(book, /نحو اليمين بجهة القوة الأكبر/);
+});
+
+
+test('book pages 37, 39 and 40 preserve source facts without revealing the missing force', async () => {
+  const html = forcesBookContent();
+  assert.match(html, /F₁ &gt; F₂<\/span> على حامل واحد وبجهتين متعاكستين، فإنّ شدّة محصّلتهما/);
+  assert.match(html, /كيف يتحكّم المظلّي في حركته/);
+  assert.doesNotMatch(html, /وبماثله بالاتجاه/);
+  for (const id of ['book-p39-examples-book', 'book-p39-examples-hand', 'book-p39-examples-rocket', 'book-p40-parachute-title']) assert.match(html, new RegExp(id));
+  const { riflePerpFigure } = await import('../src/diagrams.js');
+  const rifle = riflePerpFigure();
+  assert.match(rifle, /x1="310" y1="62" x2="370" y2="39"/);
+  assert.doesNotMatch(rifle, /ردّ فعل البندقية نحو الخلف/);
+});
+
+test('teacher solutions agree with student source and avoid unsupported page 39 claims', () => {
+  const [q1, q2, q3, q4] = teacherSolutions['forces-one-carrier'].questions;
+  const second = forcesBookChoiceQuestions.find(q => q.id === 'fh-mc-2');
+  assert.match(second.prompt, /F₁ > F₂/);
+  assert.match(q1.body, /F₁ &gt; F₂/);
+  assert.match(q1.body, /\(a\) <span dir="ltr">F = F₁ − F₂<\/span>/);
+  assert.doesNotMatch(q1.body, /F₁ < F₂|فتُجمع الشدّتان\.<\/p><div class="solution-enrich/);
+  assert.match(q1.body, /880/);
+  assert.match(q1.body, /960/);
+  assert.match(q2.body, /وليسا زوج فعل وردّ فعل/);
+  assert.match(q2.body, /قوة الطاولة على الكتاب نحو الأعلى، وقوة الكتاب على الطاولة نحو الأسفل/);
+  assert.match(q2.body, /لا يحدّدان اسميهما صراحةً/);
+  assert.match(q2.body, /يطلب نص السؤال تحديد زوج فعل وردّ فعل/);
+  assert.match(q2.body, /الأولى تؤثّر في الكتاب والثانية في الطاولة/);
+  assert.match(q2.body, /جذب الكتاب للأرض/);
+  assert.match(q2.body, /قوة الكتاب على الطاولة/);
+  assert.match(q2.body, /نحو أسفل اليمين/);
+  assert.match(q2.body, /نحو أعلى اليسار/);
+  assert.match(q3.body, /المعطيات غير كافية/);
+  assert.match(q3.body, /لا يحدّد القوة المطلوبة/);
+  assert.match(q3.body, /هل يمثّل السهم قوة أم حركة/);
+  assert.doesNotMatch(q3.body, /قوة الرصاصة على البندقية|قوة ردّ الفعل التي تؤثّر بها البندقية في كتف/);
+  assert.match(forcesBookContent(), /ملاحظة توضيحية: لا يسمّي الرسم السهم/);
+  for (const amount of ['45', '50', '25', '75']) assert.match(q4.body, new RegExp(amount));
+  assert.match(q4.body, /بجهة القوة الأكبر/);
+  assert.match(q4.body, /بجهة F̄₁/);
+});
+
+
+test('page 39 source arrows preserve directions and contact position', async () => {
+  const { actionReactionExamplesFigure, riflePerpFigure } = await import('../src/diagrams.js');
+  const html = actionReactionExamplesFigure();
+  for (const vector of ['x1="150" y1="140" x2="150" y2="72"', 'x1="150" y1="156" x2="150" y2="215"', 'x1="151" y1="151" x2="86" y2="83"', 'x1="151" y1="151" x2="213" y2="216"', 'x1="150" y1="160" x2="150" y2="115"', 'x1="150" y1="168" x2="150" y2="216"']) assert.ok(html.includes(vector), vector);
+  assert.match(riflePerpFigure(), /x1="310" y1="62" x2="370" y2="39"/);
 });
