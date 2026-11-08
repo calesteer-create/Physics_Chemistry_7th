@@ -556,3 +556,16 @@ select, .numeric-answer input { min-height: 48px; border: 2px solid var(--line-s
   .graph-compare:has(.pair-aligned-figure) { grid-template-columns: 1fr; }
   .graph-compare:has(.pair-aligned-figure) > div { display: block; }
 }
+
+/* Isolate mathematical labels from the document's RTL direction. */
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) text {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) .vector-tick {
+  font-size: 20px;
+  font-weight: 700;
+  fill: #253a53;
+}
+
+:is(.force-pair-figure,.tug-figure,.car-push-figure,.pair-aligned-figure,.pair-opposite-figure,.resultant-figure,.force-ray-figure,.action-reaction-figure,.team-forces-figure,.recoil-figure,.spring-reading-figure,.resultant-lab .force-scene-svg) .svg-label { font-size: 20px; }

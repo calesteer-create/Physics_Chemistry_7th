@@ -224,6 +224,20 @@ export function singleForceRayFigure({ id = 'single-force-ray', forceLabel = 'F'
   </svg>`;
 }
 
+// ص31: الثقلان ومحصّلتهما على الحامل الشاقولي كما في الرسم المطبوع.
+export function verticalWeightsFigure({ id = 'vertical-weights' } = {}) {
+  return `<svg class="pair-aligned-figure" viewBox="0 0 360 300" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">قوتان من نقطة مشتركة نحو الأسفل ومحصّلتهما في الجهة نفسها</title>
+    <rect x="105" y="22" width="80" height="45" rx="10" fill="#d9f4e5" stroke="#86c9ab" stroke-width="2"/>
+    <line x1="145" y1="50" x2="145" y2="263" stroke="#d6e2ee" stroke-width="2" stroke-dasharray="5 7"/>
+    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 230, color: '#dc2626', width: 8 })}
+    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 170, color: '#2563eb', width: 6 })}
+    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 110, color: '#b45309', width: 5 })}
+    <circle cx="145" cy="50" r="6" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+    <g class="svg-label" text-anchor="start" style="direction:ltr"><text x="165" y="48">O</text><text x="174" y="112">F₁</text><text x="174" y="172">F₂</text><text x="174" y="232">F</text></g>
+  </svg>`;
+}
+
 // قوتان على حامل واحد، جهة واحدة: سهمان متراكبان من النقطة O (ص31–32).
 export function sameDirectionPairFigure({ id = 'same-direction-pair', first = 20, second = 30, unit = 'N' } = {}) {
   const base = 78;
@@ -242,7 +256,7 @@ export function sameDirectionPairFigure({ id = 'same-direction-pair', first = 20
 }
 
 // قوتان متعاكستان على الحامل نفسه: F₁ قوية نحو اليسار وF₂ أضعف نحو اليمين (ص33–34).
-export function oppositePairFigure({ id = 'opposite-pair', left = 30, right = 20, equal = false, unit = 'N' } = {}) {
+export function oppositePairFigure({ id = 'opposite-pair', left = 30, right = 20, equal = false, unit = 'N', showResult = false } = {}) {
   const center = 240;
   const perUnit = 5.8;
   const leftEnd = center - (equal ? left : left) * perUnit;
@@ -253,33 +267,38 @@ export function oppositePairFigure({ id = 'opposite-pair', left = 30, right = 20
     <line x1="30" y1="${y}" x2="450" y2="${y}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"/>
     <circle cx="${center}" cy="${y}" r="6" fill="#1e40af"/>
     <text x="${center}" y="${y - 30}" class="svg-label" text-anchor="middle">O</text>
-    ${lessonArrow({ x1: center, y1: y - 14, x2: leftEnd, y2: y - 14, color: '#b45309', width: 6, label: 'F₁', labelX: leftEnd - 6, labelY: y - 40 })}
-    ${lessonArrow({ x1: center, y1: y + 20, x2: rightEnd, y2: y + 20, color: '#dc2626', width: 6, label: 'F₂', labelX: rightEnd + 8, labelY: y + 50 })}
+    ${lessonArrow({ x1: center, y1: y, x2: leftEnd, y2: y, color: '#b45309', width: 6, label: 'F₁', labelX: leftEnd - 6, labelY: y - 18 })}
+    ${lessonArrow({ x1: center, y1: y, x2: rightEnd, y2: y, color: '#dc2626', width: 6, label: 'F₂', labelX: rightEnd + 8, labelY: y - 18 })}
+    ${showResult && left !== right ? lessonArrow({ x1: center, y1: y, x2: center + (right - left) * perUnit, y2: y, color: '#0284c7', width: 5, label: 'F', labelX: center + (right - left) * perUnit / 2, labelY: y + 32 }) : ''}
   </svg>`;
 }
 
 // رسم محلول لمنتج قوتين على الحامل نفسه: F₁ وF₂ والمحصلة F (ص32 وص36).
 export function resultantScaleFigure({ id = 'resultant-figure', rows = [], caption = 'تمثيل القوى والمحصلة بمقياس رسم', newtonPerCm = 10 } = {}) {
-  const y0 = 40;
-  const gap = 34;
-  const base = 62;
-  // كل سنتيمتر واحد في الرسم يساوي 60 بكسل، وكل سنتيمتر يمثل newtonPerCm نيوتن.
-  const pxPerCm = 48;
-  const rowMarkup = rows.map((row, index) => {
-    const y = y0 + index * gap;
-    const px = (row.newton / newtonPerCm) * pxPerCm;
-    const color = row.color || '#dc2626';
-    return `<g>
-      <text x="16" y="${y + 5}" class="vector-tick" text-anchor="start">${row.label}</text>
-      <circle cx="${base}" cy="${y}" r="4" fill="${row.marker ? '#1e40af' : 'transparent'}"/>
-      ${lessonArrow({ x1: base, y1: y, x2: base + px, y2: y, color, width: 6, label: `${row.newton} N`, labelX: 415, labelY: y + 5 })}
-    </g>`;
-  }).join('');
-  const height = 40 + Math.max(1, rows.length) * gap;
-  return `<svg class="resultant-figure" viewBox="0 0 480 ${height}" role="img" aria-labelledby="${id}-title" dir="ltr">
+  const base = 72, y = 78, pxPerCm = 48;
+  const sorted = [...rows].sort((a, b) => b.newton - a.newton);
+  const colorFor = row => row.color === '#f59e0b' ? '#b45309' : (row.color || '#dc2626');
+  return `<svg class="resultant-figure" viewBox="0 0 480 175" role="img" aria-labelledby="${id}-title" dir="ltr">
     <title id="${id}-title">${caption}</title>
-    <line x1="50" y1="14" x2="50" y2="${height - 12}" stroke="#cbd5e1" stroke-width="2"/>
-    ${rowMarkup}
+    <line x1="44" y1="${y}" x2="405" y2="${y}" stroke="#d6e2ee" stroke-width="2" stroke-dasharray="5 7"/>
+    ${sorted.map(row => lessonArrow({ x1: base, y1: y, x2: base + (row.newton / newtonPerCm) * pxPerCm, y2: y, color: colorFor(row), width: 7 })).join('')}
+    <circle cx="${base}" cy="${y}" r="6" fill="#fff" stroke="#23456b" stroke-width="2"/>
+    <text x="${base}" y="49" class="svg-label" text-anchor="middle">O</text>
+    ${rows.map((row, i) => `<g><circle cx="${48 + i * 142}" cy="136" r="5" fill="${colorFor(row)}"/><text x="${60 + i * 142}" y="142" class="vector-tick" text-anchor="start">${row.label}: ${row.newton} N</text></g>`).join('')}
+  </svg>`;
+}
+
+// جهاز الربيعتين والحلقة في تجربة ص33، دون اختلاق مقادير.
+export function springPairFigure({ id = 'spring-pair' } = {}) {
+  const scale = x => `<g><rect x="${x}" y="58" width="100" height="42" rx="10" fill="#e8f4f9" stroke="#7296a8" stroke-width="2"/><rect x="${x + 12}" y="69" width="74" height="20" rx="4" fill="#fff" stroke="#9bb4c2"/><line x1="${x + 20}" y1="79" x2="${x + 77}" y2="79" stroke="#d3a349" stroke-width="3"/></g>`;
+  return `<svg class="pair-opposite-figure" viewBox="0 0 500 190" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">ربيعتان تسحبان حلقة بجهتين متعاكستين</title>
+    ${scale(25)}${scale(375)}
+    <line x1="125" y1="79" x2="226" y2="79" stroke="#51677b" stroke-width="3"/>
+    <line x1="274" y1="79" x2="375" y2="79" stroke="#51677b" stroke-width="3"/>
+    <circle cx="250" cy="79" r="24" fill="#fff" stroke="#263f58" stroke-width="4"/>
+    ${lessonArrow({ x1: 195, y1: 140, x2: 135, y2: 140, color: '#b45309', width: 5, label: 'F₁', labelY: 126 })}
+    ${lessonArrow({ x1: 305, y1: 140, x2: 365, y2: 140, color: '#dc2626', width: 5, label: 'F₂', labelY: 126 })}
   </svg>`;
 }
 
@@ -300,7 +319,7 @@ export function springScaleReadingFigure({ id = 'spring-reading', first = 1, sec
       <text x="29" y="240" class="vector-tick" text-anchor="middle">${label}</text>
     </g>`;
   };
-  return `<svg class="spring-reading-figure" viewBox="0 0 300 250" role="img" aria-labelledby="${id}-title" dir="ltr">
+  return `<svg class="spring-reading-figure" viewBox="0 0 300 270" role="img" aria-labelledby="${id}-title" dir="ltr">
     <title id="${id}-title">${caption}</title>
     ${scale(first, 96, 'w₁')}
     ${scale(second, 196, 'w₂')}
@@ -321,14 +340,21 @@ export function actionReactionFigure({ id = 'action-reaction', mode = 'magnets' 
       <text x="232" y="176" class="svg-label" text-anchor="middle">الفعل</text>
     </svg>`;
   }
-  return `<svg class="action-reaction-figure" viewBox="0 0 340 250" role="img" aria-labelledby="${id}-title" dir="ltr">
-    <title id="${id}-title">مغناطيسان متقابلان: قطب شمالي وقطب جنوبي يتجاذبان بقوتين متساويتين ومتعاكستين</title>
-    <rect x="26" y="40" width="52" height="80" rx="6" fill="#dc2626"/><rect x="26" y="120" width="52" height="80" rx="6" fill="#0ea5e9"/>
-    <text x="52" y="88" class="svg-label" text-anchor="middle" style="fill:#fff">S</text><text x="52" y="170" class="svg-label" text-anchor="middle" style="fill:#fff">N</text>
-    <rect x="262" y="40" width="52" height="80" rx="6" fill="#dc2626"/><rect x="262" y="120" width="52" height="80" rx="6" fill="#0ea5e9"/>
-    <text x="288" y="88" class="svg-label" text-anchor="middle" style="fill:#fff">S</text><text x="288" y="170" class="svg-label" text-anchor="middle" style="fill:#fff">N</text>
-    ${lessonArrow({ x1: 92, y1: 96, x2: 168, y2: 96, color: '#2563eb', width: 6, label: 'F₁', labelX: 130, labelY: 74 })}
-    ${lessonArrow({ x1: 248, y1: 148, x2: 172, y2: 148, color: '#dc2626', width: 6, label: 'F₂', labelX: 210, labelY: 182 })}
+  // ترتيب الأقطاب والسهام كما في الرسم المطبوع ص35، بما في ذلك حالة S/S.
+  const magnet = (x, y, upper, lower) => `<g>
+    <rect x="${x}" y="${y}" width="50" height="92" rx="7" fill="${upper === 'N' ? '#168bb9' : '#e14848'}"/>
+    <rect x="${x}" y="${y + 46}" width="50" height="46" rx="5" fill="${lower === 'N' ? '#168bb9' : '#e14848'}"/>
+    <text x="${x + 25}" y="${y + 30}" class="svg-label" text-anchor="middle" style="fill:white">${upper}</text>
+    <text x="${x + 25}" y="${y + 76}" class="svg-label" text-anchor="middle" style="fill:white">${lower}</text>
+  </g>`;
+  return `<svg class="action-reaction-figure" viewBox="0 0 360 340" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">مغناطيسان متجاذبان بقطبين مختلفين، ومغناطيسان متنافران بقطبين متماثلين كما في الرسم</title>
+    ${magnet(64, 20, 'S', 'N')}${magnet(64, 228, 'S', 'N')}
+    ${magnet(246, 20, 'N', 'S')}${magnet(246, 228, 'S', 'N')}
+    ${lessonArrow({ x1: 140, y1: 75, x2: 140, y2: 135, color: '#0284c7', width: 6 })}
+    ${lessonArrow({ x1: 140, y1: 265, x2: 140, y2: 205, color: '#0284c7', width: 6 })}
+    ${lessonArrow({ x1: 220, y1: 135, x2: 220, y2: 75, color: '#dc2626', width: 6 })}
+    ${lessonArrow({ x1: 220, y1: 205, x2: 220, y2: 265, color: '#dc2626', width: 6 })}
   </svg>`;
 }
 
@@ -336,7 +362,7 @@ export function actionReactionFigure({ id = 'action-reaction', mode = 'magnets' 
 export function teamForcesFigure({ id = 'team-forces', team = 'team1', values = [], sum = 0 } = {}) {
   const dirColor = team === 'team1' ? '#b45309' : '#dc2626';
   const perUnit = 0.16;
-  const base = 95;
+  const base = 105;
   const y0 = 52;
   const rows = values.map((value, index) => {
     const y = y0 + index * 40;
@@ -353,7 +379,7 @@ export function teamForcesFigure({ id = 'team-forces', team = 'team1', values = 
     ${rows}
     <line x1="60" y1="${sumY - 16}" x2="452" y2="${sumY - 16}" stroke="#cbd5e1" stroke-width="1.5"/>
     ${lessonArrow({ x1: base, y1: sumY + 4, x2: base + sumPx, y2: sumY + 4, color: '#2563eb', width: 8 })}
-    <text x="${base + sumPx + 18}" y="${sumY + 10}" class="svg-label" text-anchor="start">F = ${sum} N</text>
+    <text x="${base + sumPx + 18}" y="${sumY + 10}" class="svg-label" text-anchor="start" style="direction:ltr">F = ${sum} N</text>
   </svg>`;
 }
 
@@ -372,19 +398,20 @@ export function riflePerpFigure({ id = 'rifle-recoil', caption = 'بندقية �
 }
 
 // كتلة معلّقة: ميزان نابض يقرأ الثقل، للاستعمال في عرض سؤال الحركة (دفع السيارة).
-export function carPushFigure({ id = 'car-push', caption = 'ثلاثة أشخاص يدفعون سيارة متوقفة على طريق أفقي مستقيم' } = {}) {
-  return `<svg class="car-push-figure" viewBox="0 0 520 200" role="img" aria-labelledby="${id}-title" dir="ltr">
+export function carPushFigure({ id = 'car-push', caption = 'ثلاثة أشخاص يسحبون سيارة بحبل مربوط من الأمام' } = {}) {
+  return `<svg class="car-push-figure" viewBox="0 0 560 220" role="img" aria-labelledby="${id}-title">
     <title id="${id}-title">${caption}</title>
-    <rect x="0" y="150" width="520" height="12" rx="6" fill="#d7e0ea"/>
-    <path d="M60 150 L60 122 Q60 112 74 110 L140 98 Q152 96 166 96 L228 96 Q248 96 262 106 L300 118 Q322 122 325 134 L325 148 Q325 150 319 150 Z" fill="#3aa7dd"/>
-    <path d="M150 102 L150 120 L228 120 L228 100 L172 100 Q160 100 150 102 Z" fill="#d8f0f6"/>
-    <path d="M238 100 L238 120 L286 120 L262 102 L246 100 Z" fill="#d8f0f6"/>
-    <circle cx="128" cy="150" r="18" fill="#344055"/><circle cx="128" cy="150" r="6" fill="#cbd5e1"/>
-    <circle cx="280" cy="150" r="18" fill="#344055"/><circle cx="280" cy="150" r="6" fill="#cbd5e1"/>
-    <g fill="#f8d3b8"><circle cx="356" cy="92" r="13"/><circle cx="404" cy="88" r="13"/><circle cx="452" cy="92" r="13"/></g>
-    <g fill="#4d7c3f"><rect x="343" y="106" width="26" height="42" rx="10"/><rect x="391" y="102" width="26" height="46" rx="10"/><rect x="439" y="106" width="26" height="42" rx="10"/></g>
-    <path d="M336 128 l-14 -10" stroke="#4d7c3f" stroke-width="7" stroke-linecap="round"/>
-    ${lessonArrow({ x1: 476, y1: 168, x2: 396, y2: 168, color: '#dc2626', width: 6 })}
-    <text x="436" y="190" class="vector-tick" text-anchor="middle">مجموع قوى الدفع</text>
+    <path d="M28 173 H532" stroke="#d3dfeb" stroke-width="8" stroke-linecap="round"/>
+    <path d="M55 159 v-26 q0-16 20-19 l50-9 27-30 q8-9 25-9 h49 q16 0 27 12 l27 27 30 11 q12 5 12 18 v25 z" fill="#2797c8" stroke="#16749b" stroke-width="3"/>
+    <path d="M144 105 l18-24 h52 v24z M224 81 l21 2 22 22 h-43z" fill="#d8f4fc"/>
+    <circle cx="113" cy="160" r="18" fill="#334155"/><circle cx="113" cy="160" r="7" fill="#cbd5e1"/>
+    <circle cx="266" cy="160" r="18" fill="#334155"/><circle cx="266" cy="160" r="7" fill="#cbd5e1"/>
+    <path d="M322 128 H490" stroke="#8b6848" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#38586e" stroke-width="6" stroke-linecap="round" fill="none">
+      <path d="M370 113 l-8 15 m8-15 l12 14 m-13 0 l-7 30 m7-30 l13 30"/>
+      <path d="M424 113 l-8 15 m8-15 l12 14 m-13 0 l-7 30 m7-30 l13 30"/>
+      <path d="M478 113 l-8 15 m8-15 l12 14 m-13 0 l-7 30 m7-30 l13 30"/>
+    </g>
+    <g fill="#f0bd98"><circle cx="370" cy="102" r="10"/><circle cx="424" cy="102" r="10"/><circle cx="478" cy="102" r="10"/></g>
   </svg>`;
 }

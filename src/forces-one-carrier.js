@@ -3,8 +3,8 @@
 // كل توضيح إضافي منفصل بعنوان «توضيح إثرائي»، وكل تدريب من إعداد المنصة موسوم «من إعداد المنصة».
 import { formula, quantity, units } from './math.js';
 import {
-  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure,
-  oppositePairFigure, resultantScaleFigure, springScaleReadingFigure, actionReactionFigure,
+  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure, verticalWeightsFigure,
+  oppositePairFigure, resultantScaleFigure, springPairFigure, springScaleReadingFigure, actionReactionFigure,
   teamForcesFigure, riflePerpFigure, carPushFigure,
 } from './diagrams.js';
 import { notebookSections } from './course.js';
@@ -82,7 +82,7 @@ export function forcesBookContent() {
         ${questionList(['أعلّق الربيعة بمحور أفقي على اللوح المعدني.', 'أعلّق بالربيعة ثقلاً <span dir="ltr">w₁</span>. وأسجّل دلالة المؤشّر.', 'أعلّق بالربيعة إضافياً ثقلاً <span dir="ltr">w₂</span>. وأسجّل دلالة المؤشّر.', 'أعلّق بالربيعة ثقلاً <span dir="ltr">w=w₁+w₂</span>. وأسجّل دلالة المؤشّر. ماذا أستنتج؟'])}</div></div>`)}
       ${inferBox('أستنتج:', `<p>يمكن لقوة واحدة أن تترك ذاته الأثر الذي تركته قوّتان أو أكثر في الربيعة وتُسمى محصّلة القوى.</p>
         ${definition('محصّلة قوتين (F̄₁، F̄₂) على حامل واحد وبجهة واحدة هي قوة وحيدة عناصرها:', `<ol class="book-questions"><li><strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.</li><li><strong>الحامل:</strong> حامل القوتين.</li><li><strong>الجهة:</strong> بجهة القوتين.</li><li><strong>الشدة:</strong> مجموع شدّتي القوتين <span class="formula" dir="ltr">F=F₁+F₂</span>.</li></ol>`)}
-        <div class="figure-and-text"><div>${sameDirectionPairFigure({ id: 'book-p31-pair' })}</div><div><p>رسم الكتاب لثقلين متتاليين على نقطة تأثيرهما المشتركة، وبجهة واحدة نحو الأسفل، والمحصّلة <span class="formula" dir="ltr">F</span> بطولهما معاً.</p></div></div>`)}`)}
+        <div class="figure-and-text"><div>${verticalWeightsFigure({ id: 'book-p31-pair' })}</div><div><p>رسم الكتاب لثقلين متتاليين على نقطة تأثيرهما المشتركة، وبجهة واحدة نحو الأسفل، والمحصّلة <span class="formula" dir="ltr">F</span> بطولهما معاً.</p></div></div>`)}`)}
     ${section('32', 'تطبيق محلول: قوتان على حامل واحد وبجهة واحدة', `
       ${resultantScaleFigure({ id: 'book-p32-solution', newtonPerCm: 10, rows: [
         { label: 'F', newton: 50, color: '#dc2626', marker: true },
@@ -104,7 +104,7 @@ export function forcesBookContent() {
       ${experiment('أجرِبُ وأستنتجُ:', `
         <p><strong>أدوات التجربة:</strong> من حقيبة الميكانيك ربيعان، خيوط من علبة الملحقات.</p>
         ${questionList(['نأخذ أنا وزميلي ربيعتين مدرّجتين بالنيوتن، ونعلّق خطّيهما بحلقة كما في الشكل.', 'أدع زميلي يشدّ الربيعة الأولى بقوة <span class="formula" dir="ltr">F̄₁</span>، وأشدّ الربيعة الثانية بقوة <span class="formula" dir="ltr">F̄₂</span> وفق الحامل ذاته باتجاهين متعاكسين.', 'إلى أي جهة تتحرّك الحلقة في كلّ من الحالتين الآتيتين: إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>، إذا كانت <span class="formula" dir="ltr">F₁ &lt; F₂</span>.'])}`)}
-      ${oppositePairFigure({ id: 'book-p33-pair' })}
+      ${springPairFigure({ id: 'book-p33-pair' })}
       ${inferBox('أستنتج:', `${definition('محصّلة قوتين (F̄₁، F̄₂) على حامل واحد وبجهتين متعاكستين هي قوة وحيدة عناصرها:', `<ol class="book-questions"><li><strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.</li><li><strong>الحامل:</strong> حامل القوتين.</li><li><strong>الجهة:</strong> بجهة القوة الأكبر.</li><li><strong>الشدة:</strong> حاصل طرح شدّتي القوتين <span class="formula" dir="ltr">F=F₁-F₂</span> إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>.</li></ol>`)}
         <div class="figure-and-text"><div>${oppositePairFigure({ id: 'book-p33-result', left: 30, right: 20 })}</div><div><p>رسم الكتاب: <span class="formula" dir="ltr">F̄</span> نحو اليسار بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₁</span>.</p></div></div>`)}`)}
     ${section('34', 'تطبيق محلول وقوتان متعاكستان مباشرة', `
@@ -113,7 +113,7 @@ export function forcesBookContent() {
       ${questionList(['أحدّد بالكتابة عناصر محصّلة هاتين القوتين وأحسب شدّتها.', 'أمثّل القوتين ومحصّلتهما بمقياس رسم مناسب.'])}
       <p><strong>الحل:</strong></p>
       ${questionList(['<strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.', '<strong>الحامل:</strong> حامل القوتين.', '<strong>الجهة:</strong> بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₂</span>.', `<strong>الشدة:</strong> حاصل طرح شدّتي القوتين: ${formula('F=F_2-F_1=30-20=10\\,\\mathrm{N}')}`])}
-      ${oppositePairFigure({ id: 'book-p34-result', left: 20, right: 30 })}
+      ${oppositePairFigure({ id: 'book-p34-result', left: 20, right: 30, showResult: true })}
       <h4>القوتان المتعاكستان مباشرة:</h4>
       <ul class="check-list"><li>أكرّر التجربة السابقة ولتكن <span class="formula" dir="ltr">F₁ = F₂</span>.</li><li>هل تتحرّك الحلقة؟</li><li>أفسّر ذلك.</li></ul>
       ${inferBox('أستنتج:', `${definition('القوتان المتعاكستان مباشرة:', 'قوتان منطبقتان حاملاً، متعاكستان جهةً، متساويتان شدّةً، لهما نقطة تأثير مشتركة.')}

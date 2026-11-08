@@ -226,11 +226,11 @@ test('main.js routes lesson three to its own stage renderers and lab', () => {
 test('lesson three vector diagrams keep proportional lengths and vertical arrowheads', async () => {
   const { resultantScaleFigure, oppositePairFigure, actionReactionFigure } = await import('../src/diagrams.js');
   const html = resultantScaleFigure({ rows: [{ label: 'F', newton: 50 }, { label: 'F₁', newton: 20 }] });
-  const arrows = [...html.matchAll(/<line x1="62" y1="[^"]+" x2="([^"]+)"/g)].map(match => Number(match[1]) - 62);
+  const arrows = [...html.matchAll(/<line x1="72" y1="[^"]+" x2="([^"]+)"/g)].map(match => Number(match[1]) - 72);
   assert.deepEqual(arrows, [240, 96]);
   const pair = oppositePairFigure({ left: 30, right: 20 });
-  assert.match(pair, /x1="240" y1="78" x2="66"/);
-  assert.match(pair, /x1="240" y1="112" x2="356"/);
+  assert.match(pair, /x1="240" y1="92" x2="66"/);
+  assert.match(pair, /x1="240" y1="92" x2="356"/);
   const balloon = actionReactionFigure({ mode: 'balloon' });
   assert.match(balloon, /points="0,0 8\.5,15 -8\.5,15"/);
 });
@@ -247,4 +247,20 @@ test('interactive same-direction vectors fit and share a scale at maximum and ze
     const zero = resultantLabContent();
     assert.doesNotMatch(zero, /<polygon/);
   } finally { Object.assign(labState, saved); }
+});
+
+test('page 31 weights and page 34 resultant retain the illustrated directions', async () => {
+  const { verticalWeightsFigure, oppositePairFigure, springPairFigure, actionReactionFigure, carPushFigure } = await import('../src/diagrams.js');
+  const weights = verticalWeightsFigure();
+  assert.match(weights, /x1="145" y1="50" x2="145" y2="110"/);
+  assert.match(weights, /x1="145" y1="50" x2="145" y2="170"/);
+  assert.match(weights, /x1="145" y1="50" x2="145" y2="230"/);
+  const result = oppositePairFigure({ left: 20, right: 30, showResult: true });
+  assert.match(result, /x1="240" y1="92" x2="298" y2="92"/);
+  assert.match(springPairFigure(), /ربيعتان تسحبان حلقة/);
+  assert.match(carPushFigure(), /يسحبون سيارة بحبل/);
+  const magnets = actionReactionFigure();
+  assert.match(magnets, /قطبين مختلفين/);
+  assert.equal((magnets.match(/>S<\/text>/g) || []).length, 4);
+  assert.equal((magnets.match(/>N<\/text>/g) || []).length, 4);
 });
