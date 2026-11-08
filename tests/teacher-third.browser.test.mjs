@@ -30,7 +30,7 @@ test('third lesson teacher gate and source solutions at mobile and desktop', { t
       assert.equal(await panel.isVisible(), true);
       const q1 = panel.locator('#solution-forces-one-carrier-q1');
       assert.match(await q1.innerText(), /F₁ > F₂/); assert.match(await q1.innerText(), /\(a\) F = F₁ − F₂/);
-      assert.match(await panel.locator('#solution-forces-one-carrier-q2').innerText(), /وليستا زوج فعل وردّ فعل/);
+      assert.match(await panel.locator('#solution-forces-one-carrier-q2').innerText(), /وليسا زوج فعل وردّ فعل/);
       assert.match(await panel.locator('#solution-forces-one-carrier-q3').innerText(), /بانتظار التحقق/);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `no overflow at ${width}`);
       await page.locator('[data-teacher-logout]').click();

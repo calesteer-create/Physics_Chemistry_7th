@@ -405,7 +405,7 @@ export function actionReactionExamplesFigure({ id = 'action-examples' } = {}) {
       <rect x="48" y="156" width="204" height="14" rx="5" fill="#a97142"/><path d="M66 170 v46 M234 170 v46" stroke="#895b37" stroke-width="10"/>
       <rect x="116" y="140" width="68" height="16" rx="4" fill="#a21a43"/><rect x="122" y="143" width="56" height="8" rx="2" fill="#fff"/>
       ${lessonArrow({ x1: 150, y1: 140, x2: 150, y2: 72, color: '#16886e', width: 5 })}
-      ${lessonArrow({ x1: 150, y1: 166, x2: 150, y2: 215, color: '#a33a91', width: 5 })}`)}
+      ${lessonArrow({ x1: 150, y1: 156, x2: 150, y2: 215, color: '#a33a91', width: 5 })}`)}
     ${frame('hand', 'يد عند حافة طاولة مع سهمين قطريين متعاكسين', `
       <rect x="154" y="152" width="116" height="15" rx="4" fill="#aa7852"/><rect x="175" y="167" width="13" height="49" fill="#8a5b3c"/>
       <path d="M144 153 C113 146 92 135 73 117 C62 107 58 92 66 86 C73 80 82 91 91 98 L103 105 L88 74 C84 64 92 59 98 68 L117 95 L109 59 C107 48 117 46 121 57 L135 91 L132 56 C131 45 141 45 144 56 L151 92 L156 65 C158 54 169 56 168 68 L165 115 Q164 136 144 153 Z" fill="#f3c39d" stroke="#d99b74" stroke-width="2"/>

@@ -301,15 +301,27 @@ test('teacher solutions agree with student source and avoid unsupported page 39 
   assert.doesNotMatch(q1.body, /F₁ < F₂|فتُجمع الشدّتان\.<\/p><div class="solution-enrich/);
   assert.match(q1.body, /880/);
   assert.match(q1.body, /960/);
-  assert.match(q2.body, /وليستا زوج فعل وردّ فعل/);
+  assert.match(q2.body, /وليسا زوج فعل وردّ فعل/);
+  assert.match(q2.body, /قوة الطاولة على الكتاب نحو الأعلى، وقوة الكتاب على الطاولة نحو الأسفل/);
+  assert.match(q2.body, /لا يحدّدان اسميهما صراحةً/);
   assert.match(q2.body, /جذب الكتاب للأرض/);
   assert.match(q2.body, /قوة الكتاب على الطاولة/);
   assert.match(q2.body, /نحو أسفل اليمين/);
   assert.match(q2.body, /نحو أعلى اليسار/);
   assert.match(q3.body, /بانتظار التحقق/);
   assert.match(q3.body, /إذا كان السهم/);
+  assert.match(q3.body, /نحو أسفل اليسار/);
+  assert.match(q3.body, /يبيّن حركة الرصاصة فقط/);
   assert.doesNotMatch(q3.body, /الحامل الأفقي|قوة ردّ الفعل التي تؤثّر بها البندقية في كتف/);
   for (const amount of ['45', '50', '25', '75']) assert.match(q4.body, new RegExp(amount));
   assert.match(q4.body, /بجهة القوة الأكبر/);
   assert.match(q4.body, /بجهة F̄₁/);
+});
+
+
+test('page 39 source arrows preserve directions and contact position', async () => {
+  const { actionReactionExamplesFigure, riflePerpFigure } = await import('../src/diagrams.js');
+  const html = actionReactionExamplesFigure();
+  for (const vector of ['x1="150" y1="140" x2="150" y2="72"', 'x1="150" y1="156" x2="150" y2="215"', 'x1="151" y1="151" x2="86" y2="83"', 'x1="151" y1="151" x2="213" y2="216"', 'x1="150" y1="160" x2="150" y2="115"', 'x1="150" y1="168" x2="150" y2="216"']) assert.ok(html.includes(vector), vector);
+  assert.match(riflePerpFigure(), /x1="310" y1="62" x2="370" y2="39"/);
 });
