@@ -207,8 +207,7 @@ export function tugOfWarFigure({ id = 'tug-of-war', leftLabel = 'F₁', rightLab
     <g fill="#22c55e"><circle cx="104" cy="72" r="17"/><rect x="88" y="92" width="32" height="42" rx="12"/><rect x="76" y="100" width="18" height="11" rx="5"/></g>
     <g fill="#3b82f6"><circle cx="456" cy="72" r="17"/><rect x="440" y="92" width="32" height="42" rx="12"/><rect x="466" y="100" width="18" height="11" rx="5"/></g>
     <path d="M124 100 q40 -14 80 0 t80 0 t80 0 t80 0 t80 0" fill="none" stroke="#7c5a3a" stroke-width="4" stroke-linecap="round"/>
-    ${lessonArrow({ x1: 150, y1: 150, x2: 78, y2: 150, color: '#b45309', label: leftLabel, labelY: 178 })}
-    ${lessonArrow({ x1: 410, y1: 150, x2: 482, y2: 150, color: '#dc2626', label: rightLabel, labelY: 178 })}
+
   </svg>`;
 }
 
@@ -226,15 +225,26 @@ export function singleForceRayFigure({ id = 'single-force-ray', forceLabel = 'F'
 
 // ص31: الثقلان ومحصّلتهما على الحامل الشاقولي كما في الرسم المطبوع.
 export function verticalWeightsFigure({ id = 'vertical-weights' } = {}) {
-  return `<svg class="pair-aligned-figure" viewBox="0 0 360 300" role="img" aria-labelledby="${id}-title">
-    <title id="${id}-title">قوتان من نقطة مشتركة نحو الأسفل ومحصّلتهما في الجهة نفسها</title>
-    <rect x="105" y="22" width="80" height="45" rx="10" fill="#d9f4e5" stroke="#86c9ab" stroke-width="2"/>
-    <line x1="145" y1="50" x2="145" y2="263" stroke="#d6e2ee" stroke-width="2" stroke-dasharray="5 7"/>
-    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 230, color: '#dc2626', width: 8 })}
-    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 170, color: '#2563eb', width: 6 })}
-    ${lessonArrow({ x1: 145, y1: 50, x2: 145, y2: 110, color: '#b45309', width: 5 })}
-    <circle cx="145" cy="50" r="6" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
-    <g class="svg-label" text-anchor="start" style="direction:ltr"><text x="165" y="48">O</text><text x="174" y="112">F₁</text><text x="174" y="172">F₂</text><text x="174" y="232">F</text></g>
+  return `<svg class="pair-aligned-figure" viewBox="0 0 390 265" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">اتجاه الثقلين ومحصّلتهما نحو الأسفل؛ الأسهم للاتجاه فقط وليست مقياساً للشدة</title>
+    <text x="195" y="35" class="svg-label" text-anchor="middle" style="direction:rtl">الأسهم للاتجاه فقط، وليست مقياساً للشدة</text>
+    ${lessonArrow({ x1: 90, y1: 85, x2: 90, y2: 166, color: '#b45309', width: 7 })}
+    ${lessonArrow({ x1: 195, y1: 85, x2: 195, y2: 166, color: '#2563eb', width: 7 })}
+    ${lessonArrow({ x1: 300, y1: 85, x2: 300, y2: 166, color: '#dc2626', width: 7 })}
+    <g class="svg-label" text-anchor="middle" style="direction:ltr"><text x="90" y="200">F₁</text><text x="195" y="200">F₂</text><text x="300" y="200">F</text><text x="195" y="241">F = F₁ + F₂</text></g>
+  </svg>`;
+}
+
+// استنتاج ص33: نتبع سهم المحصلة وF₁ المطبوعين دون تخمين الرمز غير المقروء.
+export function bookOppositeResultFigure({ id = 'book-opposite-result' } = {}) {
+  return `<svg class="pair-opposite-figure" viewBox="0 0 480 180" role="img" aria-labelledby="${id}-title">
+    <title id="${id}-title">قوتان متعاكستان وF₁ والمحصّلة نحو اليمين؛ تسمية القوة اليسرى غير واضحة في المصدر</title>
+    <line x1="35" y1="99" x2="445" y2="99" stroke="#d6e2ee" stroke-width="2" stroke-dasharray="6 7"/>
+    ${lessonArrow({ x1: 220, y1: 99, x2: 76, y2: 99, color: '#b45309', width: 7 })}
+    ${lessonArrow({ x1: 220, y1: 99, x2: 398, y2: 99, color: '#dc2626', width: 7, label: 'F₁', labelX: 404, labelY: 79 })}
+    ${lessonArrow({ x1: 220, y1: 99, x2: 278, y2: 99, color: '#0284c7', width: 6, label: 'F', labelX: 251, labelY: 62 })}
+    <circle cx="220" cy="99" r="6" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+    <text x="220" y="72" class="svg-label" text-anchor="middle">O</text>
   </svg>`;
 }
 

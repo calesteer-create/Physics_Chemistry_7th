@@ -250,11 +250,14 @@ test('interactive same-direction vectors fit and share a scale at maximum and ze
 });
 
 test('page 31 weights and page 34 resultant retain the illustrated directions', async () => {
-  const { verticalWeightsFigure, oppositePairFigure, springPairFigure, actionReactionFigure, carPushFigure } = await import('../src/diagrams.js');
+  const { verticalWeightsFigure, bookOppositeResultFigure, oppositePairFigure, springPairFigure, actionReactionFigure, carPushFigure } = await import('../src/diagrams.js');
   const weights = verticalWeightsFigure();
-  assert.match(weights, /x1="145" y1="50" x2="145" y2="110"/);
-  assert.match(weights, /x1="145" y1="50" x2="145" y2="170"/);
-  assert.match(weights, /x1="145" y1="50" x2="145" y2="230"/);
+  assert.match(weights, /الأسهم للاتجاه فقط، وليست مقياساً للشدة/);
+  for (const x of [90, 195, 300]) assert.match(weights, new RegExp(`x1="${x}" y1="85" x2="${x}" y2="166"`));
+  const bookResult = bookOppositeResultFigure();
+  assert.match(bookResult, /x1="220" y1="99" x2="278"/);
+  assert.match(bookResult, />F₁<\/text>/);
+  assert.doesNotMatch(bookResult, />F₂<\/text>/);
   const result = oppositePairFigure({ left: 20, right: 30, showResult: true });
   assert.match(result, /x1="240" y1="92" x2="298" y2="92"/);
   assert.match(springPairFigure(), /ربيعتان تسحبان حلقة/);
@@ -263,4 +266,14 @@ test('page 31 weights and page 34 resultant retain the illustrated directions', 
   assert.match(magnets, /قطبين مختلفين/);
   assert.equal((magnets.match(/>S<\/text>/g) || []).length, 4);
   assert.equal((magnets.match(/>N<\/text>/g) || []).length, 4);
+});
+
+test('book tug of war does not invent a force-length ratio', async () => {
+  const { tugOfWarFigure } = await import('../src/diagrams.js');
+  const tug = tugOfWarFigure();
+  assert.doesNotMatch(tug, /<polygon/);
+  assert.doesNotMatch(tug, />F₁<\/text>|>F₂<\/text>/);
+  const book = forcesBookContent();
+  assert.match(book, /نؤثّر على الحبل بقوتين مختلفتين بالشدّة/);
+  assert.match(book, /نحو اليمين بجهة القوة الأكبر/);
 });

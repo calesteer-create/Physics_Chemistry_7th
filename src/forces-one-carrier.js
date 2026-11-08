@@ -3,7 +3,7 @@
 // كل توضيح إضافي منفصل بعنوان «توضيح إثرائي»، وكل تدريب من إعداد المنصة موسوم «من إعداد المنصة».
 import { formula, quantity, units } from './math.js';
 import {
-  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure, verticalWeightsFigure,
+  bookForcePairFigure, tugOfWarFigure, singleForceRayFigure, sameDirectionPairFigure, verticalWeightsFigure, bookOppositeResultFigure,
   oppositePairFigure, resultantScaleFigure, springPairFigure, springScaleReadingFigure, actionReactionFigure,
   teamForcesFigure, riflePerpFigure, carPushFigure,
 } from './diagrams.js';
@@ -106,7 +106,7 @@ export function forcesBookContent() {
         ${questionList(['نأخذ أنا وزميلي ربيعتين مدرّجتين بالنيوتن، ونعلّق خطّيهما بحلقة كما في الشكل.', 'أدع زميلي يشدّ الربيعة الأولى بقوة <span class="formula" dir="ltr">F̄₁</span>، وأشدّ الربيعة الثانية بقوة <span class="formula" dir="ltr">F̄₂</span> وفق الحامل ذاته باتجاهين متعاكسين.', 'إلى أي جهة تتحرّك الحلقة في كلّ من الحالتين الآتيتين: إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>، إذا كانت <span class="formula" dir="ltr">F₁ &lt; F₂</span>.'])}`)}
       ${springPairFigure({ id: 'book-p33-pair' })}
       ${inferBox('أستنتج:', `${definition('محصّلة قوتين (F̄₁، F̄₂) على حامل واحد وبجهتين متعاكستين هي قوة وحيدة عناصرها:', `<ol class="book-questions"><li><strong>نقطة التأثير:</strong> نقطة التأثير المشتركة للقوتين.</li><li><strong>الحامل:</strong> حامل القوتين.</li><li><strong>الجهة:</strong> بجهة القوة الأكبر.</li><li><strong>الشدة:</strong> حاصل طرح شدّتي القوتين <span class="formula" dir="ltr">F=F₁-F₂</span> إذا كانت <span class="formula" dir="ltr">F₁ &gt; F₂</span>.</li></ol>`)}
-        <div class="figure-and-text"><div>${oppositePairFigure({ id: 'book-p33-result', left: 30, right: 20 })}</div><div><p>رسم الكتاب: <span class="formula" dir="ltr">F̄</span> نحو اليسار بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₁</span>.</p></div></div>`)}`)}
+        <div class="figure-and-text"><div>${bookOppositeResultFigure({ id: 'book-p33-result' })}</div><div><p>رسم الكتاب: <span class="formula" dir="ltr">F̄</span> نحو اليمين بجهة القوة الأكبر <span class="formula" dir="ltr">F̄₁</span>.</p></div></div>`)}`)}
     ${section('34', 'تطبيق محلول وقوتان متعاكستان مباشرة', `
       <p><strong>تطبيق محلول:</strong> قوتان <span class="formula" dir="ltr">F̄₁</span> و<span class="formula" dir="ltr">F̄₂</span> على حامل واحد وبجهتين متعاكستين، شدّتاهما <span class="formula" dir="ltr">F₁=20 N</span> و<span class="formula" dir="ltr">F₂=30 N</span>. تؤثّران في نقطة <span class="formula" dir="ltr">(o)</span>.</p>
       <p><strong>المطلوب:</strong></p>
