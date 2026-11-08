@@ -135,7 +135,7 @@ test('question two marks all six statements as false and gives a correction for 
 
 test('question three item 1 stays pending; item 2 is decided from the printed figure', () => {
   const html = teacherSolutionsView();
-  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 1, 'only item 1 is pending');
+  assert.equal((teacherSolutions['motion-rest'].questions.find(q => q.id === 'q3').body.match(/بانتظار التحقق/g) || []).length, 1, 'only item 1 in this question is pending');
   assert.doesNotMatch(html, /\(c\) منتظمة\./, 'no guessed answer for item 1');
   assert.match(html, /\(b\) الشجرة\./);
   assert.match(html, /حركة المتزلج الممثلة بالصورة الآتية/);
@@ -247,7 +247,7 @@ test('force-motion question five solves both problems: w = 100 N and m = 300 kg'
 
 test('force-motion solutions add no pending items and render every formula with KaTeX', () => {
   const html = teacherSolutionsView();
-  assert.equal((html.match(/بانتظار التحقق/g) || []).length, 1, 'only the legacy motion-rest item stays pending');
+  assert.equal((teacherSolutions['force-motion'].questions.map(q => q.body).join('').match(/بانتظار التحقق/g) || []).length, 0, 'force-motion has no pending items');
   assert.doesNotMatch(html, /math-fallback|تعذّر عرض المعادلة/);
   assert.doesNotMatch(plain(html), /\\frac|\\mathrm|\\times/);
 });

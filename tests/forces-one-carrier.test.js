@@ -291,3 +291,25 @@ test('book pages 37, 39 and 40 preserve source facts without revealing the missi
   assert.match(rifle, /x1="310" y1="62" x2="370" y2="39"/);
   assert.doesNotMatch(rifle, /ردّ فعل البندقية نحو الخلف/);
 });
+
+test('teacher solutions agree with student source and avoid unsupported page 39 claims', () => {
+  const [q1, q2, q3, q4] = teacherSolutions['forces-one-carrier'].questions;
+  const second = forcesBookChoiceQuestions.find(q => q.id === 'fh-mc-2');
+  assert.match(second.prompt, /F₁ > F₂/);
+  assert.match(q1.body, /F₁ &gt; F₂/);
+  assert.match(q1.body, /\(a\) <span dir="ltr">F = F₁ − F₂<\/span>/);
+  assert.doesNotMatch(q1.body, /F₁ < F₂|فتُجمع الشدّتان\.<\/p><div class="solution-enrich/);
+  assert.match(q1.body, /880/);
+  assert.match(q1.body, /960/);
+  assert.match(q2.body, /وليستا زوج فعل وردّ فعل/);
+  assert.match(q2.body, /جذب الكتاب للأرض/);
+  assert.match(q2.body, /قوة الكتاب على الطاولة/);
+  assert.match(q2.body, /نحو أسفل اليمين/);
+  assert.match(q2.body, /نحو أعلى اليسار/);
+  assert.match(q3.body, /بانتظار التحقق/);
+  assert.match(q3.body, /إذا كان السهم/);
+  assert.doesNotMatch(q3.body, /الحامل الأفقي|قوة ردّ الفعل التي تؤثّر بها البندقية في كتف/);
+  for (const amount of ['45', '50', '25', '75']) assert.match(q4.body, new RegExp(amount));
+  assert.match(q4.body, /بجهة القوة الأكبر/);
+  assert.match(q4.body, /بجهة F̄₁/);
+});

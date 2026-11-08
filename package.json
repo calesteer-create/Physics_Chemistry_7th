@@ -11,6 +11,7 @@
     "test": "node --test tests/*.test.js",
     "test:browser": "node --test tests/browser.test.mjs",
     "test:browser:lessons": "node --test tests/previous-lessons.browser.test.mjs",
+    "test:browser:teacher": "node --test tests/teacher-third.browser.test.mjs",
     "test:browser:production": "npm run build && PRODUCTION=1 node --test tests/browser.test.mjs"
   },
   "devDependencies": {
