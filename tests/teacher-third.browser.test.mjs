@@ -20,6 +20,11 @@ test('third lesson teacher gate and source solutions at mobile and desktop', { t
     for (const width of [390, 1366]) {
       await page.setViewportSize({ width, height: 850 });
       const errors = []; const handler = e => errors.push(e.message); page.on('pageerror', handler);
+      await page.goto(`${base}#/lesson/forces-one-carrier/book`);
+      await page.locator('[data-book-tab="forces-problems"]').click();
+      await page.locator('#forces-problems details').nth(1).evaluate(el => { el.open = true; });
+      assert.match(await page.locator('#forces-problems').innerText(), /لا يسمّي الرسم السهم/);
+      assert.equal(await page.locator('.solution-question').count(), 0, 'student page contains no teacher solutions');
       await page.goto(`${base}#/teacher`);
       assert.equal(await page.locator('.solution-question').count(), 0, 'no solutions in DOM before login');
       await page.locator('#teacher-password').fill('wrong'); await page.locator('[data-teacher-login] button').click();
@@ -31,7 +36,7 @@ test('third lesson teacher gate and source solutions at mobile and desktop', { t
       const q1 = panel.locator('#solution-forces-one-carrier-q1');
       assert.match(await q1.innerText(), /F₁ > F₂/); assert.match(await q1.innerText(), /\(a\) F = F₁ − F₂/);
       assert.match(await panel.locator('#solution-forces-one-carrier-q2').innerText(), /وليسا زوج فعل وردّ فعل/);
-      assert.match(await panel.locator('#solution-forces-one-carrier-q3').innerText(), /بانتظار التحقق/);
+      assert.match(await panel.locator('#solution-forces-one-carrier-q3').innerText(), /المعطيات غير كافية/);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `no overflow at ${width}`);
       await page.locator('[data-teacher-logout]').click();
       assert.equal(await page.locator('.solution-question').count(), 0, 'logout removes solutions');

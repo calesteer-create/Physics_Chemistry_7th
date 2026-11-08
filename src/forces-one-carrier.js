@@ -195,6 +195,7 @@ export function forcesBookContent() {
       <details class="book-exercises"><summary>السؤال الثالث: لاحظ الرسم أدناه، ثم أجب عن السؤال الآتي</summary>
       ${riflePerpFigure({ id: 'book-p39-rifle' })}
       <p>في الرسم، توجد قوة مفقودة، وضّح هذه القوة على الرسم.</p>
+      <p class="notice" role="note">ملاحظة توضيحية: لا يسمّي الرسم السهم، ولا يحدّد نص السؤال القوة المفقودة أو الجسم الذي تؤثّر فيه؛ يلزم توضيح إضافي لتعيينها يقيناً.</p>
       </details>
       <details class="book-exercises"><summary>السؤال الرابع: حلّ المسألتين الآتيتين</summary>
       <h4>المسألة الأولى:</h4>
