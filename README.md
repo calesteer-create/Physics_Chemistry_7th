@@ -27,6 +27,53 @@ cp .env.example .env   # ثم اضبط القيم حسب بيئة النشر
 | `npm run typecheck` | فحص الأنواع (TypeScript) |
 | `npm test` | اختبارات الوحدة (node:test) |
 | `npm run test:integration` | اختبارات تكامل HTTP (بناء وتشغل الخادم محليًا) |
+| `npm run db:generate` | توليد ملفات migrations من `src/db/schema.ts` (لا يحتاج اتصالاً فعلياً بقاعدة بيانات) |
+| `npm run db:check` | التحقق من اتساق ملفات الـ migrations المحفوظة مع بعضها (لا يحتاج اتصالاً فعلياً بقاعدة بيانات) |
+| `npm run db:migrate` | تطبيق الـ migrations على قاعدة بيانات فعلية (يحتاج `DATABASE_URL`) |
+
+## قاعدة البيانات والـ migrations
+
+إعداد Drizzle Kit في `drizzle.config.ts` لا يحتوي على أي عنوان قاعدة بيانات ثابت أو
+خاص ببيئة بعينها؛ يُقرأ `DATABASE_URL` من بيئة التشغيل (أو من ملف `.env` محليًا
+عبر `dotenv/config`) — وهو نفس المتغيّر الذي يستخدمه التطبيق في `src/db/index.ts`.
+
+ملفات الـ migrations محفوظة في `drizzle/migrations/` وتُولَّد مباشرة من
+`src/db/schema.ts`؛ أي تغيير لاحق على الـ schema يتطلب تشغيل `npm run db:generate`
+من جديد لإضافة ملف migration جديد (لا تُعدَّل الملفات المولَّدة سابقًا يدويًا).
+
+خطوات إعداد قاعدة بيانات جديدة من الصفر:
+
+```bash
+cp .env.example .env            # اضبط DATABASE_URL على قاعدة PostgreSQL فعلية
+npm run db:generate             # (اختياري) تأكيد أن لا تغييرات غير مولَّدة في الـ schema
+npm run db:migrate              # تطبيق الـ migrations على القاعدة الفعلية
+```
+
+`db:generate` و`db:check` يعملان بمقارنة ملفات الـ schema مع ملفات الـ migrations
+المحفوظة محليًا فقط، لذا ينجحان حتى بدون `DATABASE_URL` (مناسبان للتحقق في CI
+أو في بيئة بلا قاعدة بيانات). أما `db:migrate` فيحتاج اتصالاً فعليًا بقاعدة
+PostgreSQL حقيقية عبر `DATABASE_URL`؛ وعند غياب `DATABASE_URL` يفشل فورًا برسالة
+واضحة من Drizzle Kit (`Please provide required params for Postgres driver: [x] url: ''`)
+دون أي محاولة اتصال فعلي ودون استخدام أي عنوان افتراضي.
+
+**تنبيه — قاعدة بيانات جديدة فقط:** ملف الـ migration الأول
+`drizzle/migrations/0000_init_schema.sql` هو migration **إنشائي** (`CREATE TABLE`).
+
+- **قاعدة بيانات PostgreSQL جديدة وفارغة** (لا تحتوي أصلاً على الجداول
+  `students`, `lesson_progress`, `quiz_attempts`, `project_authoring_rules`):
+  يمكن تشغيل `npm run db:migrate` عليها مباشرة لتطبيق migration 0000 كما هو.
+- **قاعدة بيانات تحتوي هذه الجداول مسبقًا** (من إعداد يدوي سابق أو من نسخة
+  أقدم من المشروع): **لا يجوز** تشغيل `npm run db:migrate` عليها مباشرة؛
+  migration 0000 سينفّذ `CREATE TABLE` من جديد وسيتعارض مع الجداول الموجودة
+  فعلاً.
+- في هذه الحالة الثانية يلزم أولاً اعتماد **baseline** مناسب: أي التحقق من
+  أن بنية الجداول الحالية مطابقة تمامًا لما في `0000_init_schema.sql`، ثم
+  اعتبار هذا الـ migration "مطبَّقًا مسبقًا" لدى Drizzle بدل تنفيذ الـ
+  `CREATE TABLE` فعليًا عليه. هذا الاعتماد **ليس إجراءً تشغيليًا جاهزًا أو
+  موثَّقًا ضمن P1-2** — هو خطة وإجراء منفصلان يجب تصميمهما وتنفيذهما بحذر لكل
+  حالة على حدة (تختلف حسب أداة تتبّع الـ migrations وإصدارها)، ولم يُنفَّذ أو
+  يُختبر هنا. **لم يُنفَّذ أي SQL يدوي ولم تتغيّر أي قاعدة بيانات فعلية** في
+  إطار توثيق هذا التنبيه.
 
 ## متغيرات البيئة
 
@@ -45,6 +92,7 @@ cp .env.example .env   # ثم اضبط القيم حسب بيئة النشر
 
 - `src/content/` — المحتوى التعليمي (الوحدات، الدروس، بنك الاختبارات).
 - `src/db/` — اتصال قاعدة البيانات (Drizzle) وجدول الجداول.
+- `drizzle/migrations/` — ملفات migrations المولَّدة من `src/db/schema.ts` (Drizzle Kit).
 - `src/app/api/` — مسارات API.
 - `src/lib/` — منطق الخادم (الأمان، الطالب، تصحيح الاختبارات).
 - `tests/stage1/` — اختبارات الوحدة.
