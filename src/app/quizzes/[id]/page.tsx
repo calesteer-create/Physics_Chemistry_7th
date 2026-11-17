@@ -47,11 +47,11 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
           <div className="mt-5 flex flex-wrap gap-3 text-[12px] font-bold">
             <span className="flex items-center gap-2 rounded-xl border border-[rgba(60,224,244,0.25)] bg-[rgba(60,224,244,0.05)] px-3.5 py-2 text-[#bdeaf3]">
               <ShieldCheck className="h-4 w-4 text-[var(--color-phys)]" />
-              التصحيح يجري في الخادم — الإجابات غير متاحة قبل التسليم
+              تُقبل الإجابات المكتملة دون عرض درجة الاختبار
             </span>
             <span className="flex items-center gap-2 rounded-xl border border-[rgba(255,176,58,0.25)] bg-[rgba(255,176,58,0.05)] px-3.5 py-2 text-[#ffe4b8]">
               <Lightbulb className="h-4 w-4 text-[var(--color-chem)]" />
-              ستظهر نتيجة كل إجابة بعد التسليم؛ الحلول التفصيلية في منطقة المعلم
+              لا تُحفظ المحاولة حالياً؛ الحلول التفصيلية في منطقة المعلم
             </span>
           </div>
         </div>

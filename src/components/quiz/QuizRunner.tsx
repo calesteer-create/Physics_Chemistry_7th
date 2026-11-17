@@ -1,31 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Award, CheckCircle2, ClipboardList, RotateCcw, Send, Timer, XCircle } from "lucide-react";
+import { Award, RotateCcw, Send, Timer } from "lucide-react";
 import type { QuizPublic } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
 import { FigureBlock } from "@/components/figures";
 
 type Answers = Record<string, number | boolean | string | undefined>;
 
-interface FeedbackItem {
-  id: string;
-  correct: boolean;
-}
-
-interface Result {
-  score: number;
-  total: number;
-  feedback: FeedbackItem[];
-  saved: boolean;
-}
-
 const LETTERS = ["أ", "ب", "ج", "د", "هـ"];
 
 export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
   const [answers, setAnswers] = useState<Answers>({});
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<Result | null>(null);
+  const [result, setResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const answeredCount = useMemo(
@@ -45,7 +33,7 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.error || "fail");
-      setResult({ score: data.score, total: data.total, feedback: data.feedback, saved: data.saved });
+      setResult(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setError("تعذّر تسليم الاختبار. تحقق من اتصالك وحاول مجددًا.");
@@ -56,86 +44,29 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
 
   function retry() {
     setAnswers({});
-    setResult(null);
+    setResult(false);
     setError(null);
   }
 
   /* ---------- شاشة النتيجة ---------- */
   if (result) {
-    const pct = Math.round((result.score / result.total) * 100);
-    const passed = pct >= 60;
     return (
       <div className="mx-auto max-w-3xl">
         <div className="card relative overflow-hidden p-10 text-center">
-          <div className={`absolute inset-x-0 top-0 h-1.5 ${passed ? "bg-gradient-to-l from-[#4ade80] to-[var(--color-phys)]" : "bg-gradient-to-l from-[var(--color-chem)] to-[#f87171]"}`} />
-          <Award className={`mx-auto h-14 w-14 ${passed ? "text-[#4ade80]" : "text-[var(--color-chem)]"}`} />
-          <h2 className="mt-4 text-[28px] font-black text-white">
-            {passed ? "أحسنت! نتيجة رائعة" : "محاولة جيدة — راجع النقاط أدناه"}
-          </h2>
-          <p className="mt-2 text-[14px] font-bold text-[var(--color-mist)]">
-            {result.saved ? "سُجّلت محاولتك في ملفك الشخصي." : "سجّل اسمك في منطقة الطالب لتحفظ نتائجك تلقائيًا."}
+          <Award className="mx-auto h-14 w-14 text-[var(--color-phys)]" />
+          <h2 className="mt-4 text-[28px] font-black text-white">تم تسليم الاختبار</h2>
+          <p className="mt-2 text-[14px] font-bold leading-8 text-[var(--color-mist)]">
+            لحماية إجابات الاختبار، لا تُعرض الدرجة أو صحة الإجابات ولا تُحفظ هذه المحاولة حالياً.
+            الحلول التفصيلية متاحة في منطقة المعلم.
           </p>
-
-          <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-[var(--color-line)] bg-[rgba(6,14,30,0.5)] p-4">
-              <div className="text-[26px] font-black text-[#8ceeff]" dir="ltr">
-                {result.score}/{result.total}
-              </div>
-              <div className="mt-1 text-[11.5px] font-bold text-[var(--color-mist)]">إجابات صحيحة</div>
-            </div>
-            <div className="rounded-2xl border border-[var(--color-line)] bg-[rgba(6,14,30,0.5)] p-4">
-              <div className="text-[26px] font-black text-[#ffd9a0]" dir="ltr">
-                {pct}%
-              </div>
-              <div className="mt-1 text-[11.5px] font-bold text-[var(--color-mist)]">النسبة المئوية</div>
-            </div>
-            <div className="rounded-2xl border border-[var(--color-line)] bg-[rgba(6,14,30,0.5)] p-4">
-              <div className="text-[26px] font-black text-[#cfc7ff]" dir="ltr">
-                {result.total - result.score}
-              </div>
-              <div className="mt-1 text-[11.5px] font-bold text-[var(--color-mist)]">تحتاج مراجعة</div>
-            </div>
-          </div>
         </div>
-
-        {/* التغذية الراجعة */}
-        <h3 className="mt-10 flex items-center gap-2 text-[19px] font-black text-white">
-          <ClipboardList className="h-5 w-5 text-[var(--color-phys)]" />
-          نتيجة كل إجابة
-        </h3>
-        <div className="mt-5 space-y-4">
-          {quiz.questions.map((q, i) => {
-            const fb = result.feedback.find((f) => f.id === q.id);
-            if (!fb) return null;
-            return (
-              <div key={q.id} className={`card border-r-4 p-6 ${fb.correct ? "border-r-[#4ade80]" : "border-r-[#f87171]"}`}>
-                <div className="flex items-start gap-3">
-                  {fb.correct ? (
-                    <CheckCircle2 className="mt-1 h-5.5 w-5.5 shrink-0 text-[#4ade80]" />
-                  ) : (
-                    <XCircle className="mt-1 h-5.5 w-5.5 shrink-0 text-[#f87171]" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-[14.5px] font-extrabold leading-8 text-white">
-                      <span className="ml-2 text-[var(--color-dim)]">س{i + 1}.</span>
-                      <RichText rich={q.prompt} />
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         <div className="mt-10 flex flex-wrap gap-4">
           <button onClick={retry} className="btn btn-ghost">
-            <RotateCcw className="h-5 w-5" />
-            أعد المحاولة
+            <RotateCcw className="h-5 w-5" /> أعد المحاولة
           </button>
           {quiz.lessonSlug && (
             <a href={`/lessons/${quiz.lessonSlug}`} className="btn btn-phys">
-              <RotateCcw className="h-5 w-5" />
-              عُد إلى الدرس وراجع
+              <RotateCcw className="h-5 w-5" /> عُد إلى الدرس وراجع
             </a>
           )}
         </div>

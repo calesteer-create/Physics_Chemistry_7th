@@ -55,10 +55,19 @@ await runServer(env, async () => {
     check('incomplete submission', r.status, 400);
     const data = await r.json(); noSecrets(data); assert.ok(!('feedback' in data));
   }
-  const res = await post('/api/quizzes/quiz-motion-1/submit', { answers });
-  check('complete anonymous submission', res.status, 200);
-  const data = await res.json(); noSecrets(data); assert.equal(data.feedback.length, 10);
-  assert.ok(data.feedback.every(x => Object.keys(x).sort().join(',') === 'correct,id'));
+  // Repeated, complete attempts varying one answer at a time must be indistinguishable,
+  // including when a caller supplies an untrusted student cookie.
+  const variants = [answers, { ...answers, q1: 1 }, { ...answers, q1: 2 },
+    { ...answers, q3: true }, { ...answers, q5: 'candidate' }, answers];
+  for (const cookie of [undefined, 'student_id=00000000-0000-4000-8000-000000000001']) {
+    for (const candidate of variants) {
+      const res = await post('/api/quizzes/quiz-motion-1/submit', { answers: candidate }, cookie);
+      check('repeated complete submission', res.status, 200);
+      const data = await res.json();
+      assert.deepEqual(data, { ok: true });
+      noSecrets(data);
+    }
+  }
   const page = await get('/quizzes/quiz-motion-1');
   check('quiz page', page.status, 200);
   const html = await page.text();
@@ -78,7 +87,8 @@ await runServer({ ...env, TEACHER_PASSWORD: password, TEACHER_SESSION_SECRET: se
   check('valid session /teacher', teacher.status, 200);
   assert.ok((await teacher.text()).includes('مفاتيح الإجابة والحلول التفصيلية'));
   const result = await post('/api/quizzes/quiz-motion-1/submit', { answers }, cookie);
-  check('teacher complete submission', result.status, 200); noSecrets(await result.json());
+  check('teacher complete submission', result.status, 200);
+  assert.deepEqual(await result.json(), { ok: true });
 });
 const changed = execFileSync('git', ['diff', '--name-only', 'main', '--', 'src/content', 'src/components/lesson', 'src/components/figures', 'src/components/lab'], { encoding: 'utf8' }).trim();
 check('educational content files unchanged', changed, '');
