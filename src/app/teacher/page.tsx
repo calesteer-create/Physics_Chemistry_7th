@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { TEACHER_COOKIE, verifyTeacherSessionToken } from "@/lib/auth";
 import { ClipboardCheck, KeyRound, ListOrdered, ShieldCheck } from "lucide-react";
 import { getQuizFull } from "@/content/quiz-bank";
 import { RichText } from "@/components/content/RichText";
@@ -10,8 +13,10 @@ export const dynamic = "force-dynamic";
 
 const LETTERS = ["أ", "ب", "ج", "د", "هـ"];
 
-export default function TeacherPage() {
-  // محمي عبر middleware + تحقق جلسة في الخادم — لا يصل إليه الطالب
+export default async function TeacherPage() {
+  // دفاع إضافي: لا نعتمد على Proxy وحده لحماية مفاتيح الإجابة.
+  const token = (await cookies()).get(TEACHER_COOKIE)?.value;
+  if (!(await verifyTeacherSessionToken(token))) redirect("/teacher/login");
   const quizzes = ["quiz-orientation", "quiz-motion-1", "quiz-force-2", "quiz-one-support-3"].map(getQuizFull).filter(Boolean);
 
   return (

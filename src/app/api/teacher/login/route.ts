@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
-import { createTeacherSessionToken, TEACHER_COOKIE } from "@/lib/auth";
-import { teacherPasswordConfigured, verifyTeacherPassword } from "@/lib/passwords";
+import { createTeacherSessionToken, TEACHER_COOKIE, teacherAuthConfigured } from "@/lib/auth";
+import { verifyTeacherPassword } from "@/lib/passwords";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    if (!teacherPasswordConfigured()) {
-      // التصريح الصريح: الحماية معطّلة حتى تُضبط الأسرار — لا ندّعي حماية غير موجودة
+    if (!teacherAuthConfigured()) {
+      // P0-1: لا تُصدر جلسة إلا باكتمال المتغيّرين الإلزاميين؛ لا ندّعي حماية غير موجودة.
       return NextResponse.json(
-        { ok: false, error: "لم تُضبط كلمة مرور المعلم بعد. تُضبط عبر متغيّر البيئة TEACHER_PASSWORD في إعدادات النشر الآمنة." },
+        {
+          ok: false,
+          error:
+            "إعدادات الأمان غير مكتملة. يلزم ضبط TEACHER_PASSWORD و TEACHER_SESSION_SECRET في متغيّرات بيئة الخادم.",
+        },
         { status: 503 },
       );
     }

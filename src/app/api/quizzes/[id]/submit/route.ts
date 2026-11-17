@@ -2,27 +2,21 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { quizAttempts } from "@/db/schema";
 import { STUDENT_COOKIE } from "@/lib/student";
+import { deniedSubmissionBody, gateQuizSubmission } from "@/lib/quiz-submission";
 import { getQuizFull } from "@/content/quiz-bank";
-import type { Rich } from "@/content/types";
 
 export const dynamic = "force-dynamic";
 
 interface QuestionFeedback {
   id: string;
   correct: boolean;
-  explain: Rich;
-  correctLabel: string;
 }
 
 function normalizeFill(s: string): string {
   return s.trim().replace(/\s+/g, " ").replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
 }
 
-/**
- * تصحيح الاختبار في جهة الخادم فقط.
- * مفاتيح الإجابة لا تغادر الخادم قبل تسليم الإجابات، وتُسجَّل المحاولة
- * في قاعدة البيانات إذا كان الطالب مسجلًا.
- */
+/** تصحيح محاولة مكتملة، دون إرسال مفاتيح الإجابة أو الشروح للعميل. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -30,10 +24,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     if (!quiz) return NextResponse.json({ ok: false, error: "اختبار غير موجود" }, { status: 404 });
 
     const body = await request.json().catch(() => null);
-    const answers: Record<string, unknown> = (body?.answers as Record<string, unknown>) ?? {};
+
+    // لا يُصحّح طلب ناقص أو غير صالح.
+    const gate = gateQuizSubmission(
+      quiz.questions.map((q) => ({
+        id: q.id,
+        type: q.type,
+        optionCount: q.type === "mcq" ? q.options.length : undefined,
+      })),
+      body?.answers,
+    );
+    if (!gate.ok) {
+      return NextResponse.json(deniedSubmissionBody(gate), { status: gate.status });
+    }
+    const answers = gate.answers;
 
     let score = 0;
-    const letters = ["أ", "ب", "ج", "د", "هـ"];
     const feedback: QuestionFeedback[] = [];
 
     for (const ans of quiz.answers) {
@@ -48,8 +54,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         feedback.push({
           id: ans.id,
           correct: ok,
-          explain: ans.explain,
-          correctLabel: `${letters[ans.correct]}) ${q.options[ans.correct].map((s) => ("t" in s ? s.t : "")).join("")}`,
         });
       } else if (ans.type === "tf") {
         const val = typeof given === "boolean" ? given : null;
@@ -58,8 +62,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         feedback.push({
           id: ans.id,
           correct: ok,
-          explain: ans.explain,
-          correctLabel: ans.correct ? "صح" : "خطأ",
         });
       } else if (ans.type === "fill") {
         const val = typeof given === "string" ? normalizeFill(given) : "";
@@ -68,8 +70,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         feedback.push({
           id: ans.id,
           correct: ok,
-          explain: ans.explain,
-          correctLabel: ans.accepted[0],
         });
       }
     }

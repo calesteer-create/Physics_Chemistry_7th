@@ -51,7 +51,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
             </span>
             <span className="flex items-center gap-2 rounded-xl border border-[rgba(255,176,58,0.25)] bg-[rgba(255,176,58,0.05)] px-3.5 py-2 text-[#ffe4b8]">
               <Lightbulb className="h-4 w-4 text-[var(--color-chem)]" />
-              ستحصل على شرح سبب كل إجابة بعد التسليم
+              ستظهر نتيجة كل إجابة بعد التسليم؛ الحلول التفصيلية في منطقة المعلم
             </span>
           </div>
         </div>

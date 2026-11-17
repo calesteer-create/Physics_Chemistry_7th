@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Award, CheckCircle2, ClipboardList, RotateCcw, Send, Timer, XCircle } from "lucide-react";
-import type { QuizPublic, Rich } from "@/content/types";
+import type { QuizPublic } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
 import { FigureBlock } from "@/components/figures";
 
@@ -11,8 +11,6 @@ type Answers = Record<string, number | boolean | string | undefined>;
 interface FeedbackItem {
   id: string;
   correct: boolean;
-  explain: Rich;
-  correctLabel: string;
 }
 
 interface Result {
@@ -103,7 +101,7 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
         {/* التغذية الراجعة */}
         <h3 className="mt-10 flex items-center gap-2 text-[19px] font-black text-white">
           <ClipboardList className="h-5 w-5 text-[var(--color-phys)]" />
-          لماذا؟ — شرح كل إجابة
+          نتيجة كل إجابة
         </h3>
         <div className="mt-5 space-y-4">
           {quiz.questions.map((q, i) => {
@@ -121,14 +119,6 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
                     <p className="text-[14.5px] font-extrabold leading-8 text-white">
                       <span className="ml-2 text-[var(--color-dim)]">س{i + 1}.</span>
                       <RichText rich={q.prompt} />
-                    </p>
-                    {!fb.correct && (
-                      <p className="mt-2 rounded-lg bg-[rgba(74,222,128,0.08)] px-3 py-2 text-[13px] font-black text-[#b8f5cf]">
-                        الإجابة الصحيحة: {fb.correctLabel}
-                      </p>
-                    )}
-                    <p className="mt-2.5 text-[13.5px] font-bold leading-8 text-[var(--color-mist)]">
-                      <RichText rich={fb.explain} />
                     </p>
                   </div>
                 </div>

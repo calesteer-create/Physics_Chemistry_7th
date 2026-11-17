@@ -1,5 +1,6 @@
 import "server-only";
 import { scryptSync, timingSafeEqual } from "crypto";
+import { readServerEnv } from "./env";
 
 /**
  * التحقق من كلمة مرور المعلم في جهة الخادم فقط.
@@ -17,12 +18,13 @@ function derive(value: string): Buffer {
 }
 
 export function teacherPasswordConfigured(): boolean {
-  return Boolean(process.env.TEACHER_PASSWORD && process.env.TEACHER_PASSWORD.length >= 6);
+  const password = readServerEnv("TEACHER_PASSWORD");
+  return Boolean(password && password.length >= 6);
 }
 
 export function verifyTeacherPassword(candidate: string): boolean {
   if (!teacherPasswordConfigured()) return false;
-  const expected = derive(process.env.TEACHER_PASSWORD as string);
+  const expected = derive(readServerEnv("TEACHER_PASSWORD") as string);
   const given = derive(candidate);
   return timingSafeEqual(expected, given);
 }
