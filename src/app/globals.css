@@ -1,35 +1,35 @@
 @import "tailwindcss";
-@import "@fontsource-variable/cairo";
+@import "./fonts.css";
 
 @theme {
-  --font-sans: "Cairo Variable", "Cairo", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", system-ui, sans-serif;
 
-  /* ───── ثيم داكن احترافي ───── */
-  --color-ink:       #060c1a;
-  --color-bg:        #060c1a;
-  --color-surface:   #0b1830;
-  --color-card:      #0e2038;
-  --color-card2:     #122a48;
-  --color-line:      rgba(148, 178, 220, 0.12);
-  --color-line2:     rgba(148, 178, 220, 0.22);
-  --color-fog:       #e8f0fc;
-  --color-mist:      #9db1cf;
-  --color-dim:       #6b7f9e;
+  /* ───── ألوان الهوية الأساسية ───── */
+  --color-ink:       #faf9f5;
+  --color-bg:        #faf9f5;
+  --color-surface:   #ffffff;
+  --color-card:      #ffffff;
+  --color-card2:     #f3f5f8;
+  --color-line:      #e7e3da;
+  --color-line2:     #d1d7df;
+  --color-fog:       #1a2438;
+  --color-mist:      #4b5568;
+  --color-dim:       #596579;
   --color-muted:     #64748b;
 
   /* ───── ألوان التأكيد ───── */
-  --color-phys:      #3ce0f4;
-  --color-phys-lt:   rgba(60, 224, 244, 0.12);
-  --color-chem:      #ffb03a;
-  --color-chem-lt:   rgba(255, 176, 58, 0.12);
-  --color-vio:       #a78bfa;
-  --color-vio-lt:    rgba(167, 139, 250, 0.12);
-  --color-gold:      #fbbf24;
-  --color-gold-lt:   rgba(251, 191, 36, 0.12);
-  --color-success:   #34d399;
-  --color-success-lt:rgba(52, 211, 153, 0.12);
-  --color-error:     #f87171;
-  --color-error-lt:  rgba(248, 113, 113, 0.12);
+  --color-phys:      #33568f;
+  --color-phys-lt:   #eef2f9;
+  --color-chem:      #8a6420;
+  --color-chem-lt:   #f9f3e6;
+  --color-vio:       #68518a;
+  --color-vio-lt:    #f3eff8;
+  --color-gold:      #8a6420;
+  --color-gold-lt:   #f9f3e6;
+  --color-success:   #16706b;
+  --color-success-lt:#eef5f3;
+  --color-error:     #b42318;
+  --color-error-lt:  #fff1f0;
 
   --color-paper:     #fffef7;
   --color-paper-ink: #1e293b;
@@ -99,6 +99,7 @@ body {
 .btn-phys:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(60,224,244,0.5); }
 .btn-ghost { background: rgba(148,178,220,0.08); border-color: var(--color-line2); color: var(--color-fog); }
 .btn-ghost:hover { background: rgba(148,178,220,0.14); }
+.btn-whatsapp { background: #16706b; color: #fff; box-shadow: none; }
 .btn-gold { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1c1000; }
 .btn-whatsapp { background: #25d366; color: #fff; box-shadow: 0 6px 20px rgba(37,211,102,0.3); }
 
@@ -164,3 +165,67 @@ body {
 .lab-canvas { background:#0a1428; border-radius:16px; overflow:hidden; }
 
 .header-bar { background:rgba(6,12,26,0.88); backdrop-filter:blur(16px); border-bottom:1px solid var(--color-line); }
+
+
+/* Light academic identity. Legacy utility colors are mapped here so the
+   scientific content and the notebook renderer remain untouched. */
+body { font-synthesis: none; }
+.font-black, .font-extrabold { font-weight: 700; }
+.card, .glass, .lab-card {
+  background: #fff; border: 1px solid var(--color-line);
+  box-shadow: 0 3px 16px rgba(26,36,56,.05);
+}
+.card:hover { box-shadow: 0 5px 20px rgba(26,36,56,.08); }
+.glass { background: rgba(255,255,255,.96); }
+section > canvas[aria-hidden="true"] { opacity: .25; }
+.grid-bg { background-image: linear-gradient(rgba(51,86,143,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(51,86,143,.035) 1px, transparent 1px); }
+.header-bar { background: rgba(250,249,245,.96); }
+.btn-phys { background: #33568f; color: #fff; box-shadow: none; }
+.btn-phys:hover { box-shadow: 0 5px 16px rgba(51,86,143,.2); }
+.btn-whatsapp { background: #16706b; color: #fff; box-shadow: none; }
+.btn-gold { background: #f4e6c9; color: #513b0d; }
+.btn-ghost { background: #fff; color: #24304a; border-color: #cbd2dc; }
+.grad-text-phys, .grad-text-chem, .grad-text-gold { background: none; color: #33568f; }
+.grad-text-chem, .grad-text-gold { color: #16706b; }
+.eyebrow { color: #33568f; background: #eef2f9; border-color: #d5dfed; }
+.eyebrow-amber, .eyebrow-gold { color: #785618; background: #f9f3e6; border-color: #eadcbf; }
+.badge-book { color: #785618; background: #f9f3e6; border-color: #eadcbf; }
+.badge-extra { color: #26406e; background: #eef2f9; border-color: #d5dfed; }
+.stage-link.active { color: #26406e; background: #eef2f9; border-color: #d5dfed; }
+.stage-link.active .dot { background: #33568f; color: white; }
+.stage-link .dot.gold { background: #f4e6c9; color: #513b0d; }
+.tbl th { color: #24304a; background: #eef2f9; }
+.bar > span { background: #33568f; }
+.tex-box { background: #f5f7fa; color: #1a2438; border-color: #d1d7df; }
+.lab-canvas { background: #f5f7fa; }
+::selection { background: #dfe7f4; color: #1a2438; }
+::-webkit-scrollbar-track { background: #f1f0eb; }
+::-webkit-scrollbar-thumb { background: #aab5c4; }
+:focus-visible { outline: 3px solid #33568f; outline-offset: 3px; }
+
+/* Adapt the existing dark-theme utility classes, without touching content. */
+[class~="text-white"]:not(.paper *):not([class*="bg-[#0066cc]"]):not([class*="bg-[#dc2626]"]):not([class*="bg-[#6633cc]"]):not([class*="bg-[#1e293b]"]):not([class*="bg-[var(--color-success)]"]):not([class*="bg-[var(--color-error)]"]):not([style*="background"]) { color: #1a2438; }
+[class~="text-[#8ceeff]"], [class~="text-[#bfe9ff]"], [class~="text-[#d9f7ff]"], [class~="text-[#c5d8f0]"], [class~="text-[#c9dbf5]"], [class~="text-[#cfe1f7]"], [class~="text-[#dce8f8]"], [class~="text-[#d9ecff]"], [class~="text-[#d4e3f7]"], [class~="text-[#bae6fd]"], [class~="text-[#bdeaf3]"], [class~="text-[#8fd4ec]"] { color: #26406e; }
+[class~="text-[#f4ddab]"], [class~="text-[#fde68a]"], [class~="text-[#ffe4b8]"], [class~="text-[#ffd9a0]"], [class~="text-[#ffd08a]"], [class~="text-[#fff3c4]"] { color: #785618; }
+[class~="text-[#6ee7b7]"], [class~="text-[#a7f3d0]"], [class~="text-[#c8ffd4]"], [class~="text-[#d9ffe6]"], [class~="text-[#4be07e]"], [class~="text-[#00e676]"], [class~="text-[#34d399]"] { color: #12645d; }
+[class~="text-[#ffd740]"], [class~="text-[#ffab40]"], [class~="text-[#ffb03a]"], [class~="text-[#f59e0b]"] { color: #785618; }
+[class~="text-[#00e5ff]"], [class~="text-[rgba(255,255,255,0.55)]"], [class~="text-[rgba(255,255,255,0.65)]"] { color: #26406e; }
+[class~="text-[#cfc7ff]"], [class~="text-[#ddd6fe]"] { color: #5b4781; }
+[class~="text-[#fca5a5]"], [class~="text-[#f87171]"], [class~="text-[#ff5252]"] { color: #b42318; }
+[class~="bg-[rgba(0,0,0,0.25)]"] { background: #f5f7fa; }
+[class*="bg-[rgba(6,14,30,"], [class*="bg-[rgba(6,12,26,"] { background: #f2f4f7; }
+[class~="bg-[#050a16]"], [class~="bg-[#060c1a]"], [class~="bg-[#0b1830]"], [class~="bg-[#0d1b2e]"], [class~="bg-[#0a1628]"] { background: #f2f4f7; }
+[class*="bg-[radial-gradient(80%_60%"] { background-image: none; }
+[class~="hover:text-white"]:hover, [class~="group-hover:text-white"]:is(.group:hover *) { color: #26406e; }
+.paper th[class~="text-white"] { color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transition: none; }
+  .animate-floaty { animation: none; }
+}
+/* Selected controls originally used a bright fill with dark text. */
+[class~="bg-[var(--color-gold)]"][class~="text-[#1c1000]"],
+[class~="bg-[var(--color-chem)]"][class~="text-[#1c1000]"] {
+  background-color: #f4e6c9;
+  border-color: #d5bd8f;
+  color: #513b0d;
+}

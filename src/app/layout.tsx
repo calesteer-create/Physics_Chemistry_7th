@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#060c1a",
+  themeColor: "#faf9f5",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ar" dir="rtl">
       <body className="noise min-h-screen bg-[var(--color-ink)] font-sans text-[var(--color-fog)] antialiased">
         <Header />
-        <main className="pt-[74px]">{children}</main>
+        <main className="pt-[116px] lg:pt-[74px]">{children}</main>
         <Footer />
       </body>
     </html>
