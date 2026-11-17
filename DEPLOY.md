@@ -49,15 +49,23 @@ openssl rand -hex 32
 
 ## خطوات الحصول على الرابط (مرة واحدة)
 
+هناك طريقتان، اختر **واحدة** فقط (تفعيل الاثنتين معًا يسبّب نشرًا مزدوجًا):
+
+- **(أ) الأسرع — بلا أي أسرار في GitHub**: في Vercel اختر Add New → Project →
+  استورد مستودع `calesteer-create/Physics_Chemistry_7th` (Framework: Next.js، بلا
+  إعدادات إضافية). عندها يُنشر الموقع من Vercel عند كل push إلى `main`، ويكفي من
+  تبويب Actions أنه يفحص البناء والاختبارات.
+- **(ب) النشر من GitHub Actions**: أضف الأسرار الثلاثة `VERCEL_TOKEN` و
+  `VERCEL_ORG_ID` و`VERCEL_PROJECT_ID` كما في الخطوات 2–4 أدناه.
+
+في الحالتين لا بد من القاعدة والمتغيّرات السرّية (الخطوتان 3 و5–6).
+
 1. **إنشاء مشروع Vercel**: Add New → Project → اختر مستودع
    `calesteer-create/Physics_Chemistry_7th` (Framework: Next.js، بلا إعدادات إضافية).
-   إن استخدمت استيراد Git داخل Vercel فسيُنشر عند كل push إلى `main` مباشرةً،
-   ويمكن الاكتفاء حينها بفحص البناء من تبويب Actions (اختر طريقة واحدة فقط لتجنّب
-   النشر المزدوج).
-2. **أخذ المعرّفات**: Project → Settings → General يعرض `Project ID`،
+2. **أخذ المعرّفات** (للطريقة ب): Project → Settings → General يعرض `Project ID`،
    وحسابك/فريقك يعرض `Team ID` (المستخدم كـ `VERCEL_ORG_ID`).
-3. **إنشاء رمز CLI**: Vercel → Account Settings → Tokens → Create Token.
-4. **إضافة الأسرار الثلاثة** في GitHub → Settings → Secrets and variables → Actions.
+3. **إنشاء رمز CLI** (للطريقة ب): Vercel → Account Settings → Tokens → Create Token.
+4. **إضافة الأسرار الثلاثة** (للطريقة ب) في GitHub → Settings → Secrets and variables → Actions.
 5. **إنشاء قاعدة PostgreSQL** (Neon أو Marketplace) ونسخ رابط الاتصال
    (يحتوي `sslmode=require`) إلى `DATABASE_URL` في Vercel.
 6. **تطبيق الـ migrations مرة واحدة على القاعدة الجديدة** — من جهازك، لا من داخل

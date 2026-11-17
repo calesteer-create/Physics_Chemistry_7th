@@ -86,15 +86,17 @@ jobs:
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
             {
-              echo "### لم يتم النشر: أسرار Vercel غير مضبوطة"
+              echo "### لم يُنفَّذ النشر التلقائي: أسرار Vercel غير مضبوطة"
               echo ""
-              echo "أضف أسرار المستودع التالية ثم أعد تشغيل هذا الـ workflow:"
+              echo "إن كان المستودع مربوطًا بـ Vercel من لوحة Vercel (Git Integration)"
+              echo "فالنشر يحدث هناك مباشرةً ولا حاجة لهذه الخطوة."
               echo ""
+              echo "لتفعيل النشر من Actions أضف أسرار المستودع التالية ثم أعد التشغيل:"
               echo '`VERCEL_TOKEN` و`VERCEL_ORG_ID` و`VERCEL_PROJECT_ID`'
               echo ""
               echo "الخطوات الكاملة في \`DEPLOY.md\`."
             } >> "$GITHUB_STEP_SUMMARY"
-            echo "::notice title=Deploy skipped::أسرار Vercel غير مضبوطة — تم تخطي النشر."
+            echo "::notice title=Deploy skipped::أسرار Vercel غير مضبوطة — تم تخطي النشر التلقائي."
           fi
 
       - name: تثبيت Vercel CLI
