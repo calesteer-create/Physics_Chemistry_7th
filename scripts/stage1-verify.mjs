@@ -1,4 +1,7 @@
-// HTTP integration tests. DATABASE_URL is a non-working placeholder for build only.
+// HTTP integration tests. Since P1-1 the build no longer requires DATABASE_URL: a
+// non-working placeholder is kept for DB-backed endpoints so they fail at runtime
+// like an unreachable database instead of blocking the build. The block added for
+// P1-1 also proves the server boots with DATABASE_URL entirely absent.
 import { spawn, execFileSync } from 'node:child_process';
 import { createHmac } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -72,6 +75,16 @@ await runServer(env, async () => {
   check('quiz page', page.status, 200);
   const html = await page.text();
   for (const marker of ['correctLabel', 'explain', 'teacherNotes']) assert.ok(!html.includes(marker), `quiz page leak: ${marker}`);
+});
+// P1-1: DATABASE_URL محذوف تمامًا. الخادم يبدأ، والصفحات غير المدفوعة بالبيانات
+// تعمل، ومسارات قاعدة البيانات تفشل بخطأ واضح (500) دون أن ينهار الخادم.
+const envNoDb = { ...env };
+delete envNoDb.DATABASE_URL;
+await runServer(envNoDb, async () => {
+  const health = await get('/api/health');
+  check('health without DATABASE_URL', health.status, 500);
+  assert.deepEqual(await health.json(), { ok: false });
+  check('static quiz page without DATABASE_URL', (await get('/quizzes')).status, 200);
 });
 await runServer({ ...env, TEACHER_PASSWORD: password, TEACHER_SESSION_SECRET: secret }, async () => {
   for (const [name, key, version] of [['old', oldSecret, true], ['database-derived', `derived:${db}`, true], ['password-derived', `derived:${password}`, true], ['legacy even with current key', secret, false]]) {

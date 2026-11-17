@@ -15,7 +15,7 @@ import {
   UserRound,
   UserRoundPlus,
 } from "lucide-react";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { lessonProgress, quizAttempts } from "@/db/schema";
 import { getCurrentStudent } from "@/lib/student";
 import { getLessonMeta, listPublishedLessons } from "@/content/registry";
@@ -70,8 +70,8 @@ export default async function StudentPage() {
   /* ---------- بيانات الطالب ---------- */
   const lessons = listPublishedLessons();
   const [progressRows, attemptRows] = await Promise.all([
-    db.select().from(lessonProgress).where(eq(lessonProgress.studentId, student.id)),
-    db.select().from(quizAttempts).where(eq(quizAttempts.studentId, student.id)).orderBy(desc(quizAttempts.createdAt)).limit(20),
+    getDb().select().from(lessonProgress).where(eq(lessonProgress.studentId, student.id)),
+    getDb().select().from(quizAttempts).where(eq(quizAttempts.studentId, student.id)).orderBy(desc(quizAttempts.createdAt)).limit(20),
   ]);
 
   const quizMeta = listQuizzesMeta();

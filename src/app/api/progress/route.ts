@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { lessonProgress } from "@/db/schema";
 import { STUDENT_COOKIE } from "@/lib/student";
 import { getLessonMeta } from "@/content/registry";
@@ -29,7 +29,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "درس غير معروف" }, { status: 404 });
     }
 
-    const existing = await db
+    const database = getDb();
+    const existing = await database
       .select()
       .from(lessonProgress)
       .where(and(eq(lessonProgress.studentId, studentId), eq(lessonProgress.lessonSlug, lessonSlug)))
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     if (existing.length > 0) {
       const prev = existing[0];
       const completed = Array.from(new Set([...(prev.completedStages as number[]), ...Array.from({ length: stageIndex + 1 }, (_, i) => i)]));
-      await db
+      await database
         .update(lessonProgress)
         .set({
           stageIndex: Math.max(prev.stageIndex, stageIndex),
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
         })
         .where(eq(lessonProgress.id, prev.id));
     } else {
-      await db.insert(lessonProgress).values({
+      await database.insert(lessonProgress).values({
         studentId,
         lessonSlug,
         stageIndex,

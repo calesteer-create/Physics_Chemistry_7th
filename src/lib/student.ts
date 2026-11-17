@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { students } from "@/db/schema";
 
 export const STUDENT_COOKIE = "student_id";
@@ -11,7 +11,7 @@ export async function getCurrentStudent() {
   const id = store.get(STUDENT_COOKIE)?.value;
   if (!id) return null;
   try {
-    const rows = await db.select().from(students).where(eq(students.id, id)).limit(1);
+    const rows = await getDb().select().from(students).where(eq(students.id, id)).limit(1);
     return rows[0] ?? null;
   } catch {
     return null;
