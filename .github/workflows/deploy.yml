@@ -1,0 +1,117 @@
+# بناء المنصة والتحقق منها، ثم نشرها على Vercel (بيئة الإنتاج).
+#
+# لماذا Vercel: تشغيل Next.js 16 كاملاً (App Router، proxy/middleware، مسارات API،
+# العرض على الخادم) دون تعديل إعدادات المشروع، مع دعم قاعدة PostgreSQL خارجية
+# عبر `DATABASE_URL` — بخلاف GitHub Pages الذي يخدم ملفات ثابتة فقط.
+#
+# لا تُحفظ أي أسرار في المستودع. تُضبط في:
+#   - أسرار المستودع (Settings → Secrets and variables → Actions):
+#       VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID
+#   - متغيّرات بيئة مشروع Vercel (Settings → Environment Variables):
+#       DATABASE_URL / TEACHER_PASSWORD / TEACHER_SESSION_SECRET / STUDENT_SESSION_SECRET
+#
+# عند غياب أسرار النشر يتخطى التشغيل خطوة النشر ويعرض تنبيهًا في ملخّص التشغيل،
+# بحيث يبقى فحص البناء والاختبارات عاملًا دائمًا.
+
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: فحص البناء والاختبارات
+    runs-on: ubuntu-latest
+    steps:
+      - name: تنزيل الشيفرة
+        uses: actions/checkout@v4
+
+      - name: تهيئة Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: تثبيت الاعتماديات
+        run: npm ci
+
+      - name: تدقيق الشيفرة
+        run: npm run lint
+
+      - name: فحص الأنواع
+        run: npm run typecheck
+
+      - name: اختبارات الوحدة
+        run: npm test
+
+      # البناء لا يحتاج DATABASE_URL (التهيئة متأخرة في src/db/index.ts).
+      - name: بناء الإنتاج
+        run: npm run build
+
+  deploy:
+    name: نشر الإنتاج على Vercel
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: تنزيل الشيفرة
+        uses: actions/checkout@v4
+
+      - name: تهيئة Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: التحقق من توفّر أسرار النشر
+        id: secrets
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### لم يتم النشر: أسرار Vercel غير مضبوطة"
+              echo ""
+              echo "أضف أسرار المستودع التالية ثم أعد تشغيل هذا الـ workflow:"
+              echo ""
+              echo '`VERCEL_TOKEN` و`VERCEL_ORG_ID` و`VERCEL_PROJECT_ID`'
+              echo ""
+              echo "الخطوات الكاملة في \`DEPLOY.md\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice title=Deploy skipped::أسرار Vercel غير مضبوطة — تم تخطي النشر."
+          fi
+
+      - name: تثبيت Vercel CLI
+        if: steps.secrets.outputs.ready == 'true'
+        run: npm install --global vercel@latest
+
+      - name: جلب إعدادات المشروع
+        if: steps.secrets.outputs.ready == 'true'
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: النشر للإنتاج
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN" | tee deploy.log
+          url="$(grep -Eo 'https://[A-Za-z0-9._-]+\.vercel\.app' deploy.log | tail -n1)"
+          {
+            echo "### ✅ تم النشر"
+            echo ""
+            echo "**الرابط:** ${url:-راجع سجل الخطوة أعلاه}"
+          } >> "$GITHUB_STEP_SUMMARY"

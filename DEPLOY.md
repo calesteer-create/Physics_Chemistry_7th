@@ -1,0 +1,95 @@
+# النشر (DEPLOY)
+
+الهدف: رابط Live يعمل عليه Next.js 16 بوظائفه الحالية (App Router، `src/proxy.ts`،
+مسارات `src/app/api/**`، والعرض على الخادم) مع قاعدة PostgreSQL.
+
+## الوجهة المختارة: Vercel + PostgreSQL مُدار
+
+- **Vercel** تشغّل هذا المشروع بلا أي تعديل على الشيفرة أو إعدادات Next.js:
+  البناء (`next build`) يعمل كما هو، والمسارات الديناميكية والـ proxy تعمل كما هي.
+- **GitHub Pages غير مناسب**: يخدم ملفات ثابتة فقط — لا مسارات API، ولا عرض على
+  الخادم، ولا `src/proxy.ts`، ولا اتصال PostgreSQL. تحويل المشروع إلى تصدير ثابت
+  يعني تعطيل وظائف قائمة، وهو خارج نطاق هذه الخطوة.
+- **قاعدة البيانات**: أي PostgreSQL يُعطى رابط اتصال قياسي يكفي؛ التطبيق يستخدم
+  `pg` + Drizzle عبر `DATABASE_URL` فقط. الأبسط: Neon (خطة مجانية) أو
+  Vercel Marketplace. لا تغيير في المخطط أو الـ migrations.
+
+البناء لا يحتاج قاعدة بيانات (التهيئة متأخرة في `src/db/index.ts`)، لذا يفشل النشر
+فقط إذا فشلت الشيفرة نفسها — لا إذا كانت القاعدة غير مضبوطة.
+
+تشغيل إنتاجي محلي (`npm run build` ثم `npm start`) بلا أي متغيّر بيئة: الصفحات
+`/` و`/units` و`/lessons/*` و`/quizzes` و`/lab` و`/student` و`/teacher/login`
+تعمل بحالة `200`، و`/teacher` يعيد التوجيه إلى الدخول. تعطّل وظائف الحفظ
+(إنشاء ملف طالب، حفظ التقدّم) عندها هو سلوك مقصود (fail closed) لا خطأ نشر.
+
+## متغيّرات البيئة — الأسماء وأماكن الضبط فقط
+
+لا تُكتب أي قيمة سرّية في المستودع. الأسماء التالية تُضبط في مكانين مختلفين:
+
+| المتغيّر | مكان الضبط | الاستخدام |
+|---|---|---|
+| `DATABASE_URL` | Vercel → Project → Settings → Environment Variables (Production + Preview) | رابط PostgreSQL (ملفات الطلاب، حفظ التقدّم، فحص الاتصال) |
+| `TEACHER_PASSWORD` | المكان نفسه | كلمة مرور منطقة المعلم (6 أحرف على الأقل) |
+| `TEACHER_SESSION_SECRET` | المكان نفسه | سرّ توقيع جلسات المعلم (32 حرفاً على الأقل) |
+| `STUDENT_SESSION_SECRET` | المكان نفسه | سرّ توقيع جلسات الطالب (32 حرفاً على الأقل، مستقلّ عن غيره) |
+| `VERCEL_TOKEN` | GitHub → Settings → Secrets and variables → Actions | رمز Vercel CLI لخطوة النشر |
+| `VERCEL_ORG_ID` | المكان نفسه | معرّف الحساب/الفريق في Vercel |
+| `VERCEL_PROJECT_ID` | المكان نفسه | معرّف المشروع في Vercel |
+
+الأسرار الثلاثة الأولى (`TEACHER_*` و`STUDENT_*`) يجب أن تكون قيمًا عشوائية
+مختلفة؛ يمكن توليدها محليًا بـ:
+
+```bash
+openssl rand -hex 32
+```
+
+عند غياب `TEACHER_PASSWORD` أو `TEACHER_SESSION_SECRET` تبقى منطقة المعلم مغلقة
+(fail closed)، وعند غياب `STUDENT_SESSION_SECRET` لا تُنشأ ملفات طلاب — وهذا سلوك
+مقصود في الشيفرة وليس خللاً في النشر.
+
+## خطوات الحصول على الرابط (مرة واحدة)
+
+1. **إنشاء مشروع Vercel**: Add New → Project → اختر مستودع
+   `calesteer-create/Physics_Chemistry_7th` (Framework: Next.js، بلا إعدادات إضافية).
+   إن استخدمت استيراد Git داخل Vercel فسيُنشر عند كل push إلى `main` مباشرةً،
+   ويمكن الاكتفاء حينها بفحص البناء من تبويب Actions (اختر طريقة واحدة فقط لتجنّب
+   النشر المزدوج).
+2. **أخذ المعرّفات**: Project → Settings → General يعرض `Project ID`،
+   وحسابك/فريقك يعرض `Team ID` (المستخدم كـ `VERCEL_ORG_ID`).
+3. **إنشاء رمز CLI**: Vercel → Account Settings → Tokens → Create Token.
+4. **إضافة الأسرار الثلاثة** في GitHub → Settings → Secrets and variables → Actions.
+5. **إنشاء قاعدة PostgreSQL** (Neon أو Marketplace) ونسخ رابط الاتصال
+   (يحتوي `sslmode=require`) إلى `DATABASE_URL` في Vercel.
+6. **تطبيق الـ migrations مرة واحدة على القاعدة الجديدة** — من جهازك، لا من داخل
+   المستودع، وبلا أي تعديل على ملفات الـ migrations:
+
+   ```bash
+   npm ci
+   DATABASE_URL="postgresql://…" npm run db:migrate
+   ```
+
+   (تنطبق تحذيرات `README.md` الخاصة بقاعدة تحتوي الجداول مسبقًا: استخدم قاعدة
+   جديدة وفارغة.)
+7. **التشغيل**: push إلى `main` أو Actions → Build & Deploy → Run workflow.
+   يظهر الرابط في ملخّص التشغيل (Summary) وفي سجل الخطوة.
+
+## ما يفعله `.github/workflows/deploy.yml`
+
+- `verify` (على كل push وPR إلى `main`): `npm ci` ثم lint ثم typecheck ثم
+  اختبارات الوحدة ثم `npm run build` — بلا قاعدة بيانات.
+- `deploy` (على `main` فقط): `vercel pull` ثم `vercel deploy --prod` باستخدام
+  الأسرار الثلاثة.
+- إذا لم تكن أسرار Vercel مضبوطة: تُتخطّى خطوة النشر ويُكتب تنبيه واضح في ملخّص
+  التشغيل، ويظل فحص البناء ناجحًا.
+
+## استكشاف الأخطاء
+
+| العَرَض | السبب المرجّح |
+|---|---|
+| `Deploy skipped` في الملخّص | أحد الأسرار الثلاثة (`VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`) غير مضبوط أو فارغ |
+| `403` أو `Invalid token` | الرمز منتهٍ/محذوف، أو أُنشئ لحساب لا يملك المشروع |
+| `Project not found` | `VERCEL_ORG_ID` أو `VERCEL_PROJECT_ID` لا يطابقان المشروع |
+| إنشاء ملف الطالب يُرجع `503` | `STUDENT_SESSION_SECRET` غير مضبوط في بيئة Vercel |
+| إنشاء ملف الطالب أو حفظ التقدّم يفشل بخطأ قاعدة بيانات | `DATABASE_URL` غير مضبوط، أو الـ migrations لم تُطبَّق على القاعدة |
+| `/api/health` يُرجع `{"ok":false}` بحالة `500` | لا اتصال بقاعدة البيانات (المتغيّر أو الشبكة) |
+| منطقة المعلم تعيد التوجيه إلى الدخول دائماً | `TEACHER_PASSWORD` / `TEACHER_SESSION_SECRET` غير مضبوطين أو أقصر من الحد |
