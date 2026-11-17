@@ -62,9 +62,15 @@ openssl rand -hex 32
 
 1. **إنشاء مشروع Vercel**: Add New → Project → اختر مستودع
    `calesteer-create/Physics_Chemistry_7th` (Framework: Next.js، بلا إعدادات إضافية).
-2. **أخذ المعرّفات** (للطريقة ب): Project → Settings → General يعرض `Project ID`،
-   وحسابك/فريقك يعرض `Team ID` (المستخدم كـ `VERCEL_ORG_ID`).
-3. **إنشاء رمز CLI** (للطريقة ب): Vercel → Account Settings → Tokens → Create Token.
+2. **أخذ المعرّفات** (للطريقة ب):
+   - `VERCEL_PROJECT_ID`: Project → Settings → General → *Project ID*.
+   - `VERCEL_ORG_ID`: Team/Account Settings → General → *Team ID* (في الحساب
+     الشخصي يكون بنفس تنسيق `team_…`).
+   - البديل الأسهل من الطرفية: `npx vercel link` داخل المشروع ثم
+     `cat .vercel/project.json` — يحتوي `projectId` و`orgId` (مجلد `.vercel/`
+     مستبعَد من Git، ولا يُرفع).
+3. **إنشاء رمز CLI** (للطريقة ب): Vercel → Account Settings → Tokens → Create Token
+   (اختر النطاق/الفريق الصحيح، واضبط مدة انتهاء معقولة؛ وهو سرّ لا يُشارك).
 4. **إضافة الأسرار الثلاثة** (للطريقة ب) في GitHub → Settings → Secrets and variables → Actions.
 5. **إنشاء قاعدة PostgreSQL** (Neon أو Marketplace) ونسخ رابط الاتصال
    (يحتوي `sslmode=require`) إلى `DATABASE_URL` في Vercel.
@@ -78,23 +84,47 @@ openssl rand -hex 32
 
    (تنطبق تحذيرات `README.md` الخاصة بقاعدة تحتوي الجداول مسبقًا: استخدم قاعدة
    جديدة وفارغة.)
-7. **التشغيل**: push إلى `main` أو Actions → Build & Deploy → Run workflow.
-   يظهر الرابط في ملخّص التشغيل (Summary) وفي سجل الخطوة.
+7. **التشغيل**: push إلى `main`، أو يدويًا: Actions → Build & Deploy → Run workflow
+   **مع اختيار الفرع `main`**. يظهر الرابط في ملخّص التشغيل (Summary) وفي سجل الخطوة.
+   ملاحظة: GitHub لا يعرض زر *Run workflow* إلا بعد وجود ملف الـ workflow على الفرع
+   الافتراضي، أي **بعد دمج هذا الـ PR في `main`**. قبل الدمج يعمل الـ workflow
+   تلقائيًا على الـ PR (فحص فقط).
+
+## ضمانات عدم المساس بالبيانات
+
+- لا يحتوي المستودع ولا هذه الخطوات أي أمر يحذف بيانات: لا `db:push`، ولا
+  `drizzle-kit drop`، ولا SQL يدوي، ولا حذف/إعادة إنشاء قاعدة.
+- ملف الـ migration الوحيد `drizzle/migrations/0000_init_schema.sql` إنشائي بالكامل:
+  خمسة `CREATE` + إضافتا `ADD CONSTRAINT`، **بلا أي `DROP` أو `TRUNCATE` أو `DELETE`
+  أو `ALTER … DROP`**.
+- إعادة تشغيل `npm run db:migrate` آمنة: Drizzle يتتبّع الـ migrations المطبَّقة في
+  جدول `drizzle.__drizzle_migrations` ولا يعيد تنفيذها.
+- الخطر الوحيد (فشل لا حذف): تشغيل `db:migrate` على قاعدة **تحتوي الجداول مسبقًا**
+  سيُفشل الـ `CREATE TABLE` بتعارض، دون أن يمسح شيئًا. لذلك استخدم قاعدة جديدة
+  وفارغة، كما هو موضّح في `README.md`.
+- الـ workflow نفسه لا يلمس القاعدة إطلاقًا: لا يشغّل أي migration، ولا يقرأ
+  `DATABASE_URL`. تطبيق الـ migrations خطوة يدوية منفّذة مرة واحدة من جهازك.
 
 ## ما يفعله `.github/workflows/deploy.yml`
 
 - `verify` (على كل push وPR إلى `main`): `npm ci` ثم lint ثم typecheck ثم
   اختبارات الوحدة ثم `npm run build` — بلا قاعدة بيانات.
-- `deploy` (على `main` فقط): `vercel pull` ثم `vercel deploy --prod` باستخدام
-  الأسرار الثلاثة.
-- إذا لم تكن أسرار Vercel مضبوطة: تُتخطّى خطوة النشر ويُكتب تنبيه واضح في ملخّص
-  التشغيل، ويظل فحص البناء ناجحًا.
+- `gate` (على `main` فقط): يتأكد من وجود `VERCEL_TOKEN` و`VERCEL_ORG_ID`
+  و`VERCEL_PROJECT_ID` معًا، ويُخرج `ready=true` أو `false`.
+- `deploy` (على `main` فقط، وفقط إذا كان `ready=true`): `vercel pull` ثم
+  `vercel deploy --prod`.
+- غياب الأسرار ⇒ مهمة النشر تظهر **skipped** (لا خطوة نشر واحدة)، ويُكتب سبب
+  التخطي وقائمة الأسماء المطلوبة في ملخّص التشغيل؛ ويبقى فحص البناء أخضر.
+- وجود الأسرار ⇒ تنفيذ النشر فعليًا، وأي فشل فيه يُفشل التشغيل (لا يُحجب الفشل
+  بسبب تمرير المخرجات عبر `tee`).
 
 ## استكشاف الأخطاء
 
 | العَرَض | السبب المرجّح |
 |---|---|
-| `Deploy skipped` في الملخّص | أحد الأسرار الثلاثة (`VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`) غير مضبوط أو فارغ |
+| مهمة «نشر الإنتاج على Vercel» ظهرت `skipped` | أحد الأسرار الثلاثة (`VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`) غير مضبوط أو فارغ — انظر الملخّص |
+| مهمة النشر لم تُشغَّل أصلًا على PR | مقصود: النشر يشترط فرع `main` وليس PR |
+| زر Run workflow غير ظاهر | ملف الـ workflow ليس بعد على الفرع الافتراضي `main` (يظهر بعد الدمج) |
 | `403` أو `Invalid token` | الرمز منتهٍ/محذوف، أو أُنشئ لحساب لا يملك المشروع |
 | `Project not found` | `VERCEL_ORG_ID` أو `VERCEL_PROJECT_ID` لا يطابقان المشروع |
 | إنشاء ملف الطالب يُرجع `503` | `STUDENT_SESSION_SECRET` غير مضبوط في بيئة Vercel |
