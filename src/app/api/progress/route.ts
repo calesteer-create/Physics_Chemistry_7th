@@ -1,24 +1,30 @@
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 import { getDb } from "@/db";
 import { lessonProgress } from "@/db/schema";
-import { STUDENT_COOKIE } from "@/lib/student";
+import { STUDENT_SESSION_COOKIE, resolveStudentSession } from "@/lib/student-session";
+import { findStudentById } from "@/lib/student";
 import { getLessonMeta } from "@/content/registry";
 
 export const dynamic = "force-dynamic";
 
-/** حفظ تقدّم الطالب داخل درس — يتطلب ملف طالب مسجلًا */
+/**
+ * حفظ تقدّم الطالب داخل درس — يتطلّب جلسة طالب موقّعة صالحة.
+ *
+ * P1-4b: معرّف الطالب يُشتق من الجلسة الموقّعة **وحدها**.
+ * لا يُقرأ من كوكي يرسله المتصفح، ولا من جسم الطلب، ولا من نصّ الطلب.
+ */
 export async function POST(request: Request) {
   try {
-    const studentId = request.headers.get("cookie")
-      ?.split(";")
-      .map((c) => c.trim())
-      .find((c) => c.startsWith(`${STUDENT_COOKIE}=`))
-      ?.split("=")[1];
-    if (!studentId) {
+    const store = await cookies();
+    const token = store.get(STUDENT_SESSION_COOKIE)?.value;
+    const resolution = await resolveStudentSession(token, findStudentById);
+    if (!resolution.ok) {
       // ليس خطأً — الحفظ يعمل فقط بعد تسجيل الاسم في منطقة الطالب
       return NextResponse.json({ ok: true, saved: false });
     }
+    const studentId = resolution.studentId;
 
     const body = await request.json().catch(() => null);
     const lessonSlug = typeof body?.lessonSlug === "string" ? body.lessonSlug : "";
