@@ -175,7 +175,7 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
             {error && <span className="text-[12.5px] font-bold text-[#f87171]">{error}</span>}
             <button onClick={submit} disabled={!complete || submitting} className="btn btn-phys disabled:cursor-not-allowed disabled:opacity-40">
               <Send className="h-4.5 w-4.5" />
-              {submitting ? "جارٍ التصحيح…" : "سلّم الاختبار"}
+              {submitting ? "جارٍ تسليم الاختبار…" : "سلّم الاختبار"}
             </button>
           </div>
         </div>
