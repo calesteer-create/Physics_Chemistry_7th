@@ -27,6 +27,32 @@ cp .env.example .env   # ثم اضبط القيم حسب بيئة النشر
 | `npm run typecheck` | فحص الأنواع (TypeScript) |
 | `npm test` | اختبارات الوحدة (node:test) |
 | `npm run test:integration` | اختبارات تكامل HTTP (بناء وتشغل الخادم محليًا) |
+| `npm run db:generate` | توليد ملفات migrations من `src/db/schema.ts` (لا يحتاج اتصالاً فعلياً بقاعدة بيانات) |
+| `npm run db:check` | التحقق من اتساق ملفات الـ migrations المحفوظة مع بعضها (لا يحتاج اتصالاً فعلياً بقاعدة بيانات) |
+| `npm run db:migrate` | تطبيق الـ migrations على قاعدة بيانات فعلية (يحتاج `DATABASE_URL`) |
+
+## قاعدة البيانات والـ migrations
+
+إعداد Drizzle Kit في `drizzle.config.ts` لا يحتوي على أي عنوان قاعدة بيانات ثابت أو
+خاص ببيئة بعينها؛ يُقرأ `DATABASE_URL` من بيئة التشغيل (أو من ملف `.env` محليًا
+عبر `dotenv/config`) — وهو نفس المتغيّر الذي يستخدمه التطبيق في `src/db/index.ts`.
+
+ملفات الـ migrations محفوظة في `drizzle/migrations/` وتُولَّد مباشرة من
+`src/db/schema.ts`؛ أي تغيير لاحق على الـ schema يتطلب تشغيل `npm run db:generate`
+من جديد لإضافة ملف migration جديد (لا تُعدَّل الملفات المولَّدة سابقًا يدويًا).
+
+خطوات إعداد قاعدة بيانات جديدة من الصفر:
+
+```bash
+cp .env.example .env            # اضبط DATABASE_URL على قاعدة PostgreSQL فعلية
+npm run db:generate             # (اختياري) تأكيد أن لا تغييرات غير مولَّدة في الـ schema
+npm run db:migrate              # تطبيق الـ migrations على القاعدة الفعلية
+```
+
+`db:generate` و`db:check` يعملان بمقارنة ملفات الـ schema مع ملفات الـ migrations
+المحفوظة محليًا فقط، لذا ينجحان حتى بدون `DATABASE_URL` (مناسبان للتحقق في CI
+أو في بيئة بلا قاعدة بيانات). أما `db:migrate` فيحتاج اتصالاً فعليًا بقاعدة
+PostgreSQL حقيقية عبر `DATABASE_URL`.
 
 ## متغيرات البيئة
 
@@ -45,6 +71,7 @@ cp .env.example .env   # ثم اضبط القيم حسب بيئة النشر
 
 - `src/content/` — المحتوى التعليمي (الوحدات، الدروس، بنك الاختبارات).
 - `src/db/` — اتصال قاعدة البيانات (Drizzle) وجدول الجداول.
+- `drizzle/migrations/` — ملفات migrations المولَّدة من `src/db/schema.ts` (Drizzle Kit).
 - `src/app/api/` — مسارات API.
 - `src/lib/` — منطق الخادم (الأمان، الطالب، تصحيح الاختبارات).
 - `tests/stage1/` — اختبارات الوحدة.
