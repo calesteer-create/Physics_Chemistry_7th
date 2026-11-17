@@ -52,7 +52,24 @@ npm run db:migrate              # تطبيق الـ migrations على القاع
 `db:generate` و`db:check` يعملان بمقارنة ملفات الـ schema مع ملفات الـ migrations
 المحفوظة محليًا فقط، لذا ينجحان حتى بدون `DATABASE_URL` (مناسبان للتحقق في CI
 أو في بيئة بلا قاعدة بيانات). أما `db:migrate` فيحتاج اتصالاً فعليًا بقاعدة
-PostgreSQL حقيقية عبر `DATABASE_URL`.
+PostgreSQL حقيقية عبر `DATABASE_URL`؛ وعند غياب `DATABASE_URL` يفشل فورًا برسالة
+واضحة من Drizzle Kit (`Please provide required params for Postgres driver: [x] url: ''`)
+دون أي محاولة اتصال فعلي ودون استخدام أي عنوان افتراضي.
+
+**تنبيه — قاعدة بيانات جديدة فقط:** ملف الـ migration الأول
+`drizzle/migrations/0000_init_schema.sql` هو migration **إنشائي** (`CREATE TABLE`)
+مخصَّص لقاعدة PostgreSQL **جديدة وفارغة** لا تحتوي أصلاً على الجداول
+(`students`, `lesson_progress`, `quiz_attempts`, `project_authoring_rules`).
+إن كانت قاعدة البيانات المستهدفة تحتوي هذه الجداول مسبقًا (من إعداد سابق يدوي
+أو من نسخة أقدم من المشروع)، فتشغيل `npm run db:migrate` مباشرة عليها سيفشل
+(تعارض مع جداول موجودة فعلاً) ولا يجوز تطبيق migration الإنشائي 0000 عليها كما
+هو. في هذه الحالة يجب اعتماد **baseline** مناسب أولاً: التحقق يدويًا من مطابقة
+بنية الجداول الحالية لما في `0000_init_schema.sql`، ثم تسجيل هذا الـ migration
+كمطبَّق مسبقًا في جدول تتبّع Drizzle (`drizzle.__drizzle_migrations`، بالمخطط
+`drizzle` والجدول `__drizzle_migrations` اللذين يُنشئهما Drizzle تلقائيًا عند أول
+تشغيل ناجح لـ `migrate`) دون تنفيذ الـ `CREATE TABLE` فعليًا — لا تشغيله مباشرة
+كأنها قاعدة جديدة. هذا إجراء حسّاس يتطلب مراجعة دقيقة لكل حالة على حدة، ولا
+تغطيه هذه المرحلة (P1-2) بأداة آلية.
 
 ## متغيرات البيئة
 
