@@ -35,10 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: تنزيل الشيفرة
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: تهيئة Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
@@ -70,10 +70,10 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: تنزيل الشيفرة
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: تهيئة Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
