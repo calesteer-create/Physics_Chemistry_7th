@@ -67,57 +67,58 @@ function ObserverLab() {
 
   const W = 640, H = 240;
 
-  const draw = useCallback(() => {
-    const cv = canvasRef.current; if (!cv) return;
-    const ctx = cv.getContext("2d")!;
-    tRef.current += 0.012;
-    const t = tRef.current;
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#f1f5f9";
-    ctx.fillRect(0, 0, W, H);
-
-    /* road */
-    ctx.fillStyle = "#cbd5e1"; ctx.fillRect(0, H - 60, W, 60);
-    ctx.strokeStyle = "#ffffff"; ctx.setLineDash([20, 16]); ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
-    ctx.setLineDash([]);
-
-    /* bus */
-    const busX = refChoice === "driver" ? W / 2 - 90 : (220 + (t * 60) % (W + 200) - 100);
-    drawBus(ctx, busX, H - 60);
-
-    /* walker inside bus */
-    const walkerOffX = refChoice === "driver" ? Math.sin(t * 2.2) * 22 : 0;
-    const walkerAbsX = busX + 68 + walkerOffX;
-    drawPerson(ctx, walkerAbsX, H - 90, "#ffb03a", "B");
-
-    /* seated passenger */
-    drawPerson(ctx, busX + 110, H - 90, "#3ce0f4", "A");
-
-    /* tree */
-    const treeX = refChoice === "driver" ? W * 0.75 - ((t * 60) % W) : W * 0.75;
-    drawTree(ctx, treeX, H - 60);
-
-    /* moon observer */
-    if (refChoice === "moon") {
-      ctx.fillStyle = "rgba(255,255,255,0.08)";
-      ctx.beginPath(); ctx.arc(W / 2, 42, 32, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#e8f0fc"; ctx.font = "bold 13px Cairo, sans-serif"; ctx.textAlign = "center";
-      ctx.fillText("رائد الفضاء", W / 2, 48);
-    }
-
-    raf.current = requestAnimationFrame(draw);
-  }, [refChoice]);
-
   useEffect(() => {
     const cv = canvasRef.current; if (!cv) return;
     cv.width = W; cv.height = H;
     cv.style.width = "100%"; cv.style.height = "auto";
     tRef.current = 0;
+
+    function draw() {
+      const cv = canvasRef.current; if (!cv) return;
+      const ctx = cv.getContext("2d")!;
+      tRef.current += 0.012;
+      const t = tRef.current;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#f1f5f9";
+      ctx.fillRect(0, 0, W, H);
+
+      /* road */
+      ctx.fillStyle = "#cbd5e1"; ctx.fillRect(0, H - 60, W, 60);
+      ctx.strokeStyle = "#ffffff"; ctx.setLineDash([20, 16]); ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+      ctx.setLineDash([]);
+
+      /* bus */
+      const busX = refChoice === "driver" ? W / 2 - 90 : (220 + (t * 60) % (W + 200) - 100);
+      drawBus(ctx, busX, H - 60);
+
+      /* walker inside bus */
+      const walkerOffX = refChoice === "driver" ? Math.sin(t * 2.2) * 22 : 0;
+      const walkerAbsX = busX + 68 + walkerOffX;
+      drawPerson(ctx, walkerAbsX, H - 90, "#ffb03a", "B");
+
+      /* seated passenger */
+      drawPerson(ctx, busX + 110, H - 90, "#3ce0f4", "A");
+
+      /* tree */
+      const treeX = refChoice === "driver" ? W * 0.75 - ((t * 60) % W) : W * 0.75;
+      drawTree(ctx, treeX, H - 60);
+
+      /* moon observer */
+      if (refChoice === "moon") {
+        ctx.fillStyle = "rgba(255,255,255,0.08)";
+        ctx.beginPath(); ctx.arc(W / 2, 42, 32, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#e8f0fc"; ctx.font = "bold 13px Cairo, sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("رائد الفضاء", W / 2, 48);
+      }
+
+      raf.current = requestAnimationFrame(draw);
+    }
+
     raf.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf.current);
-  }, [draw]);
+  }, [refChoice]);
 
   const refDesc: Record<Ref, { title: string; rows: { who: string; state: string; why: string }[] }> = {
     road: {
@@ -213,67 +214,68 @@ function PathLab() {
     return { x: W / 2 + 110 * Math.cos(angle), y: H / 2 + 75 * Math.sin(angle) };
   }, [path, speed]);
 
-  const draw = useCallback(() => {
-    const cv = canvasRef.current; if (!cv) return;
-    const ctx = cv.getContext("2d")!;
-    tRef.current += 0.025;
-    const t = tRef.current;
-    const pos = getPos(t);
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0d1b2e"; ctx.fillRect(0, 0, W, H);
-
-    /* دليل المسار */
-    ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
-    ctx.beginPath();
-    if (path === "straight") { ctx.moveTo(60, H / 2); ctx.lineTo(W - 60, H / 2); }
-    else if (path === "curved") {
-      for (let p = 0; p <= Math.PI * 2; p += 0.05) {
-        const x = 60 + (W - 120) * (p / (Math.PI * 2)), y = H / 2 - Math.sin(p) * 90;
-        p === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-    } else { ctx.ellipse(W / 2, H / 2, 110, 75, 0, 0, Math.PI * 2); }
-    ctx.stroke(); ctx.setLineDash([]);
-
-    /* trail */
-    if (trail) {
-      dots.current.push({ x: pos.x, y: pos.y, a: 1 });
-      if (dots.current.length > 90) dots.current.shift();
-      dots.current.forEach((d, i) => {
-        const alpha = (i / dots.current.length) * 0.6;
-        const r = 1 + (i / dots.current.length) * 3;
-        ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0,229,255,${alpha})`; ctx.fill();
-      });
-    }
-
-    /* الجسم المتحرك */
-    const grd = ctx.createRadialGradient(pos.x - 4, pos.y - 4, 2, pos.x, pos.y, 14);
-    grd.addColorStop(0, "#ffffff"); grd.addColorStop(1, "#0066cc");
-    ctx.beginPath(); ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
-    ctx.fillStyle = grd; ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 2; ctx.stroke();
-
-    /* المسافة المقطوعة */
-    const totalDots = dots.current.length;
-    let d = 0;
-    for (let i = 1; i < totalDots; i++) {
-      d += Math.hypot(dots.current[i].x - dots.current[i - 1].x, dots.current[i].y - dots.current[i - 1].y);
-    }
-
-    ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.font = "bold 12px Cairo, sans-serif"; ctx.textAlign = "left";
-    ctx.fillText(`المسافة المقطوعة: ${Math.round(d)} وحدة`, 16, 24);
-
-    raf.current = requestAnimationFrame(draw);
-  }, [path, speed, trail, getPos]);
-
   useEffect(() => {
     const cv = canvasRef.current; if (!cv) return;
     cv.width = W; cv.height = H;
     tRef.current = 0; dots.current = [];
+
+    function draw() {
+      const cv = canvasRef.current; if (!cv) return;
+      const ctx = cv.getContext("2d")!;
+      tRef.current += 0.025;
+      const t = tRef.current;
+      const pos = getPos(t);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#0d1b2e"; ctx.fillRect(0, 0, W, H);
+
+      /* دليل المسار */
+      ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
+      ctx.beginPath();
+      if (path === "straight") { ctx.moveTo(60, H / 2); ctx.lineTo(W - 60, H / 2); }
+      else if (path === "curved") {
+        for (let p = 0; p <= Math.PI * 2; p += 0.05) {
+          const x = 60 + (W - 120) * (p / (Math.PI * 2)), y = H / 2 - Math.sin(p) * 90;
+          p === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+      } else { ctx.ellipse(W / 2, H / 2, 110, 75, 0, 0, Math.PI * 2); }
+      ctx.stroke(); ctx.setLineDash([]);
+
+      /* trail */
+      if (trail) {
+        dots.current.push({ x: pos.x, y: pos.y, a: 1 });
+        if (dots.current.length > 90) dots.current.shift();
+        dots.current.forEach((d, i) => {
+          const alpha = (i / dots.current.length) * 0.6;
+          const r = 1 + (i / dots.current.length) * 3;
+          ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0,229,255,${alpha})`; ctx.fill();
+        });
+      }
+
+      /* الجسم المتحرك */
+      const grd = ctx.createRadialGradient(pos.x - 4, pos.y - 4, 2, pos.x, pos.y, 14);
+      grd.addColorStop(0, "#ffffff"); grd.addColorStop(1, "#0066cc");
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = grd; ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 2; ctx.stroke();
+
+      /* المسافة المقطوعة */
+      const totalDots = dots.current.length;
+      let d = 0;
+      for (let i = 1; i < totalDots; i++) {
+        d += Math.hypot(dots.current[i].x - dots.current[i - 1].x, dots.current[i].y - dots.current[i - 1].y);
+      }
+
+      ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.font = "bold 12px Cairo, sans-serif"; ctx.textAlign = "left";
+      ctx.fillText(`المسافة المقطوعة: ${Math.round(d)} وحدة`, 16, 24);
+
+      raf.current = requestAnimationFrame(draw);
+    }
+
     raf.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf.current);
-  }, [draw]);
+  }, [path, trail, getPos]);
 
   const labels: Record<Path, string> = {
     straight: "المسار المستقيم — مثل السيارة على أوتوستراد مستقيم",

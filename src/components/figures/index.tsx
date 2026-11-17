@@ -165,7 +165,12 @@ export function NotebookFigure({ figure }: { figure: FigureRef }) {
   const Svg = figure.kind === "svg" ? FIGURES[figure.src] : undefined;
   return (
     <div className="mt-3 flex justify-center rounded-xl border-2 border-[#c9b98c] bg-white/70 p-5">
-      {Svg ? <Svg /> : <img src={figure.src} alt={figure.alt} className="h-auto max-w-full" />}
+      {Svg ? (
+        <Svg />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={figure.src} alt={figure.alt} className="h-auto max-w-full" />
+      )}
     </div>
   );
 }

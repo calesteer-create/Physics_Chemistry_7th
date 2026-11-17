@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Gauge, Magnet, MoveHorizontal, RotateCcw } from "lucide-react";
 import { TeX } from "@/components/math/TeX";
 
@@ -59,107 +59,108 @@ function ForceEffectLab() {
   const velRef = useRef(0);
   const stretchRef = useRef(0);
 
-  const draw = useCallback(() => {
-    const cv = canvasRef.current; if (!cv) return;
-    const ctx = cv.getContext("2d")!;
-    const W = cv.width, H = cv.height;
-    tRef.current += 1;
-    ctx.clearRect(0, 0, W, H);
-    // bg
-    ctx.fillStyle = "#0a1628"; ctx.fillRect(0, 0, W, H);
-
-    if (mode === "motion") {
-      // apply force
-      const acc = force * 0.4;
-      velRef.current = Math.min(velRef.current + acc * 0.06, force * 2.8);
-      bodyXRef.current += velRef.current;
-      if (bodyXRef.current > W + 50) { bodyXRef.current = -50; velRef.current = 0; }
-
-      // road
-      ctx.fillStyle = "#1c2d44"; ctx.fillRect(0, H - 60, W, 60);
-      ctx.strokeStyle = "rgba(255,255,255,0.15)"; ctx.setLineDash([22, 16]); ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
-      ctx.setLineDash([]);
-
-      // force arrow above car
-      if (force > 0) {
-        const ax = bodyXRef.current + 50, ay = H - 100;
-        const arrowLen = 20 + force * 18;
-        ctx.strokeStyle = "#ffb03a"; ctx.lineWidth = 4; ctx.lineCap = "round";
-        ctx.beginPath(); ctx.moveTo(ax - arrowLen, ay); ctx.lineTo(ax + 10, ay); ctx.stroke();
-        ctx.fillStyle = "#ffb03a";
-        ctx.beginPath(); ctx.moveTo(ax + 18, ay); ctx.lineTo(ax + 2, ay - 9); ctx.lineTo(ax + 2, ay + 9); ctx.fill();
-        // F label
-        ctx.fillStyle = "#ffb03a"; ctx.font = "bold 14px Cairo, sans-serif"; ctx.textAlign = "center";
-        ctx.fillText(`F = ${force * 10} N`, ax - arrowLen / 2, ay - 10);
-      }
-      // car body
-      const cx = bodyXRef.current;
-      ctx.fillStyle = "#2563eb";
-      ctx.beginPath(); ctx.roundRect(cx, H - 92, 100, 32, 10); ctx.fill();
-      ctx.fillStyle = "#1d4ed8";
-      ctx.beginPath(); ctx.roundRect(cx, H - 60, 100, 18, [0, 0, 10, 10]); ctx.fill();
-      // windows
-      ctx.fillStyle = "rgba(219,234,254,0.9)";
-      ctx.fillRect(cx + 14, H - 88, 28, 16); ctx.fillRect(cx + 56, H - 88, 28, 16);
-      // wheels
-      [25, 75].forEach(dx => {
-        ctx.fillStyle = "#0f172a";
-        ctx.beginPath(); ctx.arc(cx + dx, H - 42, 11, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(cx + dx, H - 42, 11, 0, Math.PI * 2); ctx.stroke();
-      });
-      // speed label
-      ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "12px Cairo, sans-serif"; ctx.textAlign = "left";
-      ctx.fillText(`سرعة: ${velRef.current.toFixed(1)} وحدة/ث`, 12, 24);
-
-    } else {
-      // SHAPE mode: spring
-      ctx.fillStyle = "#334155";
-      ctx.fillRect(W / 2 - 32, 20, 64, 20);
-      // spring coils
-      const coils = 6;
-      const baseY = 40, maxStretch = 80;
-      stretchRef.current = Math.min(stretchRef.current + force * 1.5, maxStretch);
-      if (!force) stretchRef.current = Math.max(stretchRef.current - 3, 0);
-      const springH = 60 + stretchRef.current;
-      for (let i = 0; i < coils; i++) {
-        const y1 = baseY + (i / coils) * springH;
-        const y2 = baseY + ((i + 0.5) / coils) * springH;
-        const y3 = baseY + ((i + 1) / coils) * springH;
-        ctx.strokeStyle = "#60a5fa"; ctx.lineWidth = 4; ctx.lineCap = "round";
-        ctx.beginPath(); ctx.moveTo(W / 2, y1); ctx.quadraticCurveTo(W / 2 + 36, y2, W / 2, y3); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(W / 2, y1); ctx.quadraticCurveTo(W / 2 - 36, y2, W / 2, y3); ctx.stroke();
-      }
-      // weight
-      const weightY = baseY + springH + 2;
-      ctx.fillStyle = "#ffb03a";
-      ctx.beginPath(); ctx.roundRect(W / 2 - 30, weightY, 60, 36, 10); ctx.fill();
-      // force arrow on weight
-      if (force > 0) {
-        ctx.strokeStyle = "#dc2626"; ctx.lineWidth = 5; ctx.lineCap = "round";
-        const arrowLen = 20 + force * 20;
-        ctx.beginPath(); ctx.moveTo(W / 2, weightY + 36); ctx.lineTo(W / 2, weightY + 36 + arrowLen); ctx.stroke();
-        ctx.fillStyle = "#dc2626";
-        ctx.beginPath(); ctx.moveTo(W / 2, weightY + 36 + arrowLen + 12); ctx.lineTo(W / 2 - 10, weightY + 36 + arrowLen); ctx.lineTo(W / 2 + 10, weightY + 36 + arrowLen); ctx.fill();
-        ctx.fillStyle = "#fca5a5"; ctx.font = "13px Cairo, sans-serif"; ctx.textAlign = "center";
-        ctx.fillText(`F = ${force * 10} N`, W / 2 + 55, weightY + 36 + arrowLen / 2);
-      }
-      // stretch indicator
-      ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "12px Cairo, sans-serif"; ctx.textAlign = "left";
-      ctx.fillText(`الاستطالة: ${Math.round(stretchRef.current)} وحدة`, 12, H - 16);
-    }
-    rafRef.current = requestAnimationFrame(draw);
-  }, [force, mode]);
-
   useEffect(() => {
     const cv = canvasRef.current; if (!cv) return;
     cv.width = 560; cv.height = 240;
     cv.style.width = "100%"; cv.style.height = "auto";
     bodyXRef.current = 60; velRef.current = 0; stretchRef.current = 0;
+
+    function draw() {
+      const cv = canvasRef.current; if (!cv) return;
+      const ctx = cv.getContext("2d")!;
+      const W = cv.width, H = cv.height;
+      tRef.current += 1;
+      ctx.clearRect(0, 0, W, H);
+      // bg
+      ctx.fillStyle = "#0a1628"; ctx.fillRect(0, 0, W, H);
+
+      if (mode === "motion") {
+        // apply force
+        const acc = force * 0.4;
+        velRef.current = Math.min(velRef.current + acc * 0.06, force * 2.8);
+        bodyXRef.current += velRef.current;
+        if (bodyXRef.current > W + 50) { bodyXRef.current = -50; velRef.current = 0; }
+
+        // road
+        ctx.fillStyle = "#1c2d44"; ctx.fillRect(0, H - 60, W, 60);
+        ctx.strokeStyle = "rgba(255,255,255,0.15)"; ctx.setLineDash([22, 16]); ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // force arrow above car
+        if (force > 0) {
+          const ax = bodyXRef.current + 50, ay = H - 100;
+          const arrowLen = 20 + force * 18;
+          ctx.strokeStyle = "#ffb03a"; ctx.lineWidth = 4; ctx.lineCap = "round";
+          ctx.beginPath(); ctx.moveTo(ax - arrowLen, ay); ctx.lineTo(ax + 10, ay); ctx.stroke();
+          ctx.fillStyle = "#ffb03a";
+          ctx.beginPath(); ctx.moveTo(ax + 18, ay); ctx.lineTo(ax + 2, ay - 9); ctx.lineTo(ax + 2, ay + 9); ctx.fill();
+          // F label
+          ctx.fillStyle = "#ffb03a"; ctx.font = "bold 14px Cairo, sans-serif"; ctx.textAlign = "center";
+          ctx.fillText(`F = ${force * 10} N`, ax - arrowLen / 2, ay - 10);
+        }
+        // car body
+        const cx = bodyXRef.current;
+        ctx.fillStyle = "#2563eb";
+        ctx.beginPath(); ctx.roundRect(cx, H - 92, 100, 32, 10); ctx.fill();
+        ctx.fillStyle = "#1d4ed8";
+        ctx.beginPath(); ctx.roundRect(cx, H - 60, 100, 18, [0, 0, 10, 10]); ctx.fill();
+        // windows
+        ctx.fillStyle = "rgba(219,234,254,0.9)";
+        ctx.fillRect(cx + 14, H - 88, 28, 16); ctx.fillRect(cx + 56, H - 88, 28, 16);
+        // wheels
+        [25, 75].forEach(dx => {
+          ctx.fillStyle = "#0f172a";
+          ctx.beginPath(); ctx.arc(cx + dx, H - 42, 11, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(cx + dx, H - 42, 11, 0, Math.PI * 2); ctx.stroke();
+        });
+        // speed label
+        ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "12px Cairo, sans-serif"; ctx.textAlign = "left";
+        ctx.fillText(`سرعة: ${velRef.current.toFixed(1)} وحدة/ث`, 12, 24);
+
+      } else {
+        // SHAPE mode: spring
+        ctx.fillStyle = "#334155";
+        ctx.fillRect(W / 2 - 32, 20, 64, 20);
+        // spring coils
+        const coils = 6;
+        const baseY = 40, maxStretch = 80;
+        stretchRef.current = Math.min(stretchRef.current + force * 1.5, maxStretch);
+        if (!force) stretchRef.current = Math.max(stretchRef.current - 3, 0);
+        const springH = 60 + stretchRef.current;
+        for (let i = 0; i < coils; i++) {
+          const y1 = baseY + (i / coils) * springH;
+          const y2 = baseY + ((i + 0.5) / coils) * springH;
+          const y3 = baseY + ((i + 1) / coils) * springH;
+          ctx.strokeStyle = "#60a5fa"; ctx.lineWidth = 4; ctx.lineCap = "round";
+          ctx.beginPath(); ctx.moveTo(W / 2, y1); ctx.quadraticCurveTo(W / 2 + 36, y2, W / 2, y3); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(W / 2, y1); ctx.quadraticCurveTo(W / 2 - 36, y2, W / 2, y3); ctx.stroke();
+        }
+        // weight
+        const weightY = baseY + springH + 2;
+        ctx.fillStyle = "#ffb03a";
+        ctx.beginPath(); ctx.roundRect(W / 2 - 30, weightY, 60, 36, 10); ctx.fill();
+        // force arrow on weight
+        if (force > 0) {
+          ctx.strokeStyle = "#dc2626"; ctx.lineWidth = 5; ctx.lineCap = "round";
+          const arrowLen = 20 + force * 20;
+          ctx.beginPath(); ctx.moveTo(W / 2, weightY + 36); ctx.lineTo(W / 2, weightY + 36 + arrowLen); ctx.stroke();
+          ctx.fillStyle = "#dc2626";
+          ctx.beginPath(); ctx.moveTo(W / 2, weightY + 36 + arrowLen + 12); ctx.lineTo(W / 2 - 10, weightY + 36 + arrowLen); ctx.lineTo(W / 2 + 10, weightY + 36 + arrowLen); ctx.fill();
+          ctx.fillStyle = "#fca5a5"; ctx.font = "13px Cairo, sans-serif"; ctx.textAlign = "center";
+          ctx.fillText(`F = ${force * 10} N`, W / 2 + 55, weightY + 36 + arrowLen / 2);
+        }
+        // stretch indicator
+        ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "12px Cairo, sans-serif"; ctx.textAlign = "left";
+        ctx.fillText(`الاستطالة: ${Math.round(stretchRef.current)} وحدة`, 12, H - 16);
+      }
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
     rafRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [draw, mode]);
+  }, [force, mode]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
