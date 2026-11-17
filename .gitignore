@@ -9,9 +9,10 @@ out/
 coverage/
 .turbo/
 *.log
+*.tsbuildinfo
 
 .DS_Store
 Thumbs.db
 
-# حالة ربط Vercel المحلية
+# مخرجات أدوات لم تعد مستخدمة (يُتجاهلها لو بقيت محليًا)
 .vercel/

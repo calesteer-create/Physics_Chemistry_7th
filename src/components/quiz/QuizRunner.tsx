@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Award, RotateCcw, Send, Timer } from "lucide-react";
 import type { QuizPublic } from "@/content/types";
@@ -22,24 +23,30 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
   );
   const complete = answeredCount === quiz.questions.length;
 
-  async function submit() {
+  /**
+   * تسليم محلي بالكامل: الموقع ثابت بلا خادم، فلا يوجد نداء شبكي ولا حفظ للنتيجة.
+   * يُتحقَّق من اكتمال الإجابات وصلاحيتها في المتصفح بنفس قواعد البوابة السابقة
+   * (كل الأسئلة مجابة بقيمة من نوعها)، ثم تُعرض شاشة التسليم كما هي.
+   */
+  function submit() {
     setSubmitting(true);
     setError(null);
-    try {
-      const res = await fetch(`/api/quizzes/${quiz.id}/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || "fail");
-      setResult(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setError("تعذّر تسليم الاختبار. تحقق من اتصالك وحاول مجددًا.");
-    } finally {
+
+    const incomplete = quiz.questions.some((q) => {
+      const value = answers[q.id];
+      if (value === undefined || value === null) return true;
+      if (q.type === "fill") return typeof value !== "string" || value.trim() === "";
+      return false;
+    });
+    if (incomplete) {
+      setError("أجب عن جميع الأسئلة قبل تسليم الاختبار.");
       setSubmitting(false);
+      return;
     }
+
+    setResult(true);
+    setSubmitting(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function retry() {
@@ -56,8 +63,8 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
           <Award className="mx-auto h-14 w-14 text-[var(--color-phys)]" />
           <h2 className="mt-4 text-[28px] font-black text-white">تم تسليم الاختبار</h2>
           <p className="mt-2 text-[14px] font-bold leading-8 text-[var(--color-mist)]">
-            لحماية إجابات الاختبار، لا تُعرض الدرجة أو صحة الإجابات ولا تُحفظ هذه المحاولة حالياً.
-            الحلول التفصيلية متاحة في منطقة المعلم.
+            لا تُعرض الدرجة أو صحة الإجابات ولا تُحفظ هذه المحاولة، تماماً كما كان في النسخة السابقة.
+            تصحيح ذاتي: راجع أسئلة الكتاب وحلولها داخل الدرس، ثم أعد المحاولة.
           </p>
         </div>
         <div className="mt-10 flex flex-wrap gap-4">
@@ -65,9 +72,9 @@ export function QuizRunner({ quiz }: { quiz: QuizPublic }) {
             <RotateCcw className="h-5 w-5" /> أعد المحاولة
           </button>
           {quiz.lessonSlug && (
-            <a href={`/lessons/${quiz.lessonSlug}`} className="btn btn-phys">
+            <Link href={`/lessons/${quiz.lessonSlug}`} className="btn btn-phys">
               <RotateCcw className="h-5 w-5" /> عُد إلى الدرس وراجع
-            </a>
+            </Link>
           )}
         </div>
       </div>

@@ -20,6 +20,4 @@ export const NAV = [
   { href: "/units", label: "الوحدات الدراسية" },
   { href: "/lab", label: "المختبر" },
   { href: "/quizzes", label: "الاختبارات" },
-  { href: "/student", label: "منطقة الطالب" },
-  { href: "/teacher", label: "منطقة المعلم" },
 ] as const;

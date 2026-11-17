@@ -1,4 +1,3 @@
-import "server-only";
 import type { QuizAnswer, QuizFull } from "../content/quiz-bank";
 import type { QuizQuestion } from "../content/types";
 

@@ -2,9 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowRight, ClipboardCheck, Lightbulb, ListOrdered, ShieldCheck, Timer } from "lucide-react";
-import { getQuizFull, sanitizeQuiz } from "@/content/quiz-bank";
+import { getQuizFull, listQuizzesMeta, sanitizeQuiz } from "@/content/quiz-bank";
 import { QuizRunner } from "@/components/quiz/QuizRunner";
 import { Reveal } from "@/components/ui/Reveal";
+
+/** التصدير الثابت يتطلب تعداد كل معرّفات الاختبارات وقت البناء. */
+export function generateStaticParams() {
+  return listQuizzesMeta().map((q) => ({ id: q.id }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;

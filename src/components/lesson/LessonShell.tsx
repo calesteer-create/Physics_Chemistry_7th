@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, NotebookPen } from "lucide-react";
 
 export interface StageNavItem {
@@ -12,22 +12,19 @@ export interface StageNavItem {
 
 /**
  * هيكل الدرس — نظام تبويبات (Tabs) وليس تمريرًا سرديًا:
- * شريط جانبي بالمراحل + أزرار «السابق / التالي» + حفظ تقدم تلقائي.
+ * شريط جانبي بالمراحل + أزرار «السابق / التالي» + تتبّع التقدم داخل الجلسة
+ * (الموقع ثابت بلا خادم: لا يُحفظ التقدم بين الزيارات).
  */
 export function LessonShell({
-  slug,
   stages,
   children,
 }: {
-  slug: string;
   stages: StageNavItem[];
   /** يجب أن يكون children مصفوفة عناصر بنفس ترتيب stages */
   children: ReactNode;
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [maxSeen, setMaxSeen] = useState(0);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSaved = useRef(-1);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const active = stages[activeIdx] ?? stages[0];
@@ -47,28 +44,6 @@ export function LessonShell({
     setMaxSeen((m) => Math.max(m, clamped));
     contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [stages.length]);
-
-  // حفظ التقدم (مهدّد)
-  useEffect(() => {
-    if (maxSeen === lastSaved.current) return;
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      lastSaved.current = maxSeen;
-      const notebook = stages.find((s) => s.notebook);
-      fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lessonSlug: slug,
-          stageIndex: maxSeen,
-          notebookViewed: notebook ? maxSeen >= notebook.index : false,
-        }),
-      }).catch(() => {});
-    }, 900);
-    return () => {
-      if (saveTimer.current) clearTimeout(saveTimer.current);
-    };
-  }, [maxSeen, slug, stages]);
 
   const isFirst = activeIdx === 0;
   const isLast = activeIdx === stages.length - 1;

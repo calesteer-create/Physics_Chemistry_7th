@@ -252,7 +252,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
 
       {/* المراحل (نظام تبويبات) */}
       <div className="mt-14">
-        <LessonShell slug={lesson.slug} stages={navItems}>
+        <LessonShell stages={navItems}>
           {stageElements}
         </LessonShell>
       </div>
