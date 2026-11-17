@@ -7,36 +7,25 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test tests/stage1/*.test.ts tests/stage2/*.test.ts",
-    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
-    "test:integration": "node scripts/stage1-verify.mjs",
-    "db:generate": "drizzle-kit generate",
-    "db:check": "drizzle-kit check",
-    "db:migrate": "drizzle-kit migrate"
+    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
+    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/cairo": "^5.3.0",
     "@types/katex": "^0.16.8",
-    "dotenv": "17.3.1",
-    "drizzle-orm": "0.45.2",
     "katex": "^0.19.1",
     "lucide-react": "^1.73.0",
     "next": "16.4.2",
-    "pg": "8.20.0",
     "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "server-only": "^0.0.1"
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",
     "@types/node": "22.19.15",
-    "@types/pg": "8.18.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.4.2",
     "postcss": "8.5.23",

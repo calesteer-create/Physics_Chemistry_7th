@@ -1,23 +1,14 @@
-# بناء المنصة والتحقق منها، ثم نشرها على Vercel (بيئة الإنتاج).
+# نشر المنصة كموقع ثابت (Static Export) على GitHub Pages.
 #
-# لماذا Vercel: تشغيل Next.js 16 كاملاً (App Router، proxy/middleware، مسارات API،
-# العرض على الخادم) دون تعديل إعدادات المشروع، مع دعم قاعدة PostgreSQL خارجية
-# عبر `DATABASE_URL` — بخلاف GitHub Pages الذي يخدم ملفات ثابتة فقط.
+# لماذا GitHub Pages: المنصة تعليمية بالكامل في المتصفح — لا حسابات، ولا قاعدة
+# بيانات، ولا مسارات API. لذلك تُبنى مرة واحدة إلى ملفات HTML/CSS/JS في `out/`
+# وتُخدم كملفات ثابتة تحت مسار المستودع `/Physics_Chemistry_7th/`.
 #
-# لا تُحفظ أي أسرار في المستودع. تُضبط في:
-#   - أسرار المستودع (Settings → Secrets and variables → Actions):
-#       VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID
-#   - متغيّرات بيئة مشروع Vercel (Settings → Environment Variables):
-#       DATABASE_URL / TEACHER_PASSWORD / TEACHER_SESSION_SECRET / STUDENT_SESSION_SECRET
-#
-# السلوك المقصود:
-#   - النشر على `main` فقط (push أو تشغيل يدوي). أي فرع آخر أو PR = فحص فقط.
-#   - عند غياب أي من أسرار Vercel الثلاثة تظهر مهمة النشر كـ **skipped** (لا
-#     تُنفَّذ خطوة نشر واحدة)، ويُكتب سبب التخطي في ملخّص التشغيل.
-#   - عند توفّرها تُنفَّذ خطوة النشر فعليًا، وأي فشل فيها يُفشل التشغيل (لا يُحجب
-#     بسبب الأنابيب: pipefail مُفعَّل).
+# لا أسرار ولا متغيّرات بيئة مطلوبة: أي push على `main` (أو تشغيل يدوي) يبني
+# ويتحقق ثم ينشر تلقائياً. التحقق (lint + typecheck + اختبارات) يسبق النشر، وأي
+# فشل فيه يمنع النشر ويُبقي النسخة السابقة على الرابط.
 
-name: Build & Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -30,7 +21,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -59,80 +50,75 @@ jobs:
       - name: اختبارات الوحدة
         run: npm test
 
-      # البناء لا يحتاج DATABASE_URL (التهيئة متأخرة في src/db/index.ts).
-      - name: بناء الإنتاج
+      # التصدير الثابت: ينتج مجلد `out/` كاملاً بلا قاعدة بيانات وبلا أسرار.
+      - name: بناء الموقع الثابت
         run: npm run build
 
-  # بوابة منفصلة: تُقرأ الأسرار مرة واحدة، ويُبنى قرار النشر على ناتجها.
-  # إن غاب أي سرّ تظهر مهمة النشر التالية كـ skipped بدل أن تبدو ناجحة.
-  gate:
-    name: التحقق من أسرار النشر
+      # تحقق من مخرجات البناء نفسها: كل صفحة مطلوبة موجودة كـ index.html،
+      # ومجلد `_next` للأصول موجود، وملف `.nojekyll` موجود (وإلا حجب Jekyll `_next`).
+      - name: التحقق من مخرجات التصدير
+        run: |
+          set -euo pipefail
+          test -d out
+          test -f out/.nojekyll
+          test -d out/_next
+          for page in \
+            index.html \
+            units/index.html \
+            lab/index.html \
+            quizzes/index.html \
+            lessons/platform-orientation/index.html \
+            lessons/motion-and-rest/index.html \
+            lessons/force-and-motion/index.html \
+            lessons/forces-on-one-support/index.html \
+            quizzes/quiz-orientation/index.html \
+            quizzes/quiz-motion-1/index.html \
+            quizzes/quiz-force-2/index.html \
+            quizzes/quiz-one-support-3/index.html \
+            units/unit-1/index.html \
+            404.html
+          do
+            if [ ! -f "out/$page" ]; then
+              echo "::error title=مفقود::الصفحة المطلوبة غير موجودة في التصدير: $page"
+              exit 1
+            fi
+          done
+          if grep -RqE 'href="/[^P"]|src="/[^P"]' out --include='*.html'; then
+            echo "::error title=مسار جذري::وُجد رابط أو أصل مطلق لا يمرّ عبر /Physics_Chemistry_7th/"
+            grep -RhoE '(href|src)="/[^P"][^"]*"' out --include='*.html' | sort -u | head -20
+            exit 1
+          fi
+          {
+            echo "### ✅ تم التحقق من التصدير الثابت"
+            echo ""
+            echo "الصفحات المولودة: $(find out -name 'index.html' | wc -l) + صفحة 404."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: رفع مخرجات الموقع
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: out
+
+  deploy:
+    name: النشر على GitHub Pages
     needs: verify
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    outputs:
-      ready: ${{ steps.secrets.outputs.ready }}
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: فحص توفّر أسرار Vercel الثلاثة
-        id: secrets
+      - name: النشر
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: ملخّص النشر
         run: |
-          set -euo pipefail
-          # ${VAR:-} كي لا يفشل الفحص بسبب set -u عند غياب المتغيّر كليًا.
-          if [ -n "${VERCEL_TOKEN:-}" ] && [ -n "${VERCEL_ORG_ID:-}" ] && [ -n "${VERCEL_PROJECT_ID:-}" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "أسرار النشر الثلاثة متوفّرة — سيتم النشر." >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            {
-              echo "### لم يُنفَّذ النشر: أسرار Vercel غير مضبوطة"
-              echo ""
-              echo "المطلوب في Settings → Secrets and variables → Actions:"
-              echo '`VERCEL_TOKEN` و`VERCEL_ORG_ID` و`VERCEL_PROJECT_ID`'
-              echo ""
-              echo "إن كان المستودع مربوطًا بـ Vercel من لوحة Vercel (Git Integration)"
-              echo "فالنشر يحدث هناك مباشرةً ولا حاجة لهذه الخطوة."
-              echo ""
-              echo "الخطوات الكاملة في \`DEPLOY.md\`."
-            } >> "$GITHUB_STEP_SUMMARY"
-            echo "::notice title=Deploy skipped::أسرار Vercel غير مضبوطة — مهمة النشر ستكون skipped."
-          fi
-
-  deploy:
-    name: نشر الإنتاج على Vercel
-    needs: gate
-    if: needs.gate.outputs.ready == 'true'
-    runs-on: ubuntu-latest
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    steps:
-      - name: تنزيل الشيفرة
-        uses: actions/checkout@v5
-
-      - name: تهيئة Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: تثبيت Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: جلب إعدادات المشروع
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-
-      - name: النشر للإنتاج
-        run: |
-          set -euo pipefail
-          vercel deploy --prod --yes --token="$VERCEL_TOKEN" 2>&1 | tee deploy.log
-          url="$(grep -Eo 'https://[A-Za-z0-9._-]+\.vercel\.app' deploy.log | tail -n1 || true)"
           {
-            echo "### ✅ تم النشر"
+            echo "### ✅ تم النشر على GitHub Pages"
             echo ""
-            echo "**الرابط:** ${url:-راجع سجل الخطوة أعلاه}"
+            echo "**الرابط:** ${{ steps.deployment.outputs.page_url }}"
           } >> "$GITHUB_STEP_SUMMARY"

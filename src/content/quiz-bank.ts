@@ -1,4 +1,3 @@
-import "server-only";
 import type { QuizPublic, QuizQuestion, Rich } from "./types";
 
 /**

@@ -1,4 +1,3 @@
-import "server-only";
 import type { QuizFull } from "../content/quiz-bank";
 import { assertQuizIsGradeable } from "./quiz-integrity";
 
