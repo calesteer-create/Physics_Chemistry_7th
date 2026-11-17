@@ -12,14 +12,22 @@ const base = `http://127.0.0.1:${port}`;
 const db = 'postgresql://placeholder:placeholder@127.0.0.1:5432/not-a-real-db';
 const password = 'stage1-integration-password';
 const secret = 'stage1-integration-test-only-not-a-real-secret-0123456789abcdef';
+const studentSecret = 'stage1-integration-student-only-not-a-real-secret-0123456789abcdef';
 const oldSecret = 'insecure-dev-secret-change-me';
+const studentId = '11111111-1111-4111-8111-111111111111';
 const answers = { q1: 0, q2: 0, q3: false, q4: 0, q5: 'x', q6: 0, q7: false, q8: 0, q9: 0, q10: 'x' };
 const env = { ...process.env, DATABASE_URL: db };
 delete env.TEACHER_PASSWORD;
 delete env.TEACHER_SESSION_SECRET;
+delete env.STUDENT_SESSION_SECRET;
 function check(name, actual, expected) { assert.equal(actual, expected, name); console.log(`PASS ${name}: ${actual}`); }
 function forge(key, version = true) {
   const payload = `${version ? 'v2.' : ''}${Date.now() + 3600000}`;
+  return `${payload}.${createHmac('sha256', key).update(payload).digest('hex')}`;
+}
+// P1-4b: صيغة جلسة الطالب: v1.<studentId>.<expiry>.<sig>
+function forgeStudent(key, id) {
+  const payload = `v1.${id}.${Date.now() + 3600000}`;
   return `${payload}.${createHmac('sha256', key).update(payload).digest('hex')}`;
 }
 async function runServer(serverEnv, fn) {
@@ -53,6 +61,18 @@ await runServer(env, async () => {
   }
   const login = await post('/api/teacher/login', { password });
   check('unconfigured login', login.status, 503);
+  // P1-4b: بلا STUDENT_SESSION_SECRET لا تُصدر جلسة طالب ولا تُنشأ ملفات طلاب.
+  const registration = await post('/api/students', { name: 'طالب اختبار' });
+  check('unconfigured student registration', registration.status, 503);
+  assert.ok(!registration.headers.get('set-cookie')?.includes('student_session='));
+  // الكوكي القديمة غير الموقّعة لا تمنح حفظ أي تقدّم.
+  const legacyProgress = await post('/api/progress', { lessonSlug: 'motion-and-rest', stageIndex: 1 }, `student_id=${studentId}`);
+  check('legacy unsigned cookie grants no progress', legacyProgress.status, 200);
+  assert.deepEqual(await legacyProgress.json(), { ok: true, saved: false });
+  // رمز جلسة مزوّر (توقيع خاطئ) لا يمنح حفظاً.
+  const forgedProgress = await post('/api/progress', { lessonSlug: 'motion-and-rest', stageIndex: 1 }, `student_session=${forgeStudent('wrong-secret-value-0000000000000000', studentId)}`);
+  check('forged student session grants no progress', forgedProgress.status, 200);
+  assert.deepEqual(await forgedProgress.json(), { ok: true, saved: false });
   for (const payload of [{ answers: {} }, { answers: { q1: 0 } }, { answers: null }]) {
     const r = await post('/api/quizzes/quiz-motion-1/submit', payload);
     check('incomplete submission', r.status, 400);
@@ -86,7 +106,7 @@ await runServer(envNoDb, async () => {
   assert.deepEqual(await health.json(), { ok: false });
   check('static quiz page without DATABASE_URL', (await get('/quizzes')).status, 200);
 });
-await runServer({ ...env, TEACHER_PASSWORD: password, TEACHER_SESSION_SECRET: secret }, async () => {
+await runServer({ ...env, TEACHER_PASSWORD: password, TEACHER_SESSION_SECRET: secret, STUDENT_SESSION_SECRET: studentSecret }, async () => {
   for (const [name, key, version] of [['old', oldSecret, true], ['database-derived', `derived:${db}`, true], ['password-derived', `derived:${password}`, true], ['legacy even with current key', secret, false]]) {
     const r = await get('/teacher', `teacher_session=${forge(key, version)}`);
     check(`configured /teacher ${name}`, r.status, 307);
@@ -102,6 +122,18 @@ await runServer({ ...env, TEACHER_PASSWORD: password, TEACHER_SESSION_SECRET: se
   const result = await post('/api/quizzes/quiz-motion-1/submit', { answers }, cookie);
   check('teacher complete submission', result.status, 200);
   assert.deepEqual(await result.json(), { ok: true });
+  // P1-4b: جلسة طالب موقّعة لطالب بلا سجلّ في القاعدة ⇒ لا ملكية ولا حفظ.
+  const signedNoRecord = await post('/api/progress', { lessonSlug: 'motion-and-rest', stageIndex: 1 }, `student_session=${forgeStudent(studentSecret, studentId)}`);
+  check('signed session without a student record grants no progress', signedNoRecord.status, 200);
+  assert.deepEqual(await signedNoRecord.json(), { ok: true, saved: false });
+  // P1-4b: الكوكي القديمة غير الموقّعة لا تُقرأ إطلاقاً.
+  const legacyProgress = await post('/api/progress', { lessonSlug: 'motion-and-rest', stageIndex: 1 }, `student_id=${studentId}`);
+  check('legacy unsigned cookie grants no progress', legacyProgress.status, 200);
+  assert.deepEqual(await legacyProgress.json(), { ok: true, saved: false });
+  // P1-4b: فشل إنشاء الملف ⇒ لا جلسة تُصدر.
+  const registration = await post('/api/students', { name: 'طالب اختبار' });
+  check('student registration without a database', registration.status, 500);
+  assert.ok(!registration.headers.get('set-cookie')?.includes('student_session='));
 });
 const changed = execFileSync('git', ['diff', '--name-only', 'main', '--', 'src/content', 'src/components/lesson', 'src/components/figures', 'src/components/lab'], { encoding: 'utf8' }).trim();
 check('educational content files unchanged', changed, '');
