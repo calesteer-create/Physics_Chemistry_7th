@@ -47,7 +47,7 @@ export function ExplainedNonUniformMotionChart() {
     <ChartLayout W={440} H={310} ML={70} MR={50} MT={40} MB={64} xLabel="t(\mathrm{s})" yLabel="d(\mathrm{m})" xMax={4} yMax={18} gridX={[0,1,2,3,4]} gridY={[0,4,8,12,16]}>
       {({ sx, sy }) => (
         <>
-          <path d={`M${sx(0)},${sy(0)} Q${sx(2)},${sy(0)} ${sx(4)},${sy(16)}`} fill="none" stroke="var(--color-error)" strokeWidth="4.5" strokeLinecap="round" />
+          <polyline points={pts.map(([t, d]) => `${sx(t)},${sy(d)}`).join(" ")} fill="none" stroke="var(--color-error)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
           {pts.map(([t,d],i) => <circle key={i} cx={sx(t)} cy={sy(d)} r="6" fill="white" stroke="var(--color-error)" strokeWidth="3.5" />)}
         </>
       )}
