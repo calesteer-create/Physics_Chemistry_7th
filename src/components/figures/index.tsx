@@ -12,6 +12,7 @@ import {
   SkateboarderSVG,
   CarReferenceSVG,
 } from "./motion-charts";
+import { ExplainedNonUniformMotionChart, ExplainedSpeedometerSVG } from "./motion-explanation-figures";
 import {
   ForceVectorDiagram,
   HangingBallForcesDiagram,
@@ -110,6 +111,12 @@ const FIGURES: Record<string, () => ReactElement> = {
   "parachute": ParachuteFigure,
 };
 
+// رسوم محسّنة للشرح فقط؛ لا تدخل سجل رسوم دفتر الطالب.
+const EXPLANATION_FIGURES: Record<string, () => ReactElement> = {
+  "motion-explained-nonuniform": ExplainedNonUniformMotionChart,
+  "motion-explained-speedometer": () => <ExplainedSpeedometerSVG />,
+};
+
 /** مواصفة طريقة الإنتاج للعرض */
 const REPRO_LABEL: Record<FigureRef["reproduction"], string | null> = {
   redrawn: "رسم رقمي معاد إنتاجه",
@@ -119,7 +126,7 @@ const REPRO_LABEL: Record<FigureRef["reproduction"], string | null> = {
 };
 
 export function FigureBlock({ figure, caption }: { figure: FigureRef; caption?: Rich }) {
-  const Svg = figure.kind === "svg" ? FIGURES[figure.src] : undefined;
+  const Svg = figure.kind === "svg" ? (EXPLANATION_FIGURES[figure.src] ?? FIGURES[figure.src]) : undefined;
 
   return (
     <figure className="card overflow-hidden">
