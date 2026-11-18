@@ -155,7 +155,7 @@ export const motionAndRestLesson: Lesson = {
         { type: "heading", text: "الحركة غير المنتظمة (ص 9)", book: true },
         {
           type: "figure",
-          figure: { id: "nonuniform", kind: "svg", src: "non-uniform-motion-chart", alt: "خط بياني حركة غير منتظمة", bookPage: 9, reproduction: "redrawn", notebook: true },
+          figure: { id: "nonuniform", kind: "svg", src: "motion-explained-nonuniform", alt: "خط بياني حركة غير منتظمة", bookPage: 9, reproduction: "redrawn", notebook: false },
         },
         {
           type: "definition",
@@ -204,7 +204,7 @@ export const motionAndRestLesson: Lesson = {
         },
         {
           type: "figure",
-          figure: { id: "speedo", kind: "svg", src: "speedometer", alt: "عداد سرعة", bookPage: 12, reproduction: "redrawn", notebook: true },
+          figure: { id: "speedo", kind: "svg", src: "motion-explained-speedometer", alt: "عداد سرعة", bookPage: 12, reproduction: "redrawn", notebook: false },
           caption: [{ t: "عداد السرعة يعطي السرعة اللحظية — أي سرعة الجسم في هذه اللحظة بالذات." }],
         },
         {
