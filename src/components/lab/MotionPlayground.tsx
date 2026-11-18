@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Gauge, Orbit, Play, Radar,
   RotateCcw, Square,
 } from "lucide-react";
 import { TeX, SvgTeX } from "@/components/math/TeX";
+import { graphDistance, observerPositions, pathPoint } from "@/lib/motion-model";
 
 const TABS = [
   { id: "observer", label: "نسبية الحركة",   icon: Radar },
@@ -15,7 +16,7 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 type Ref   = "road" | "driver" | "moon";
 type Path  = "straight" | "curved" | "circle";
-type Mode  = "uniform" | "accelerating" | "stationary";
+type Mode  = "uniform" | "accelerating" | "decelerating" | "changing" | "stationary";
 
 /* ══════════════════ wrapper ══════════════════ */
 export function MotionPlayground() {
@@ -62,7 +63,7 @@ export function MotionPlayground() {
 function ObserverLab() {
   const [refChoice, setRefChoice] = useState<Ref>("road");
   const raf = useRef(0);
-  const tRef = useRef(0);
+  const epochRef = useRef(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const W = 640, H = 240;
@@ -71,13 +72,12 @@ function ObserverLab() {
     const cv = canvasRef.current; if (!cv) return;
     cv.width = W; cv.height = H;
     cv.style.width = "100%"; cv.style.height = "auto";
-    tRef.current = 0;
-
-    function draw() {
+    function draw(now: number) {
       const cv = canvasRef.current; if (!cv) return;
       const ctx = cv.getContext("2d")!;
-      tRef.current += 0.012;
-      const t = tRef.current;
+      if (!epochRef.current) epochRef.current = now;
+      const t = (now - epochRef.current) / 1000;
+      const positions = observerPositions(t, refChoice);
 
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#f1f5f9";
@@ -86,23 +86,29 @@ function ObserverLab() {
       /* road */
       ctx.fillStyle = "#cbd5e1"; ctx.fillRect(0, H - 60, W, 60);
       ctx.strokeStyle = "#ffffff"; ctx.setLineDash([20, 16]); ctx.lineWidth = 2.5;
+      ctx.lineDashOffset = -positions.ground;
       ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+      ctx.lineDashOffset = 0;
       ctx.setLineDash([]);
 
       /* bus */
-      const busX = refChoice === "driver" ? W / 2 - 90 : (220 + (t * 60) % (W + 200) - 100);
+      const busX = positions.bus;
       drawBus(ctx, busX, H - 60);
 
       /* walker inside bus */
-      const walkerOffX = refChoice === "driver" ? Math.sin(t * 2.2) * 22 : 0;
-      const walkerAbsX = busX + 68 + walkerOffX;
+      const walkerAbsX = positions.walker;
       drawPerson(ctx, walkerAbsX, H - 90, "#ffb03a", "B");
 
       /* seated passenger */
       drawPerson(ctx, busX + 110, H - 90, "#3ce0f4", "A");
 
+      /* شاخصة ثابتة على الطريق */
+      const signX = 90 + positions.ground;
+      ctx.fillStyle = "#64748b"; ctx.fillRect(signX - 2, H - 105, 4, 45);
+      ctx.fillStyle = "#dc2626"; ctx.beginPath(); ctx.arc(signX, H - 110, 11, 0, 2 * Math.PI); ctx.fill();
+
       /* tree */
-      const treeX = refChoice === "driver" ? W * 0.75 - ((t * 60) % W) : W * 0.75;
+      const treeX = positions.tree;
       drawTree(ctx, treeX, H - 60);
 
       /* moon observer */
@@ -124,28 +130,28 @@ function ObserverLab() {
     road: {
       title: "المرجع: الشاخصة المرورية (ثابتة)",
       rows: [
-        { who: "الراكب A", state: "متحرك", why: "يبتعد عن الشاخصة مع الحافلة" },
-        { who: "الراكب B", state: "متحرك", why: "يبتعد عن الشاخصة بسرعة مختلفة" },
+        { who: "الراكب A", state: "متحرك", why: "يتغير موضعه مع الحافلة بالنسبة للمرجع" },
+        { who: "الراكب B", state: "متحرك", why: "يتغير موضعه داخل الحافلة ومعها" },
         { who: "الحافلة", state: "متحركة", why: "موضعها يتغير بالنسبة للشاخصة" },
-        { who: "الشجرة", state: "ساكنة", why: "لا يتغير بُعدها عن الشاخصة" },
+        { who: "الشجرة", state: "ساكنة", why: "موضعها ثابت بالنسبة للشاخصة" },
       ],
     },
     driver: {
       title: "المرجع: السائق (يتحرك مع الحافلة)",
       rows: [
-        { who: "الراكب A", state: "ساكن", why: "لا يتغير بُعده عن السائق" },
-        { who: "الراكب B", state: "متحرك", why: "يمشي داخل الحافلة ← بُعده يتغير" },
-        { who: "الشجرة", state: "متحركة !", why: "تبدو وكأنها تتحرك للخلف" },
-        { who: "الطريق", state: "متحرك !", why: "يتزحلق للخلف بالنسبة للسائق" },
+        { who: "الراكب A", state: "ساكن", why: "موضعه ثابت بالنسبة للسائق" },
+        { who: "الراكب B", state: "متحرك", why: "يمشي داخل الحافلة فيتغير موضعه بالنسبة للسائق" },
+        { who: "الشجرة", state: "متحركة !", why: "يتغير موضعها بعكس حركة الحافلة" },
+        { who: "الطريق", state: "متحرك !", why: "يتحرك بعكس حركة الحافلة بالنسبة للسائق" },
       ],
     },
     moon: {
       title: "المرجع: رائد فضاء على القمر",
       rows: [
-        { who: "الراكب A", state: "متحرك", why: "الأرض كلها تدور" },
+        { who: "الراكب A", state: "متحرك", why: "يتغير موضعه مع الأرض والحافلة في هذا النموذج" },
         { who: "الحافلة", state: "متحركة", why: "تتحرك على أرض متحركة" },
         { who: "الشجرة", state: "متحركة", why: "ثابتة على الأرض ولكن الأرض تدور" },
-        { who: "الشاخصة", state: "متحركة", why: "كل شيء يتحرك من منظور القمر" },
+        { who: "الشاخصة", state: "متحركة", why: "يتغير موضعها مع الأرض في هذا النموذج" },
       ],
     },
   };
@@ -183,6 +189,7 @@ function ObserverLab() {
           ))}
         </div>
       </div>
+      <p className="text-[12px] font-bold text-[#4a6080]">رسم توضيحي مبسّط: تتحرك الحافلة والراكب ذهاباً وإياباً. في مرجع القمر نمثل حركة الأرض بإزاحة مبسطة غير مرسومة بمقياس فلكي.</p>
       <p className="rounded-xl bg-[#cce0ff] border border-[rgba(0,102,204,0.3)] px-4 py-3 text-[13px] font-bold text-[#003d80]">
         💡 الاستنتاج: نفس الجسم قد يكون ساكناً أو متحركاً حسب الجسم المرجع الذي نختاره.
         الحركة والسكون مفهومان نسبيان دائماً.
@@ -203,79 +210,53 @@ function PathLab() {
 
   const W = 640, H = 300;
 
-  const getPos = useCallback((t: number) => {
-    if (path === "straight") return { x: 60 + ((t * 50 * speed) % (W - 120)), y: H / 2 };
-    if (path === "curved") {
-      const p = (t * speed * 0.6) % (Math.PI * 2);
-      return { x: 60 + (W - 120) * (p / (Math.PI * 2)), y: H / 2 - Math.sin(p) * 90 };
-    }
-    // circle
-    const angle = t * speed * 1.4;
-    return { x: W / 2 + 110 * Math.cos(angle), y: H / 2 + 75 * Math.sin(angle) };
-  }, [path, speed]);
+  const speedRef = useRef(speed);
+  const trailRef = useRef(trail);
+  useEffect(() => { speedRef.current = speed; }, [speed]);
+  useEffect(() => { trailRef.current = trail; }, [trail]);
+  const [distance, setDistance] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [runId, setRunId] = useState(0);
 
   useEffect(() => {
     const cv = canvasRef.current; if (!cv) return;
     cv.width = W; cv.height = H;
     tRef.current = 0; dots.current = [];
-
-    function draw() {
-      const cv = canvasRef.current; if (!cv) return;
-      const ctx = cv.getContext("2d")!;
-      tRef.current += 0.025;
-      const t = tRef.current;
-      const pos = getPos(t);
-
+    let lastTime = 0, total = 0, done = false;
+    let previous: {x: number; y: number} | null = null;
+    setDistance(0); setFinished(false);
+    const getPos = (p: number) => pathPoint(path, p);
+    function draw(now: number) {
+      const ctx = cv!.getContext("2d")!;
+      const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.1) : 0;
+      lastTime = now;
+      tRef.current = Math.min(1, tRef.current + dt * speedRef.current / 10);
+      const pos = getPos(tRef.current);
+      if (previous) total += Math.hypot(pos.x - previous.x, pos.y - previous.y) / 10;
+      previous = pos;
+      setDistance(total);
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#0d1b2e"; ctx.fillRect(0, 0, W, H);
-
-      /* دليل المسار */
-      ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
+      ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
       ctx.beginPath();
       if (path === "straight") { ctx.moveTo(60, H / 2); ctx.lineTo(W - 60, H / 2); }
       else if (path === "curved") {
-        for (let p = 0; p <= Math.PI * 2; p += 0.05) {
-          const x = 60 + (W - 120) * (p / (Math.PI * 2)), y = H / 2 - Math.sin(p) * 90;
-          p === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-      } else { ctx.ellipse(W / 2, H / 2, 110, 75, 0, 0, Math.PI * 2); }
+        for (let i = 0; i <= 100; i++) { const point = getPos(i / 100); if (i === 0) ctx.moveTo(point.x, point.y); else ctx.lineTo(point.x, point.y); }
+      } else ctx.arc(W / 2, H / 2, 90, 0, Math.PI * 2);
       ctx.stroke(); ctx.setLineDash([]);
-
-      /* trail */
-      if (trail) {
-        dots.current.push({ x: pos.x, y: pos.y, a: 1 });
-        if (dots.current.length > 90) dots.current.shift();
-        dots.current.forEach((d, i) => {
-          const alpha = (i / dots.current.length) * 0.6;
-          const r = 1 + (i / dots.current.length) * 3;
-          ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0,229,255,${alpha})`; ctx.fill();
-        });
+      if (!done) dots.current.push({ ...pos, a: 1 });
+      if (trailRef.current) {
+        ctx.fillStyle = "#00e5ff";
+        for (const dot of dots.current) { ctx.beginPath(); ctx.arc(dot.x, dot.y, 2, 0, Math.PI * 2); ctx.fill(); }
       }
-
-      /* الجسم المتحرك */
-      const grd = ctx.createRadialGradient(pos.x - 4, pos.y - 4, 2, pos.x, pos.y, 14);
-      grd.addColorStop(0, "#ffffff"); grd.addColorStop(1, "#0066cc");
-      ctx.beginPath(); ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
-      ctx.fillStyle = grd; ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 2; ctx.stroke();
-
-      /* المسافة المقطوعة */
-      const totalDots = dots.current.length;
-      let d = 0;
-      for (let i = 1; i < totalDots; i++) {
-        d += Math.hypot(dots.current[i].x - dots.current[i - 1].x, dots.current[i].y - dots.current[i - 1].y);
-      }
-
-      ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.font = "bold 12px Cairo, sans-serif"; ctx.textAlign = "left";
-      ctx.fillText(`المسافة المقطوعة: ${Math.round(d)} وحدة`, 16, 24);
-
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2); ctx.fillStyle = "#3b82f6"; ctx.fill();
+      ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.stroke();
+      if (tRef.current >= 1 && !done) { done = true; setFinished(true); }
       raf.current = requestAnimationFrame(draw);
     }
-
     raf.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf.current);
-  }, [path, trail, getPos]);
+  }, [path, runId]);
 
   const labels: Record<Path, string> = {
     straight: "المسار المستقيم — مثل السيارة على أوتوستراد مستقيم",
@@ -299,7 +280,7 @@ function PathLab() {
         </label>
       </div>
       <div className="flex items-center gap-3">
-        <span className="text-[13px] font-bold text-[#4a6080]">السرعة:</span>
+        <span className="text-[13px] font-bold text-[#4a6080]">سرعة العرض:</span>
         <input type="range" min="0.3" max="2.5" step="0.1" value={speed}
           onChange={e=>setSpeed(Number(e.target.value))} className="flex-1 accent-[#0066cc]" />
         <span className="text-[13px] font-black text-[#0066cc]">
@@ -307,6 +288,9 @@ function PathLab() {
         </span>
       </div>
       <div className="lab-canvas"><canvas ref={canvasRef} style={{ display:"block", width:"100%", height:"auto" }} /></div>
+      <p className="text-[13px] font-bold text-[#4a6080]">المسافة المقطوعة: <TeX>{`d = ${distance.toFixed(1)} \\text{ m}`}</TeX> — مقياس الرسم: كل 10 وحدات رسم تمثل متراً. المسافة مستقلة عن إظهار الأثر.</p>
+      <button onClick={() => setRunId(v => v + 1)} className="btn btn-ghost !py-2">إعادة المسار</button>
+      {finished && <p className="text-[12px] font-bold text-[#4a6080]">اكتمل المسار؛ أعد تشغيله للمشاهدة مرة أخرى.</p>}
       <div className="rounded-xl bg-[#f0f4f8] border border-[rgba(10,40,90,0.12)] px-4 py-3 text-[13.5px] font-bold text-[#0d1b2e]">
         🔵 {labels[path]}
       </div>
@@ -323,11 +307,7 @@ function GraphLab() {
   const startTime = useRef(0);
 
   const MAX_T = 8;
-  const getD = (s: number): number => {
-    if (mode === "uniform")     return s * 18;
-    if (mode === "accelerating") return s * s * 2.8;
-    return 30;
-  };
+  const getD = (s: number) => graphDistance(mode, s);
 
   useEffect(() => {
     if (!running) { cancelAnimationFrame(raf.current); return; }
@@ -346,21 +326,23 @@ function GraphLab() {
   const CW = 420, CH = 260, ML = 62, MR = 42, MT = 32, MB = 54;
   const iw = CW - ML - MR, ih = CH - MT - MB;
   const sx = (v: number) => ML + (v / MAX_T) * iw;
-  const sy = (v: number) => CH - MB - (v / 160) * ih;
+  const sy = (v: number) => CH - MB - (v / 200) * ih;
 
   const pts: { x: number; y: number }[] = [];
   const steps = 60;
   for (let i = 0; i <= steps; i++) {
     const s = (i / steps) * t;
-    pts.push({ x: sx(s), y: sy(Math.min(getD(s), 160)) });
+    pts.push({ x: sx(s), y: sy(getD(s)) });
   }
 
-  const colorMap = { uniform: "#059669", accelerating: "#dc2626", stationary: "#2563eb" };
+  const colorMap = { uniform: "#059669", accelerating: "#dc2626", decelerating: "#b45309", changing: "#7c3aed", stationary: "#2563eb" };
   const color = colorMap[mode];
 
   const summaries: Record<Mode, string> = {
     uniform:     "الخط مستقيم لأن الجسم يقطع مسافات متساوية في أزمنة متساوية — سرعة ثابتة.",
     accelerating: "الخط منحنٍ لأن الجسم يقطع مسافات متزايدة — السرعة تكبر مع الزمن.",
+    decelerating: "يقل ميل الخط مع الزمن: يقطع الجسم مسافات أصغر في فواصل زمنية متساوية.",
+    changing: "الخط مكوّن من مقطعين مستقيمين مختلفي الميل: السرعة ثابتة في كل مقطع وتزداد عند الانتقال بينهما.",
     stationary:  "الخط أفقي تماماً لأن الجسم لا يتحرك — المسافة ثابتة بالنسبة للمرجع.",
   };
 
@@ -373,24 +355,29 @@ function GraphLab() {
               className={`rounded-xl px-4 py-2 text-[13px] font-black border transition-all ${
                 mode===id ? "bg-[#1e293b] text-white border-[#1e293b]" : "bg-white text-[#4a6080] border-[#e2e8f0]"
               }`}>
-              {id === "uniform" ? "منتظمة" : id === "accelerating" ? "متسارعة" : "ساكنة"}
+              {id === "uniform" ? "منتظمة" : id === "accelerating" ? "متسارعة" : id === "decelerating" ? "متباطئة" : id === "changing" ? "سرعتان" : "ساكنة"}
             </button>
           ))}
         </div>
 
         <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm">
+          <p className="text-[12px] font-bold text-[#4a6080]">حركة الجسم على مسار مستقيم (المقياس نفسه لرسم المسافة):</p>
+          <svg viewBox="0 0 420 45" className="w-full h-auto" role="img" aria-label="موضع الجسم على المسار">
+            <line x1="25" y1="25" x2="395" y2="25" stroke="#94a3b8" strokeWidth="3" />
+            <circle cx={25 + getD(t) / 200 * 370} cy="25" r="8" fill={color} />
+          </svg>
           <svg viewBox={`0 0 ${CW} ${CH}`} className="w-full h-auto">
             <rect x={ML} y={MT} width={iw} height={ih} rx="12" fill="#f8fafc" stroke="#e2e8f0" />
-            {[0,40,80,120,160].map(d=>(
+            {[0,40,80,120,160,200].map(d=>(
               <g key={d}>
                 <line x1={ML} y1={sy(d)} x2={CW-MR} y2={sy(d)} stroke="#e2e8f0" strokeDasharray="4 4" />
-                <text x={ML-10} y={sy(d)+4} textAnchor="end" fontSize="11" fill="#94a3b8" fontWeight="700">{d}</text>
+                <SvgTeX tex={String(d)} x={ML-43} y={sy(d)-9} width={32} height={18} align="end" color="#64748b" />
               </g>
             ))}
             {[0,2,4,6,8].map(s=>(
               <g key={s}>
                 <line x1={sx(s)} y1={MT} x2={sx(s)} y2={CH-MB} stroke="#e2e8f0" strokeDasharray="4 4" />
-                <text x={sx(s)} y={CH-MB+20} textAnchor="middle" fontSize="11" fill="#94a3b8" fontWeight="700">{s}</text>
+                <SvgTeX tex={String(s)} x={sx(s)-12} y={CH-MB+9} width={24} height={18} color="#64748b" />
               </g>
             ))}
             <line x1={ML} y1={MT-8} x2={ML} y2={CH-MB+8} stroke="#1e293b" strokeWidth="2.5" strokeLinecap="round" />
@@ -431,14 +418,14 @@ function GraphLab() {
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-bold text-[#4a6080]">المسافة:</span>
               <span className="font-black text-[14px]" style={{ color }}>
-                <TeX>{`d = ${Math.min(getD(t), 160).toFixed(0)} \\text{ m}`}</TeX>
+                <TeX>{`d = ${getD(t).toFixed(1)} \\text{ m}`}</TeX>
               </span>
             </div>
             {mode !== "stationary" && t > 0 && (
               <div className="flex items-center justify-between">
                 <span className="text-[13px] font-bold text-[#4a6080]">السرعة الوسطية:</span>
                 <span className="font-black text-[#007a3d] text-[14px]">
-                  <TeX>{`v_{avg} = ${(Math.min(getD(t),160)/t).toFixed(1)} \\text{ m/s}`}</TeX>
+                  <TeX>{`v_{avg} = ${(getD(t)/t).toFixed(1)} \\text{ m/s}`}</TeX>
                 </span>
               </div>
             )}

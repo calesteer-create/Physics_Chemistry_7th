@@ -1,4 +1,5 @@
 import { SvgTeX } from "@/components/math/TeX";
+import { speedometerTip } from "@/lib/motion-model";
 
 type LayoutProps = {
   children: (h: { sx: (v: number) => number; sy: (v: number) => number }) => React.ReactNode;
@@ -75,7 +76,7 @@ export function NonUniformMotionChart() {
     <ChartLayout W={440} H={310} ML={70} MR={50} MT={40} MB={64} xLabel="t(\mathrm{s})" yLabel="d(\mathrm{m})" xMax={4} yMax={18} gridX={[0,1,2,3,4]} gridY={[0,4,8,12,16]}>
       {({ sx, sy }) => (
         <>
-          <path d={`M${sx(0)},${sy(0)} C${sx(1.2)},${sy(1)} ${sx(2.5)},${sy(5)} ${sx(3.5)},${sy(12)} S${sx(4)},${sy(16)} ${sx(4)},${sy(16)}`} fill="none" stroke="var(--color-error)" strokeWidth="4.5" strokeLinecap="round" />
+          <path d={`M${sx(0)},${sy(0)} Q${sx(2)},${sy(0)} ${sx(4)},${sy(16)}`} fill="none" stroke="var(--color-error)" strokeWidth="4.5" strokeLinecap="round" />
           {pts.map(([t,d],i) => <circle key={i} cx={sx(t)} cy={sy(d)} r="6" fill="white" stroke="var(--color-error)" strokeWidth="3.5" />)}
         </>
       )}
@@ -97,7 +98,7 @@ export function StationaryChart() {
 }
 
 export function SpeedometerSVG({ value = 80 }: { value?: number }) {
-  const angle = (value / 140) * 180 - 180;
+  const tip = speedometerTip(value);
   return (
     <div className="relative w-full max-w-[300px]">
       <svg viewBox="0 0 220 140" className="w-full h-auto drop-shadow-md">
@@ -126,15 +127,13 @@ export function SpeedometerSVG({ value = 80 }: { value?: number }) {
             </g>
           );
         })}
-        <g transform={`rotate(${angle},110,120)`}>
-          <line x1="110" y1="120" x2="40" y2="120" stroke="var(--color-error)" strokeWidth="5" strokeLinecap="round" />
+        <g>
+          <line x1="110" y1="120" x2={tip.x} y2={tip.y} stroke="var(--color-error)" strokeWidth="5" strokeLinecap="round" />
           <circle cx="110" cy="120" r="8" fill="var(--color-error)" />
         </g>
         <circle cx="110" cy="120" r="4" fill="white" />
+        <SvgTeX tex="\text{km/h}" x={80} y={91} width={60} height={18} align="center" color="var(--color-muted)" fontSize="13px" />
       </svg>
-      <div className="absolute left-1/2 -translate-x-1/2" style={{ top: "64%" }}>
-        <SvgTeX tex="\text{km/h}" x={0} y={0} width={60} height={18} align="center" color="var(--color-muted)" fontSize="13px" />
-      </div>
     </div>
   );
 }
