@@ -13,6 +13,7 @@ function QuestionCard({
   question: ReactNode; answer: ReactNode; children?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const typePalette: Record<string, { bg: string; border: string; text: string }> = {
     "اختيار": { bg: "rgba(37,99,235,0.08)", border: "rgba(37,99,235,0.3)", text: "#1d4ed8" },
     "تفسير": { bg: "rgba(5,150,105,0.08)", border: "rgba(5,150,105,0.3)", text: "#065f46" },
@@ -34,12 +35,18 @@ function QuestionCard({
         {children && <div className="mt-4">{children}</div>}
       </div>
       <div className="border-t px-5 py-3" style={{ borderColor: p.border }}>
-        <button onClick={() => setOpen(!open)}
+        <label className="mb-3 flex cursor-pointer items-center gap-2 text-[12.5px] font-bold text-[var(--color-mist)]">
+          <input type="checkbox" checked={attempted} onChange={e => setAttempted(e.target.checked)} className="h-4 w-4 accent-[#33568f]" />
+          حاولتُ حلّ السؤال بنفسي أولًا (اكتب محاولتك في دفترك أو ذهنيًا) قبل رؤية الحل
+        </label>
+        <button disabled={!attempted && !open} onClick={() => setOpen(!open)}
           className="flex items-center gap-2 rounded-xl px-4 py-2 text-[13px] font-black transition-all"
           style={{
             background: open ? p.text : "transparent",
             color: open ? "#fff" : p.text,
             border: `1.5px solid ${p.border}`,
+            opacity: !attempted && !open ? 0.45 : 1,
+            cursor: !attempted && !open ? "not-allowed" : "pointer",
           }}>
           {open ? <Eye className="h-4 w-4" /> : <Lightbulb className="h-4 w-4" />}
           {open ? "إخفاء الحل" : "إظهار الحل التفصيلي"}
@@ -118,7 +125,7 @@ function MCQItem({ number, text, options, correct, explanation, formula }: {
         {text}
         {formula && <span className="mr-1"><TeX>{formula}</TeX></span>}
       </p>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((opt, i) => {
           const state = !done ? "idle" : i === correct ? "correct" : i === sel ? "wrong" : "dim";
           return (
@@ -142,7 +149,11 @@ function MCQItem({ number, text, options, correct, explanation, formula }: {
           sel === correct ? "border-[rgba(52,211,153,0.3)] bg-[rgba(52,211,153,0.07)] text-[#a7f3d0]"
                          : "border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.07)] text-[#fde68a]"
         }`}>
+          <span className="mb-1 block text-[12px] font-black">{sel === correct ? "✓ صحيح — لماذا؟" : "✗ ليست الإجابة الصحيحة — والسبب:"}</span>
           {explanation}
+          <button onClick={() => setSel(null)} className="mt-3 block rounded-lg border border-[var(--color-line2)] px-3 py-1.5 text-[11.5px] font-black text-[var(--color-mist)] hover:text-white">
+            جرّب مرة أخرى
+          </button>
         </div>
       )}
     </div>
@@ -162,8 +173,7 @@ export function ForceBookQuestions() {
           <span className="eyebrow eyebrow-amber">📖 أسئلة الكتاب المدرسي</span>
           <h2 className="mt-3 text-[20px] font-black text-white">أختبر نفسي — ص 27 و 28</h2>
           <p className="mt-2 text-[13.5px] font-bold leading-7 text-[var(--color-mist)]">
-            جميع أسئلة الكتاب بتصميم تفاعلي: اختر إجابتك في أسئلة الاختيار، اضغط صح/خطأ في أسئلة التحقق،
-            واكشف الحل التفصيلي فقط بعد المحاولة.
+            جميع أسئلة الكتاب بتصميم تفاعلي: اختر إجابتك في أسئلة الاختيار من متعدد، وحاول بنفسك أولًا في أسئلة التفسير والرسم والمسائل، ثم اكشف الحل التفصيلي وقارنه بمحاولتك.
           </p>
         </div>
       </div>
@@ -184,18 +194,18 @@ export function ForceBookQuestions() {
             text="عند قذف جسم للأعلى فإنه يصل إلى ارتفاع معين، ثم يعود إلى سطح الأرض، بسبب:"
             options={["كتلة الجسم", "ثقل الجسم", "حجم الجسم", "طول الجسم"]}
             correct={1}
-            explanation="قوة الثقل (جذب الأرض للجسم) هي المسؤولة عن إعادته إلى الأسفل. الكتلة والحجم والطول ليست قوى وليست الملاحظة الصحيحة هنا." />
+            explanation="الصحيح: ثقل الجسم. الجسم المقذوف يتحرك للأعلى أولًا بسرعته الابتدائية، لكن قوة الثقل (جذب الأرض له) تؤثر فيه طوال الوقت نحو الأسفل، فتُبطئ صعوده حتى يتوقف لحظيًا ثم تُسرّع سقوطه عائدًا. لماذا لا تصلح البدائل؟ الكتلة مقدار مادة وليست قوة فلا «تشدّ» الجسم، والحجم والطول وصفان هندسيان لا يؤثران في اتجاه الحركة." />
           <MCQItem number={3}
             text="جسم كتلته 4 kg، وبفرض تسارع الجاذبية الأرضية"
             formula="g = 10\\,\\text{m.s}^{-2}"
             options={["400 N", "40 N", "0.4 N", "4 N"]}
             correct={1}
-            explanation="نطبق: w = m·g = 4 × 10 = 40 N. الجواب b." />
+            explanation="نطبق علاقة الثقل بالكتلة: w = m × g = 4 × 10 = 40 N — فيجب ضرب الكتلة في g لا قسمتها (لو قسمت لحصلت على 0.4) ولا تركها كما هي (4). الجواب b." />
           <MCQItem number={4}
             text="شدة قوة ثقل جسم تتناسب طردًا مع:"
             options={["طول الجسم", "لون الجسم", "كتلة الجسم", "ارتفاع الجسم عن سطح البحر"]}
             correct={2}
-            explanation="العلاقة w = m·g تُظهر أن الثقل يتناسب طردًا مع الكتلة m. اللون والطول وارتفاع الجسم لا علاقة لها بالمعادلة." />
+            explanation="من العلاقة w = m × g، وg ثابتة في المكان نفسه، فإن الثقل يتناسب طردًا مع الكتلة m وحدها: ضاعف الكتلة يتضاعف الثقل. الطول واللون لا يظهران في العلاقة ولا أثر لهما، والارتفاع عن سطح البحر قد يغيّر g قليلًا لكنه ليس التناسب المباشر المقصود هنا." />
           <MCQItem number={5}
             text="لقياس شدة قوة الثقل، نستخدم:"
             options={["ميزان ذو كفتين", "شريط متري", "ربيعة", "ميزان حرارة"]}
@@ -296,7 +306,7 @@ export function ForceBookQuestions() {
                     <li>• نقطة التأثير: نقطة اتصال الحبل بالكرة (أعلى الكرة)</li>
                     <li>• الحامل: خط الحبل (شاقولي)</li>
                     <li>• الجهة: نحو الأعلى</li>
-                    <li>• الشدة: <TeX>{"t = w = 1\\,N"}</TeX> (في حالة الاتزان)</li>
+                    <li>• الشدة: الكرة ساكنة معلّقة لا تتحرك، فالقوتان متعادلتان، ومنه <TeX>{"t = w = 1\\,N"}</TeX></li>
                   </ul>
                 </div>
               </div>
