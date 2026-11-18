@@ -12,8 +12,10 @@ export function nextVelocity(v: number, appliedN: number, frictionN: number, dt:
   // احتكاك ساكن مبسّط: إن لم تكن القوة كافية لتحريك الجسم الساكن يبقى ساكنًا
   if (v === 0 && Math.abs(appliedN) <= frictionN) net = 0;
   const nv = v + (net / CAR_MASS_KG) * dt;
-  // الاحتكاك وحده لا يعكس اتجاه الحركة؛ يوقف الجسم عند الصفر
-  if (appliedN === 0 && v !== 0 && Math.sign(nv) !== Math.sign(v)) return 0;
+  // الاحتكاك لا يعكس اتجاه الحركة أبدًا: متى كان الاحتكاك غالبًا على الدفع
+  // (friction >= applied) فهو قوة كبح فقط؛ إن أوصلت الخطوةُ السرعةَ إلى الصفر
+  // أو تجاوزته توقّف الجسم وبقي ساكنًا ما دام الدفع لا يغلب الاحتكاك.
+  if (v !== 0 && frictionN >= Math.abs(appliedN) && Math.sign(nv) !== Math.sign(v)) return 0;
   return nv;
 }
 
@@ -88,6 +90,8 @@ export function weightSpringPx(w: number): number {
   return Math.min((w / WEIGHT_MAX_N) * WEIGHT_SPRING_MAX_PX, WEIGHT_SPRING_MAX_PX);
 }
 
+/** طول سهم الثقل (px): متناسب طرديًا مع الثقل من الصفر، بمقياس يُبقي أقصى حالة داخل الرسم. */
+export const WEIGHT_ARROW_MAX_PX = 48;
 export function weightArrowPx(w: number): number {
-  return 10 + Math.min((w / WEIGHT_MAX_N) * 40, 40);
+  return (Math.max(w, 0) / WEIGHT_MAX_N) * WEIGHT_ARROW_MAX_PX;
 }

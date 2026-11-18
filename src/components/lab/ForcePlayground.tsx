@@ -418,8 +418,8 @@ function WeightMassLab() {
             <line x1="92" y1={66 + pointerPct * 168} x2="128" y2={66 + pointerPct * 168} stroke="#dc2626" strokeWidth="4" />
             <line x1="110" y1={springBottom} x2="110" y2={bodyY} stroke="#64748b" strokeWidth="4" />
             <rect x={110 - (24 + mass * 0.14)} y={bodyY} width={48 + mass * 0.28} height={bodyH} rx="10" fill="#ffb03a" />
-            <line x1="110" y1={bodyY + bodyH + 4} x2="110" y2={bodyY + bodyH + 4 + arrowPx} stroke="#dc2626" strokeWidth="4" />
-            <polygon points={`110,${bodyY + bodyH + 14 + arrowPx} 102,${bodyY + bodyH + 2 + arrowPx} 118,${bodyY + bodyH + 2 + arrowPx}`} fill="#dc2626" />
+            <line x1="110" y1={bodyY + bodyH + 4} x2="110" y2={bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)} stroke="#dc2626" strokeWidth="4" />
+            <polygon points={`110,${bodyY + bodyH + 4 + arrowPx} 102,${bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)} 118,${bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)}`} fill="#dc2626" />
             <text x="122" y={bodyY + bodyH + 12 + arrowPx / 2} fontSize="11" fill="#fca5a5" fontWeight="800">w = {w} N</text>
           </svg>
           <p className="mt-2 text-center text-[11.5px] font-bold text-[var(--color-dim)]">لاحظ: الربيعة نفسها تستطيل أكثر كلما ازداد الثقل، ويقصر سهم الثقل على القمر رغم بقاء الكتلة نفسها.</p>
