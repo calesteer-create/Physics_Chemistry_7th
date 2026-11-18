@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { CheckCircle2, HelpCircle, RotateCcw, XCircle } from "lucide-react";
 import type { Rich } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
 
-export function InlineCheck({ question, options, correct, explain }: { question: Rich; options: string[]; correct: number; explain: Rich }) {
+export function InlineCheck({ question, options, correct, explain }: { question: Rich; options: ReactNode[]; correct: number; explain: Rich }) {
   const [selected, setSelected] = useState<number | null>(null);
   const letters = ["أ","ب","ج","د","هـ"];
   const revealed = selected !== null;

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { AlertTriangle, BookOpen, Info, Sigma } from "lucide-react";
 import type { LessonBlock } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
@@ -7,11 +8,17 @@ import { TeX } from "@/components/math/TeX";
 import { FigureBlock } from "@/components/figures";
 import { InlineCheck } from "./InlineCheck";
 
+type Check = Extract<LessonBlock, { type: "check" }>;
+type Law = Extract<LessonBlock, { type: "law" }>;
+type DisplayBlock = Exclude<LessonBlock, Check | Law>
+  | (Omit<Check, "options"> & { options: ReactNode[] })
+  | (Omit<Law, "formula"> & { formula: ReactNode });
+
 export function BookBadge() {
   return <span className="badge-book"><BookOpen className="h-3.5 w-3.5" />من الكتاب</span>;
 }
 
-export function BlockRenderer({ block }: { block: LessonBlock }) {
+export function BlockRenderer({ block }: { block: DisplayBlock }) {
   switch (block.type) {
     case "heading":
       return (<div className="mt-2">{block.book && <BookBadge />}<h3 className="mt-2 flex items-center gap-3 text-[20px] font-black text-white"><span className="h-6 w-1.5 rounded-full bg-gradient-to-b from-[var(--color-phys)] to-[var(--color-vio)]" />{block.text}</h3></div>);
@@ -38,7 +45,7 @@ export function BlockRenderer({ block }: { block: LessonBlock }) {
             <h4 className="text-[19px] font-black text-[#ffd08a]">{block.name}</h4>
             {block.book && <BookBadge />}
           </div>
-          <div className="mt-5 rounded-2xl bg-[rgba(0,0,0,0.25)] p-6 border border-[rgba(255,176,58,0.1)]"><TeX block>{block.formula}</TeX></div>
+          <div className="mt-5 rounded-2xl bg-[rgba(0,0,0,0.25)] p-6 border border-[rgba(255,176,58,0.1)]">{typeof block.formula === "string" ? <TeX block>{block.formula}</TeX> : block.formula}</div>
           {block.symbols && (
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
               {block.symbols.map(s => (
@@ -108,6 +115,6 @@ export function BlockRenderer({ block }: { block: LessonBlock }) {
   }
 }
 
-export function Blocks({ blocks }: { blocks: LessonBlock[] }) {
+export function Blocks({ blocks }: { blocks: DisplayBlock[] }) {
   return <div className="space-y-6">{blocks.map((b, i) => <BlockRenderer key={i} block={b} />)}</div>;
 }

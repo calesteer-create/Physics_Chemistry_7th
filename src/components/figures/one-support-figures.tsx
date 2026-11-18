@@ -1,20 +1,13 @@
 import { SvgTeX } from "@/components/math/TeX";
 import type { ReactNode } from "react";
+import { Carrier, Drawing, ink, Label, PointMark, Vector } from "./one-support-drawing";
+import { addition, subtraction } from "./one-support-geometry";
 
+// Original frame and arrow for the book-question plates (outside this revision).
 const C = {
   paper: "#ffffff",
-  surface: "#ffffff",
   frame: "#e7e3da",
-  ink: "#24304a",
   muted: "#5f6b84",
-  faint: "#94a3b8",
-  blue: "#46629f",
-  teal: "#17807a",
-  coral: "#c96a4f",
-  plum: "#7a4a72",
-  gold: "#8a6420",
-  green: "#7aa341",
-  road: "#8b5a1f",
 };
 
 function Frame({ w, h, title, caption, children }: { w: number; h: number; title: string; caption?: string; children: ReactNode }) {
@@ -48,170 +41,200 @@ function Arrow({ x1, y1, x2, y2, color, width = 4.6 }: { x1: number; y1: number;
   );
 }
 
-function SimpleCar({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+export function BookOnTableFigure() {
   return (
-    <g transform={`translate(${x},${y}) scale(${scale})`}>
-      <path d="M0 18 H90 L78 0 H18 Z" fill="#59b7ef" stroke="#3b82c4" strokeWidth="1.5" />
-      <rect x="8" y="18" width="74" height="18" rx="6" fill="#59b7ef" stroke="#3b82c4" strokeWidth="1.5" />
-      <rect x="25" y="4" width="18" height="10" rx="3" fill="#deeff8" />
-      <rect x="47" y="4" width="18" height="10" rx="3" fill="#deeff8" />
-      <circle cx="22" cy="36" r="8" fill="#24304a" stroke="#cbd5e1" strokeWidth="2" />
-      <circle cx="64" cy="36" r="8" fill="#24304a" stroke="#cbd5e1" strokeWidth="2" />
-    </g>
+    <Drawing title="كتاب على طاولة تؤثر فيه قوتان متعاكستان" viewBox="100 53 344 182" maxWidth="32rem">
+      <ellipse cx="269" cy="222" rx="150" ry="4" fill="#f0eee8" />
+      <g strokeLinejoin="round" strokeWidth="1.5">
+        <path d="M152 139h13l-4 70h-9z M389 139h12v70h-9z" fill="#d6c5aa" stroke="#9f8c72" />
+        <path d="M134 141h15l-3 80h-12z M371 141h15v80h-12z" fill="#a67d53" stroke="#76573d" />
+        <path d="M120 128l13-7h286l-11 7z" fill="#e8d8bd" stroke="#ac8a64" />
+        <rect x="120" y="128" width="299" height="12" rx="3" fill="#ba956e" stroke="#76573d" />
+        <path d="M249 103l11-19h101l9 19z" fill="#88aea8" stroke={ink.teal} />
+        <rect x="249" y="103" width="121" height="22" rx="4" fill="#fffaf0" stroke="#ae9a7a" />
+        <path d="M251 105h116 M251 124h118" fill="none" stroke={ink.teal} strokeWidth="4" strokeLinecap="round" />
+        <path d="M257 111h103 M257 117h96" stroke="#d4c5af" />
+        <path d="M338 117h8v13l-4-3-4 3z" fill="#b66349" stroke="none" />
+      </g>
+      <Carrier from={[192, 84]} to={[429, 84]} />
+      <Vector from={[290, 84]} to={[220, 84]} color={ink.first} />
+      <Vector from={[330, 84]} to={[408, 84]} color={ink.second} />
+      <PointMark at={[290, 84]} radius={3} /><PointMark at={[330, 84]} radius={3} />
+    </Drawing>
   );
 }
 
-export function BookOnTableFigure() {
+/** Side profile anchored at the hand gripping the rope; mirror the pose, not the carrier. */
+function Puller({ shirt, skin }: { shirt: string; skin: string }) {
   return (
-    <Frame w={640} h={260} title="كتاب على طاولة تؤثر فيه قوتان متعاكستان">
-      <rect x={120} y={128} width={300} height={14} rx={3} fill={C.road} />
-      <rect x={132} y={142} width={18} height={80} fill={C.road} />
-      <rect x={272} y={142} width={18} height={80} fill={C.road} />
-      <rect x={210} y={142} width={18} height={80} fill={C.road} />
-      <rect x={312} y={142} width={18} height={80} fill={C.road} />
-      <rect x={250} y={102} width={120} height={20} rx={3} fill="#e8e8e8" stroke="#c9c9c9" strokeWidth={1.5} />
-      <path d="M250 102 h120 l-8 -18 h-104 z" fill="#b22222" />
-      <rect x={262} y={86} width={96} height={18} rx={2} fill="#f8f4da" />
-      <Arrow x1={290} y1={84} x2={220} y2={84} color={C.blue} />
-      <Arrow x1={330} y1={84} x2={408} y2={84} color="#ef4444" />
-    </Frame>
+    <g strokeLinecap="round" strokeLinejoin="round">
+      <path d="M-30 19l4 15 12 14" fill="none" stroke="#657882" strokeWidth="8" />
+      <path d="M-31 19l-8 15-13 15" fill="none" stroke={ink.body} strokeWidth="9" />
+      <path d="M-54 49h11 M-16 49h10" stroke={ink.body} strokeWidth="5" />
+      <path d="M-39 -11q6-4 11 1l10 23-13 9-8-17q-4-9 0-16z" fill={shirt} />
+      <path d="M-35 -10l-3-7 6-3 4 8" fill={skin} />
+      <path d="M-46 -24a9 9 0 0 1 17-4l2 7-3 1q-3 8-9 5-7-2-7-9z" fill={skin} />
+      <path d="M-47 -22q-4-13 6-15 8-2 12 7-9-2-12 6l-3 5z" fill="#443a38" />
+      <path d="M-31 -7l10 14 13-5" fill="none" stroke={skin} strokeWidth="5.5" />
+      <path d="M-34 -5l13 5 18-1" fill="none" stroke={shirt} strokeWidth="7" />
+      <path d="M-5 -1h6" stroke={skin} strokeWidth="6" />
+    </g>
   );
 }
 
 export function TugOfWarFigure() {
   return (
-    <Frame w={660} h={220} title="تجربة شد الحبل">
-      <rect x={70} y={86} width={520} height={54} rx={18} fill="#fdfcf9" stroke={C.frame} />
-      <path d="M168 112 C208 102 248 122 288 112 C328 102 368 122 408 112 C448 102 488 122 528 112" fill="none" stroke="#8b8b8b" strokeWidth="3" strokeDasharray="6 4" />
-      <circle cx={126} cy={92} r={12} fill="#b6d15c" />
-      <line x1={126} y1={104} x2={126} y2={140} stroke="#9bc441" strokeWidth={5} />
-      <line x1={126} y1={114} x2={150} y2={112} stroke="#9bc441" strokeWidth={5} />
-      <line x1={126} y1={114} x2={106} y2={132} stroke="#9bc441" strokeWidth={5} />
-      <line x1={126} y1={140} x2={112} y2={164} stroke="#9bc441" strokeWidth={5} />
-      <line x1={126} y1={140} x2={144} y2={164} stroke="#9bc441" strokeWidth={5} />
-      <circle cx={538} cy={92} r={12} fill="#7cc7ff" />
-      <line x1={538} y1={104} x2={538} y2={140} stroke="#6ab7ef" strokeWidth={5} />
-      <line x1={538} y1={114} x2={514} y2={112} stroke="#6ab7ef" strokeWidth={5} />
-      <line x1={538} y1={114} x2={558} y2={132} stroke="#6ab7ef" strokeWidth={5} />
-      <line x1={538} y1={140} x2={522} y2={164} stroke="#6ab7ef" strokeWidth={5} />
-      <line x1={538} y1={140} x2={554} y2={164} stroke="#6ab7ef" strokeWidth={5} />
-    </Frame>
+    <Drawing title="تجربة شد الحبل" viewBox="80 60 503 121" maxWidth="37rem">
+      <path d="M92 165h59 M511 165h61" fill="none" stroke={ink.line} strokeWidth="2" strokeLinecap="round" />
+      <path d="M144 112h376" stroke="#86673f" strokeWidth="4.5" strokeLinecap="round" />
+      <path d="M144 111.5h376" stroke="#ddc59a" strokeWidth="1.5" strokeDasharray="4 3" />
+      <g transform="translate(150 112)"><Puller shirt={ink.teal} skin="#d7a37e" /></g>
+      <g transform="translate(514 112) scale(-1 1)"><Puller shirt={ink.resultant} skin="#bc8663" /></g>
+    </Drawing>
   );
 }
 
 export function CarPullersFigure() {
+  // The original tow line through (160,200) and (350,150), extended through all three grips.
+  const ropeY = (x: number) => 200 - (x - 160) * 50 / 190;
   return (
-    <Frame w={620} h={250} title="سيارة يسحبها أشخاص عدة على نفس الحامل">
-      <SimpleCar x={40} y={146} scale={1.3} />
-      <line x1={160} y1={200} x2={350} y2={150} stroke="#94a3b8" strokeWidth={3} />
-      {[0, 1, 2].map((i) => {
-        const x = 370 + i * 48;
-        const y = 142 - i * 8;
-        return (
-          <g key={i} transform={`translate(${x},${y})`}>
-            <circle cx={0} cy={0} r={9} fill="#eac39b" />
-            <line x1={0} y1={9} x2={0} y2={34} stroke="#2563eb" strokeWidth={4} />
-            <line x1={0} y1={15} x2={-14} y2={28} stroke="#2563eb" strokeWidth={4} />
-            <line x1={0} y1={15} x2={12} y2={12} stroke="#2563eb" strokeWidth={4} />
-            <line x1={0} y1={34} x2={-12} y2={56} stroke="#2563eb" strokeWidth={4} />
-            <line x1={0} y1={34} x2={12} y2={56} stroke="#2563eb" strokeWidth={4} />
-          </g>
-        );
-      })}
-    </Frame>
+    <Drawing title="سيارة يسحبها أشخاص عدة على نفس الحامل" viewBox="22 81 482 142" maxWidth="37rem">
+      <ellipse cx="97" cy="210" rx="67" ry="3" fill="#e7e9e7" />
+      <g strokeLinejoin="round">
+        <path d="M32 185q1-8 12-9l13-24q3-5 11-5h40q7 0 12 7l14 16 15 5q7 2 7 12v10H32z" fill="#7195b9" stroke="#3c597a" strokeWidth="2" />
+        <path d="M49 173l13-20h17v20z M85 153h22q4 0 7 5l12 15H85z" fill="#e6f0f2" stroke="#46627b" strokeWidth="2" />
+        <path d="M81 177v14 M90 180h8 M36 190h115" fill="none" stroke="#456482" strokeWidth="1.5" />
+        <rect x="144" y="179" width="10" height="5" rx="1.5" fill="#fff0bd" />
+        {[57, 131].map(x => <g key={x}><circle cx={x} cy="197" r="12" fill={ink.body} /><circle cx={x} cy="197" r="6" fill="#d7dfe4" /><circle cx={x} cy="197" r="2.3" fill="#687c8a" /></g>)}
+        <path d="M151 195l9 5" stroke={ink.body} strokeWidth="3" />
+      </g>
+      <line x1="160" y1="200" x2="449" y2={ropeY(449)} stroke="#86673f" strokeWidth="3" />
+      <PointMark at={[160, 200]} radius={2.4} />
+      {[350, 398, 446].map((x, i) => <g key={x} transform={`translate(${x} ${ropeY(x)}) scale(-.8 .8)`}>
+        <Puller shirt={[ink.teal, ink.second, ink.resultant][i]} skin={["#be906e", "#e0b590", "#d0a17c"][i]} />
+      </g>)}
+    </Drawing>
   );
 }
 
+const firstSymbol = String.raw`\vec{F}_1`, secondSymbol = String.raw`\vec{F}_2`, resultSymbol = String.raw`\vec{F}`;
+
 export function ResultantSameDirectionFigure() {
+  const { origin, first, second, resultant } = addition;
   return (
-    <Frame w={720} h={220} title="محصلة قوتين على حامل واحد وبجهة واحدة">
-      <rect x={78} y={92} width={24} height={24} fill="#cfe98f" stroke="#a6c564" strokeWidth={1.5} />
-      <circle cx={92} cy={104} r={6} fill={C.surface} stroke={C.ink} strokeWidth={2} />
-      <SvgTeX tex="O" x={82} y={68} width={20} height={18} color={C.coral} fontSize="15px" />
-      <Arrow x1={92} y1={104} x2={210} y2={104} color="#f2b632" width={5} />
-      <SvgTeX tex="\vec{F_1}" x={132} y={72} width={44} height={18} color="#f2b632" fontSize="16px" />
-      <Arrow x1={92} y1={104} x2={270} y2={104} color="#4aa9df" width={5} />
-      <SvgTeX tex="\vec{F_2}" x={210} y={72} width={44} height={18} color="#4aa9df" fontSize="16px" />
-      <Arrow x1={92} y1={104} x2={430} y2={104} color={C.coral} width={6.2} />
-      <SvgTeX tex="\vec{F}" x={306} y={72} width={28} height={18} color={C.coral} fontSize="16px" />
-      <text x={512} y={108} fill={C.ink} fontSize={15} fontWeight={700}>حيث</text>
-      <SvgTeX tex="F = F_1 + F_2" x={546} y={92} width={140} height={22} color={C.ink} fontSize="16px" />
-    </Frame>
+    <Drawing title="محصلة قوتين على حامل واحد وبجهة واحدة" viewBox="0 0 212 185" maxWidth="21rem">
+      <rect x="95" y="15" width="22" height="22" rx="3" fill="#e1ede3" stroke="#abc4ae" />
+      <Carrier from={[106, 7]} to={[106, 148]} />
+      {/* Back to front: three coincident shafts, three unobstructed tips. */}
+      <Vector from={origin} to={resultant} color={ink.resultant} width={4.6} />
+      <Vector from={origin} to={second} color={ink.second} width={4} />
+      <Vector from={origin} to={first} color={ink.first} width={3.4} />
+      <PointMark at={origin} />
+      <Label at={[83, 24]} tex="O" />
+      <Label at={[131, 67]} tex={firstSymbol} color={ink.first} />
+      <Label at={[131, 92]} tex={secondSymbol} color={ink.second} />
+      <Label at={[131, 135]} tex={resultSymbol} color={ink.resultant} />
+      <rect x="17" y="151" width="178" height="29" rx="7" fill="#f3f6fa" />
+      <text x="164" y="170" textAnchor="middle" direction="rtl" fill={ink.body} fontSize="13" fontWeight="600">حيث</text>
+      <Label at={[90, 165]} tex="F = F_1 + F_2" width={124} />
+    </Drawing>
+  );
+}
+
+function SpringBalance({ accent }: { accent: string }) {
+  return (
+    <g strokeLinejoin="round">
+      <rect width="132" height="34" rx="11" fill="#f7f4ec" stroke="#8d8271" strokeWidth="1.8" />
+      <rect x="14" y="6" width="106" height="22" rx="5" fill="#fffefb" stroke="#c7bdaa" />
+      <path d="M19 17h13l4-7 6 14 6-14 6 14 6-14 6 14 6-14 6 14 4-7h31" fill="none" stroke="#786951" strokeWidth="2" />
+      <path d="M6 7v20" stroke={accent} strokeWidth="4" strokeLinecap="round" />
+    </g>
   );
 }
 
 export function OppositeForcesRingFigure() {
   return (
-    <Frame w={720} h={240} title="حلقة بين ربيعتين متعاكستين">
-      <rect x={40} y={86} width={132} height={34} rx={14} fill="#fff8d1" stroke="#d8c580" strokeWidth={2} />
-      <line x1={58} y1={103} x2={154} y2={103} stroke="#9b7f2e" strokeWidth={3} />
-      <line x1={54} y1={70} x2={54} y2={136} stroke="#9b7f2e" strokeWidth={2} />
-      <line x1={162} y1={103} x2={190} y2={103} stroke="#64748b" strokeWidth={3} />
-      <circle cx={204} cy={103} r={22} fill="none" stroke="#222" strokeWidth={6} />
-      <line x1={226} y1={103} x2={254} y2={103} stroke="#64748b" strokeWidth={3} />
-      <rect x={254} y={86} width={132} height={34} rx={14} fill="#fff8d1" stroke="#d8c580" strokeWidth={2} />
-      <line x1={272} y1={103} x2={368} y2={103} stroke="#9b7f2e" strokeWidth={3} />
-      <line x1={376} y1={70} x2={376} y2={136} stroke="#9b7f2e" strokeWidth={2} />
-      <Arrow x1={160} y1={150} x2={70} y2={150} color="#f2b632" />
-      <SvgTeX tex="\vec{F_1}" x={108} y={124} width={44} height={18} color="#f2b632" fontSize="16px" />
-      <Arrow x1={248} y1={150} x2={338} y2={150} color={C.coral} />
-      <SvgTeX tex="\vec{F_2}" x={278} y={124} width={44} height={18} color={C.coral} fontSize="16px" />
-    </Frame>
+    <Drawing title="حلقة بين ربيعتين متعاكستين" viewBox="24 55 378 141" maxWidth="34rem">
+      <g stroke="#738393" strokeWidth="3" fill="none" strokeLinecap="round">
+        <path d="M162 103h28 M226 103h28" />
+        <path d="M54 70v66 M376 70v66" />
+        <circle cx="204" cy="103" r="22" stroke={ink.body} strokeWidth="5" />
+      </g>
+      <g transform="translate(40 86)"><SpringBalance accent={ink.first} /></g>
+      <g transform="translate(386 86) scale(-1 1)"><SpringBalance accent={ink.second} /></g>
+      <Carrier from={[47, 150]} to={[370, 150]} />
+      <Vector from={[160, 150]} to={[70, 150]} color={ink.first} />
+      <Vector from={[248, 150]} to={[338, 150]} color={ink.second} />
+      <Label at={[112, 173]} tex={firstSymbol} color={ink.first} size={19} />
+      <Label at={[294, 173]} tex={secondSymbol} color={ink.second} size={19} />
+    </Drawing>
   );
 }
 
 export function ResultantOppositeForcesFigure() {
+  const { origin, first, second, resultant } = subtraction;
   return (
-    <Frame w={720} h={220} title="محصلة قوتين على حامل واحد وبجهتين متعاكستين">
-      <rect x={74} y={92} width={24} height={24} fill="#cfe98f" stroke="#a6c564" strokeWidth={1.5} />
-      <circle cx={88} cy={104} r={6} fill={C.surface} stroke={C.ink} strokeWidth={2} />
-      <SvgTeX tex="O" x={80} y={68} width={20} height={18} color={C.coral} fontSize="15px" />
-      <Arrow x1={88} y1={104} x2={26} y2={104} color="#f2b632" width={5} />
-      <SvgTeX tex="\vec{F_1}" x={20} y={72} width={44} height={18} color="#f2b632" fontSize="16px" />
-      <Arrow x1={88} y1={104} x2={410} y2={104} color={C.coral} width={6.2} />
-      <SvgTeX tex="\vec{F_2}" x={330} y={72} width={44} height={18} color={C.coral} fontSize="16px" />
-      <Arrow x1={88} y1={104} x2={180} y2={104} color="#4aa9df" width={4.5} />
-      <SvgTeX tex="\vec{F}" x={128} y={72} width={26} height={18} color="#4aa9df" fontSize="16px" />
-      <SvgTeX tex="F = F_2 - F_1" x={470} y={90} width={140} height={20} color={C.ink} fontSize="16px" />
-    </Frame>
+    <Drawing title="محصلة قوتين على حامل واحد وبجهتين متعاكستين" viewBox="0 0 260 124" maxWidth="28rem">
+      <Carrier from={[11, 54]} to={[249, 54]} />
+      <Vector from={origin} to={first} color={ink.first} />
+      <Vector from={origin} to={second} color={ink.second} width={4.6} />
+      <Vector from={origin} to={resultant} color={ink.resultant} width={3.5} />
+      <PointMark at={origin} />
+      <Label at={[110, 72]} tex="O" />
+      <Label at={[33, 32]} tex={firstSymbol} color={ink.first} />
+      <Label at={[227, 32]} tex={secondSymbol} color={ink.second} />
+      <Label at={[150, 32]} tex={resultSymbol} color={ink.resultant} />
+      <rect x="55" y="88" width="150" height="29" rx="7" fill="#f3f6fa" />
+      <Label at={[130, 102]} tex="F = F_2 - F_1" width={140} />
+    </Drawing>
   );
 }
 
 export function DirectOppositeEqualForcesFigure() {
+  const origin = [360, 96] as const;
   return (
-    <Frame w={720} h={190} title="القوتان المتعاكستان مباشرة">
-      <circle cx={360} cy={96} r={6} fill={C.surface} stroke={C.ink} strokeWidth={2} />
-      <SvgTeX tex="O" x={350} y={64} width={20} height={18} color={C.coral} fontSize="15px" />
-      <Arrow x1={360} y1={96} x2={150} y2={96} color="#f2b632" width={6} />
-      <SvgTeX tex="\vec{F_1}" x={120} y={64} width={44} height={18} color="#f2b632" fontSize="16px" />
-      <Arrow x1={360} y1={96} x2={570} y2={96} color={C.coral} width={6} />
-      <SvgTeX tex="\vec{F_2}" x={540} y={64} width={44} height={18} color={C.coral} fontSize="16px" />
-    </Frame>
+    <Drawing title="القوتان المتعاكستان مباشرة" viewBox="108 37 504 95" maxWidth="34rem">
+      <Carrier from={[121, 96]} to={[599, 96]} />
+      <Vector from={origin} to={[150, 96]} color={ink.first} width={5} />
+      <Vector from={origin} to={[570, 96]} color={ink.second} width={5} />
+      <PointMark at={origin} radius={5} />
+      <Label at={[360, 65]} tex="O" size={23} />
+      <Label at={[155, 65]} tex={firstSymbol} color={ink.first} size={23} />
+      <Label at={[565, 65]} tex={secondSymbol} color={ink.second} size={23} />
+    </Drawing>
+  );
+}
+
+function Magnet({ x, top }: { x: number; top: "S" | "N" }) {
+  const north = "#426593", south = "#a94e3e";
+  return (
+    <g>
+      <rect x={x} y="40" width="32" height="78" rx="4" fill={top === "N" ? north : south} />
+      <path d={`M${x} 79h32v35q0 4-4 4h-24q-4 0-4-4z`} fill={top === "N" ? south : north} />
+      <path d={`M${x + 3} 45v66`} stroke="white" opacity=".24" strokeWidth="2" />
+      <Label at={[x + 16, 59]} tex={`\\mathrm{${top}}`} color="white" size={15} width={26} />
+      <Label at={[x + 16, 99]} tex={`\\mathrm{${top === "N" ? "S" : "N"}}`} color="white" size={15} width={26} />
+    </g>
   );
 }
 
 export function ActionReactionFigure() {
   return (
-    <Frame w={720} h={340} title="مبدأ الفعل ورد الفعل — مغناطيسان وبالون">
-      <rect x={26} y={26} width={220} height={126} rx={18} fill="#ffffff" />
-      <rect x={26} y={178} width={220} height={126} rx={18} fill="#ffffff" />
-      <rect x={74} y={40} width={32} height={78} rx={4} fill="#ef4444" />
-      <rect x={74} y={80} width={32} height={38} rx={4} fill="#38bdf8" />
-      <text x={90} y={62} textAnchor="middle" fill="white" fontSize={18} fontWeight={800}>S</text>
-      <text x={90} y={106} textAnchor="middle" fill="white" fontSize={18} fontWeight={800}>N</text>
-      <rect x={156} y={40} width={32} height={78} rx={4} fill="#38bdf8" />
-      <rect x={156} y={80} width={32} height={38} rx={4} fill="#ef4444" />
-      <text x={172} y={62} textAnchor="middle" fill="white" fontSize={18} fontWeight={800}>N</text>
-      <text x={172} y={106} textAnchor="middle" fill="white" fontSize={18} fontWeight={800}>S</text>
-      <Arrow x1={120} y1={84} x2={120} y2={132} color="#38bdf8" />
-      <Arrow x1={204} y1={132} x2={204} y2={84} color="#ef4444" />
-      <ellipse cx={118} cy={238} rx={34} ry={44} fill="#e45a5a" />
-      <rect x={112} y={276} width={12} height={18} rx={3} fill="#b91c1c" />
-      <Arrow x1={184} y1={230} x2={184} y2={184} color="#111827" />
-      <text x={194} y={210} fill={C.coral} fontSize={18} fontWeight={800}>رد الفعل</text>
-      <Arrow x1={184} y1={250} x2={184} y2={300} color="#111827" />
-      <text x={194} y={270} fill={C.coral} fontSize={18} fontWeight={800}>الفعل</text>
-    </Frame>
+    <Drawing title="مبدأ الفعل ورد الفعل — مغناطيسان وبالون" viewBox="44 19 244 299" maxWidth="19rem">
+      <rect x="50" y="25" width="232" height="120" rx="11" fill="#f5f7fa" />
+      <Magnet x={74} top="S" /><Magnet x={156} top="N" />
+      <Vector from={[120, 84]} to={[120, 132]} color={ink.resultant} />
+      <Vector from={[204, 132]} to={[204, 84]} color={ink.second} />
+      <rect x="50" y="154" width="232" height="157" rx="11" fill="#faf6ee" />
+      <path d="M118 193c-22 0-35 18-35 41 0 21 13 39 32 47h6c19-8 32-26 32-47 0-23-13-41-35-41z"
+        fill="#cc7e68" stroke={ink.second} strokeWidth="1.8" />
+      <path d="M92 228q2-18 16-23" fill="none" stroke="#f6daca" strokeWidth="4" strokeLinecap="round" />
+      <path d="M115 280h6l4 12h-14z" fill={ink.second} />
+      <Vector from={[184, 230]} to={[184, 184]} color={ink.resultant} />
+      <text x="232" y="213" textAnchor="middle" direction="rtl" fill={ink.resultant} fontWeight="600" fontSize="16">رد الفعل</text>
+      <Vector from={[184, 250]} to={[184, 300]} color={ink.second} />
+      <text x="232" y="278" textAnchor="middle" direction="rtl" fill={ink.second} fontWeight="600" fontSize="16">الفعل</text>
+    </Drawing>
   );
 }
 

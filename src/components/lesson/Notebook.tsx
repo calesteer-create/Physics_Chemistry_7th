@@ -1,8 +1,15 @@
+import type { ReactNode } from "react";
 import { CheckSquare, NotebookPen, Paintbrush, PenLine, Star, AlertOctagon } from "lucide-react";
-import type { NotebookItem } from "@/content/types";
+import type { NotebookItem, Rich } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
 import { TeX } from "@/components/math/TeX";
 import { NotebookFigure } from "@/components/figures";
+
+type NotebookNotation = {
+  law: (source: string) => ReactNode;
+  rich: (segments: Rich) => Rich;
+  inline: (text: string) => ReactNode;
+};
 
 /**
  * «دفتر الطالب» — آخر مرحلة في كل درس.
@@ -11,7 +18,7 @@ import { NotebookFigure } from "@/components/figures";
  * بيده في دفتره الورقي: عناوين، تعريفات كاملة، قوانين مع رموزها، رسوم
  * مطلوبة، جداول، ملاحظات، وقائمة تحقق ختامية.
  */
-function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: number }) {
+function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; index: number; notation?: NotebookNotation }) {
   switch (item.kind) {
     case "h1":
       return (
@@ -71,7 +78,7 @@ function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: numb
             </span>
           </div>
           <div className="mt-3 rounded-lg bg-white/70 py-3 text-[18px]">
-            <TeX block>{item.formula}</TeX>
+            {notation?.law(item.formula) ?? <TeX block>{item.formula}</TeX>}
           </div>
           {item.symbols && (
             <ul className="mt-3 space-y-1.5">
@@ -84,7 +91,7 @@ function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: numb
                   <span>{s.meaning}</span>
                   {s.unit && (
                     <span dir="ltr" className="font-black text-[#0f766e]">
-                      ({s.unit})
+                      ({notation?.inline(s.unit) ?? s.unit})
                     </span>
                   )}
                 </li>
@@ -102,7 +109,7 @@ function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: numb
             ارسم في دفترك
           </span>
           <p className="mt-2.5 text-[14.5px] font-bold leading-9 text-[#22304a]">
-            <RichText rich={item.instruction} />
+            <RichText rich={notation?.rich(item.instruction) ?? item.instruction} />
           </p>
           {item.figure && <NotebookFigure figure={item.figure} />}
         </div>
@@ -207,7 +214,7 @@ function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: numb
             {item.items.map((c, i) => (
               <li key={i} className="flex items-center gap-3 text-[13.5px] font-bold text-[#22304a]">
                 <span className="grid h-5.5 w-5.5 shrink-0 place-items-center rounded-md border-2 border-[#0f766e] bg-white px-0.5" />
-                {c}
+                {notation?.inline(c) ?? c}
               </li>
             ))}
           </ul>
@@ -219,7 +226,7 @@ function NotebookItemRenderer({ item, index }: { item: NotebookItem; index: numb
   }
 }
 
-export function Notebook({ items, lessonTitle }: { items: NotebookItem[]; lessonTitle: string }) {
+export function Notebook({ items, lessonTitle, notation }: { items: NotebookItem[]; lessonTitle: string; notation?: NotebookNotation }) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-[rgba(230,192,122,0.35)] bg-[rgba(230,192,122,0.06)] px-5 py-4">
@@ -244,7 +251,7 @@ export function Notebook({ items, lessonTitle }: { items: NotebookItem[]; lesson
         </div>
         <div className="space-y-8">
           {items.map((item, i) => (
-            <NotebookItemRenderer key={i} item={item} index={i} />
+            <NotebookItemRenderer key={i} item={item} index={i} notation={notation} />
           ))}
         </div>
       </div>

@@ -20,6 +20,7 @@ import {
 import { getLesson, listPublishedLessons } from "@/content/registry";
 import type { StageId } from "@/content/types";
 import { Blocks } from "@/components/lesson/Blocks";
+import { oneSupportNotation, presentOneSupportBlock } from "@/components/lesson/one-support-notation";
 import { Notebook } from "@/components/lesson/Notebook";
 import { LessonShell, type StageNavItem } from "@/components/lesson/LessonShell";
 import { ForcePlayground } from "@/components/lab/ForcePlayground";
@@ -87,6 +88,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
     "warmup", "concept", "explain", "lab", "check", "apply", "quiz", "review", "notebook",
   ];
 
+  const isOneSupport = lesson.slug === "forces-on-one-support";
   const navItems: StageNavItem[] = stageOrder.map((id, i) => ({
     id,
     title: STAGE_META[id].title,
@@ -100,7 +102,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
       return (
         <section key="notebook">
           <StageHeader meta={STAGE_META.notebook} idx={idx} notebook />
-          <Notebook items={lesson.notebook} lessonTitle={lesson.title} />
+          <Notebook items={lesson.notebook} lessonTitle={lesson.title} notation={isOneSupport ? oneSupportNotation : undefined} />
           {/* توقيع المهندس */}
           <div className="card mt-10 flex flex-col items-start justify-between gap-5 border-[rgba(230,192,122,0.3)] p-6 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
@@ -133,7 +135,8 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
     return (
       <section key={stageId}>
         <StageHeader meta={STAGE_META[stageId]} idx={idx} />
-        <Blocks blocks={stage.blocks} />
+        <Blocks blocks={isOneSupport && stageId !== "lab" && stageId !== "quiz"
+          ? stage.blocks.map(presentOneSupportBlock) : stage.blocks} />
         {stageId === "lab" && lesson.labWidget === "unit-converter" && (
           <div className="mt-7">
             <UnitConverter />
