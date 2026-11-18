@@ -7,7 +7,7 @@ test("خط رسم الشرح يصل جميع مراكز النقاط الخمس"
   const chart = ExplainedNonUniformMotionChart();
   // Exercise the actual renderer with distinct affine axis scales, as in the SVG.
   const sx = (t: number) => 70 + t * 80;
-  const sy = (d: number) => 246 - d * 174 / 18;
+  const sy = (d: number) => 246 - d * 206 / 18;
   const fragment = chart.props.children({ sx, sy });
   const elements = Children.toArray(fragment.props.children) as ReactElement[];
   const line = elements[0] as ReactElement<{ points: string }>;
