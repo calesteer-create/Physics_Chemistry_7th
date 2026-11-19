@@ -102,6 +102,11 @@ export function MassWeightExplained() {
   const ARROW_EARTH = 66; // px عند g ≈ 9.8
   const arrowFor = (g: number) => ARROW_EARTH * (g / 9.8); // القمر: ≈ 11px
   const arrowTop = 204;
+  // رأس السهم متناسب مع طول سهمه: طوله المحوري نسبة ثابتة من الطول الكلي.
+  // الامتداد المحوري الفعلي للرأس في مكوّن Head يساوي size × cos(0.42)،
+  // لذلك يُشتق size منه ويُنهى الخط عند قاعدة الرأس تمامًا.
+  const HEAD_FRACTION = 0.22;
+  const headSizeFor = (len: number) => (len * HEAD_FRACTION) / Math.cos(0.42);
   return (
     <Frame w={660} h={302} title="جسم واحد على الأرض والقمر: كتلة ثابتة وثقل مختلف"
       caption="الكتلة لا تتغير بتغيّر المكان، أما الثقل فيقلّ على القمر لأن جاذبيته أصغر بنحو ست مرات — وطول السهم يعبّر عن ذلك بالنسبة نفسها">
@@ -110,6 +115,8 @@ export function MassWeightExplained() {
         const moon = i === 1;
         const g = moon ? 1.62 : 9.8;
         const len = arrowFor(g);
+        const headSize = headSizeFor(len);
+        const shaftEnd = arrowTop + len - len * HEAD_FRACTION; // قاعدة الرأس
         return (
           <g key={i}>
             <circle cx={x} cy={86} r={44} fill={moon ? "#cbd5e1" : "#93c5fd"} stroke={moon ? "#94a3b8" : C.blue} strokeWidth={2.5} />
@@ -117,8 +124,8 @@ export function MassWeightExplained() {
             <text x={x} y={100} textAnchor="middle" fill={C.muted} fontSize={11} fontWeight={700}>{moon ? "g ≈ 1.62" : "g ≈ 9.8"} N/kg</text>
             <rect x={x - 34} y={164} width={68} height={40} rx={9} fill="#ffb03a" />
             <text x={x} y={189} textAnchor="middle" fill="#1c1000" fontSize={12} fontWeight={800}>m = 10 kg</text>
-            <line x1={x} y1={arrowTop} x2={x} y2={arrowTop + Math.max(len - 10, 1)} stroke={C.coral} strokeWidth={4.5} />
-            <Head x={x} y={arrowTop + len} angle={Math.PI / 2} color={C.coral} size={11} />
+            <line x1={x} y1={arrowTop} x2={x} y2={shaftEnd} stroke={C.coral} strokeWidth={4.5} />
+            <Head x={x} y={arrowTop + len} angle={Math.PI / 2} color={C.coral} size={headSize} />
             <text x={x} y={292} textAnchor="middle" fill={C.coral} fontSize={13} fontWeight={800}>{moon ? "w ≈ 16 N" : "w ≈ 98 N"}</text>
           </g>
         );
