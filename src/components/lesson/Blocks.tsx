@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { AlertTriangle, BookOpen, Info, Sigma } from "lucide-react";
 import type { LessonBlock } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, TeX, unitTex } from "@/components/math/TeX";
 import { FigureBlock } from "@/components/figures";
 import { InlineCheck } from "./InlineCheck";
 
@@ -21,7 +21,7 @@ export function BookBadge() {
 export function BlockRenderer({ block }: { block: DisplayBlock }) {
   switch (block.type) {
     case "heading":
-      return (<div className="mt-2">{block.book && <BookBadge />}<h3 className="mt-2 flex items-center gap-3 text-[20px] font-black text-white"><span className="h-6 w-1.5 rounded-full bg-gradient-to-b from-[var(--color-phys)] to-[var(--color-vio)]" />{block.text}</h3></div>);
+      return (<div className="mt-2">{block.book && <BookBadge />}<h3 className="mt-2 flex items-center gap-3 text-[20px] font-black text-white"><span className="h-6 w-1.5 rounded-full bg-gradient-to-b from-[var(--color-phys)] to-[var(--color-vio)]" /><AutoTex text={block.text} /></h3></div>);
 
     case "paragraph":
       return (<div>{block.book && <div className="mb-2"><BookBadge /></div>}<p className="text-[15.5px] leading-9 text-[#c5d8f0]"><RichText rich={block.rich} /></p></div>);
@@ -31,7 +31,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
         <div className="card relative overflow-hidden border-r-4 border-r-[var(--color-phys)] p-6 bg-gradient-to-br from-[rgba(60,224,244,0.06)] to-transparent">
           <div className="flex flex-wrap items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-[rgba(60,224,244,0.12)]"><BookOpen className="h-5 w-5 text-[var(--color-phys)]" /></span>
-            <h4 className="text-[18px] font-black text-[#8ceeff]">{block.title}</h4>
+            <h4 className="text-[18px] font-black text-[#8ceeff]"><AutoTex text={block.title} /></h4>
             {block.book && <BookBadge />}
           </div>
           <p className="mt-3 text-[16px] font-bold leading-9 text-[#dce8f8]"><RichText rich={block.rich} /></p>
@@ -42,7 +42,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
         <div className="card border-r-4 border-r-[var(--color-chem)] p-7 bg-gradient-to-l from-[rgba(255,176,58,0.06)] to-transparent">
           <div className="flex flex-wrap items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-xl bg-[rgba(255,176,58,0.15)]"><Sigma className="h-6 w-6 text-[var(--color-chem)]" /></div>
-            <h4 className="text-[19px] font-black text-[#ffd08a]">{block.name}</h4>
+            <h4 className="text-[19px] font-black text-[#ffd08a]"><AutoTex text={block.name} /></h4>
             {block.book && <BookBadge />}
           </div>
           <div className="mt-5 rounded-2xl bg-[rgba(0,0,0,0.25)] p-6 border border-[rgba(255,176,58,0.1)]">{typeof block.formula === "string" ? <TeX block>{block.formula}</TeX> : block.formula}</div>
@@ -52,7 +52,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
                 <div key={s.sym} className="flex flex-col items-center rounded-xl bg-[rgba(255,255,255,0.03)] border border-[var(--color-line)] p-3">
                   <span className="text-[17px] font-black text-[var(--color-chem)]"><TeX>{s.sym}</TeX></span>
                   <span className="text-[12px] font-bold text-white">{s.meaning}</span>
-                  <span className="text-[11px] text-[var(--color-dim)]" dir="ltr"><TeX>{s.unit ?? ""}</TeX></span>
+                  <span className="text-[11px] text-[var(--color-dim)]" dir="ltr"><TeX>{unitTex(s.unit ?? "")}</TeX></span>
                 </div>
               ))}
             </div>
@@ -65,7 +65,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
         <div className="card border-[rgba(167,139,250,0.2)] p-6 bg-gradient-to-br from-[rgba(167,139,250,0.04)] to-transparent">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-lg bg-[var(--color-vio-lt)] px-3 py-1 text-[12px] font-black text-[var(--color-vio)]">مثال محلول</span>
-            <h4 className="text-[16px] font-black text-white">{block.title}</h4>
+            <h4 className="text-[16px] font-black text-white"><AutoTex text={block.title} /></h4>
             {block.book && <BookBadge />}
           </div>
           <ol className="mt-4 space-y-3">
@@ -82,7 +82,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
     case "steps":
       return (
         <div className="card p-6">
-          {block.title && <h4 className="mb-4 text-[15px] font-black text-[#8ceeff]">{block.title}</h4>}
+          {block.title && <h4 className="mb-4 text-[15px] font-black text-[#8ceeff]"><AutoTex text={block.title} /></h4>}
           <ol className="space-y-3">
             {block.items.map((item, i) => (
               <li key={i} className="flex items-start gap-3 text-[15px] leading-8 text-[#c5d8f0]">
@@ -106,7 +106,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
     }
 
     case "table":
-      return (<div className="overflow-x-auto rounded-xl border border-[var(--color-line)]">{block.book && <div className="p-3 pb-0"><BookBadge /></div>}<table className="tbl"><thead><tr>{block.head.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{block.rows.map((row, i) => <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>)}</tbody></table></div>);
+      return (<div className="overflow-x-auto rounded-xl border border-[var(--color-line)]">{block.book && <div className="p-3 pb-0"><BookBadge /></div>}<table className="tbl"><thead><tr>{block.head.map(h => <th key={h}><AutoTex text={h} /></th>)}</tr></thead><tbody>{block.rows.map((row, i) => <tr key={i}>{row.map((cell, j) => <td key={j}><AutoTex text={cell} /></td>)}</tr>)}</tbody></table></div>);
 
     case "figure": return <FigureBlock figure={block.figure} caption={block.caption} />;
     case "check": return <InlineCheck question={block.question} options={block.options} correct={block.correct} explain={block.explain} />;

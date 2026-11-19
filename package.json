@@ -9,8 +9,9 @@
     "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
-    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts"
+    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts && node --import tsx --test tests/render/*.test.ts",
+    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
+    "test:render": "node --import tsx --test tests/render/*.test.ts"
   },
   "dependencies": {
     "@types/katex": "^0.16.8",

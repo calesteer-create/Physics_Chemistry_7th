@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowLeftRight, Equal, Ruler, Scale, Timer } from "lucide-react";
+import { AutoTex, TeX, unitTex } from "@/components/math/TeX";
 
 /**
  * محوّل الوحدات — أداة تعليمية عامة (غير منهجية) للتدريب على التحويلات
@@ -134,7 +135,7 @@ export function UnitConverter() {
             >
               {Object.entries(units).map(([k, u]) => (
                 <option key={k} value={k} className="bg-[#0b1830]">
-                  {u.label}
+                  <AutoTex text={u.label} />
                 </option>
               ))}
             </select>
@@ -161,7 +162,7 @@ export function UnitConverter() {
             >
               {Object.entries(units).map(([k, u]) => (
                 <option key={k} value={k} className="bg-[#0b1830]">
-                  {u.label}
+                  <AutoTex text={u.label} />
                 </option>
               ))}
             </select>
@@ -172,16 +173,16 @@ export function UnitConverter() {
               النتيجة
             </span>
             <span dir="ltr" className="block text-[19px] font-black text-[#8ceeff]">
-              {result === null ? "—" : `${format(result)} ${to}`}
+              {result === null ? "—" : <TeX>{`${format(result)}\\,${unitTex(to)}`}</TeX>}
             </span>
           </div>
         </div>
 
         <p className="mt-5 rounded-xl bg-[rgba(6,14,30,0.55)] px-4 py-3 text-[12.5px] font-bold leading-6 text-[var(--color-mist)]">
           الفكرة: نحوّل القيمة إلى الوحدة الأساسية أولًا ثم إلى الوحدة المطلوبة. مثال:
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 km = 1000 m</span>،
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 kg = 1000 g</span>،
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 min = 60 s</span>.
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{km} = 1000\\,\\text{m}"}</TeX></span>،
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{kg} = 1000\\,\\text{g}"}</TeX></span>،
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{min} = 60\\,\\text{s}"}</TeX></span>.
         </p>
       </div>
     </div>

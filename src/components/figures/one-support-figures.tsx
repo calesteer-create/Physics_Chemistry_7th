@@ -1,4 +1,4 @@
-import { SvgTeX } from "@/components/math/TeX";
+import { AutoTex, SvgTeX } from "@/components/math/TeX";
 import type { ReactNode } from "react";
 import { Carrier, Drawing, ink, Label, PointMark, Vector } from "./one-support-drawing";
 import { addition, subtraction } from "./one-support-geometry";
@@ -19,7 +19,7 @@ function Frame({ w, h, title, caption, children }: { w: number; h: number; title
           {children}
         </svg>
       </div>
-      {caption && <figcaption className="mt-2 text-center text-[12.5px] font-bold leading-6" style={{ color: C.muted }}>{caption}</figcaption>}
+      {caption && <figcaption className="mt-2 text-center text-[12.5px] font-bold leading-6" style={{ color: C.muted }}><AutoTex text={caption} /></figcaption>}
     </figure>
   );
 }

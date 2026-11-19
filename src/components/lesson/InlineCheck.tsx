@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { CheckCircle2, HelpCircle, RotateCcw, XCircle } from "lucide-react";
 import type { Rich } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
+import { AutoTex } from "@/components/math/TeX";
 
 export function InlineCheck({ question, options, correct, explain }: { question: Rich; options: ReactNode[]; correct: number; explain: Rich }) {
   const [selected, setSelected] = useState<number | null>(null);
@@ -35,7 +36,7 @@ export function InlineCheck({ question, options, correct, explain }: { question:
                   : state === "wrong" ? "bg-[var(--color-error)] text-white"
                   : "bg-[rgba(148,178,220,0.08)] text-[var(--color-mist)]"
                 }`}>{letters[i]}</span>
-                {opt}
+                {typeof opt === "string" ? <AutoTex text={opt} /> : opt}
                 {state === "correct" && <CheckCircle2 className="mr-auto h-5 w-5" />}
                 {state === "wrong" && <XCircle className="mr-auto h-5 w-5" />}
               </button>

@@ -99,11 +99,11 @@ export const forceOnOneSupportLesson: Lesson = {
           title: "التطبيق المحلول من ص 32",
           book: true,
           steps: [
-            [{ t: "قوتان على حامل واحد وبجهة واحدة شدتهما " }, { tex: "F_1 = 20\,N" }, { t: " و " }, { tex: "F_2 = 30\,N" }, { t: "." }],
+            [{ t: "قوتان على حامل واحد وبجهة واحدة شدتهما " }, { tex: "F_1 = 20\\,\\mathrm{N}" }, { t: " و " }, { tex: "F_2 = 30\\,\\mathrm{N}" }, { t: "." }],
             [{ t: "القانون: " }, { tex: "F = F_1 + F_2" }],
             [{ t: "التعويض: " }, { tex: "F = 20 + 30" }],
           ],
-          result: [{ tex: "F = 50\,N" }],
+          result: [{ tex: "F = 50\\,\\mathrm{N}" }],
         },
 
         { type: "heading", text: "محصلة قوتين على حامل واحد وبجهتين متعاكستين (ص 33–34)", book: true },
@@ -117,7 +117,7 @@ export const forceOnOneSupportLesson: Lesson = {
           type: "law",
           name: "قانون المحصلة في جهتين متعاكستين",
           book: true,
-          formula: "F = F_2 - F_1 \;\; \text{إذا كانت} \; F_2 > F_1",
+          formula: "F = F_2 - F_1 \\;\\; \\text{إذا كانت} \\; F_2 > F_1",
           symbols: [
             { sym: "F", meaning: "شدة المحصلة", unit: "N" },
             { sym: "F_1", meaning: "القوة الأصغر", unit: "N" },
@@ -139,12 +139,12 @@ export const forceOnOneSupportLesson: Lesson = {
           title: "التطبيق المحلول من ص 34",
           book: true,
           steps: [
-            [{ t: "قوتان متعاكستان على حامل واحد شدتهما " }, { tex: "F_1 = 20\,N" }, { t: " و " }, { tex: "F_2 = 30\,N" }, { t: "." }],
+            [{ t: "قوتان متعاكستان على حامل واحد شدتهما " }, { tex: "F_1 = 20\\,\\mathrm{N}" }, { t: " و " }, { tex: "F_2 = 30\\,\\mathrm{N}" }, { t: "." }],
             [{ t: "بما أن " }, { tex: "F_2 > F_1" }, { t: " فجهة المحصلة هي جهة " }, { tex: "F_2" }, { t: "." }],
             [{ t: "القانون: " }, { tex: "F = F_2 - F_1" }],
             [{ t: "التعويض: " }, { tex: "F = 30 - 20" }],
           ],
-          result: [{ tex: "F = 10\,N" }],
+          result: [{ tex: "F = 10\\,\\mathrm{N}" }],
         },
 
         { type: "heading", text: "القوتان المتعاكستان مباشرة", book: true },
@@ -202,10 +202,10 @@ export const forceOnOneSupportLesson: Lesson = {
         },
         {
           type: "check",
-          question: [{ t: "قوتان متعاكستان شدتهما " }, { tex: "50\,N" }, { t: " و " }, { tex: "80\,N" }, { t: ". ما شدة المحصلة؟" }],
+          question: [{ t: "قوتان متعاكستان شدتهما " }, { tex: "50\\,\\mathrm{N}" }, { t: " و " }, { tex: "80\\,\\mathrm{N}" }, { t: ". ما شدة المحصلة؟" }],
           options: ["130 N", "30 N", "0 N"],
           correct: 1,
-          explain: [{ tex: "F = 80 - 50 = 30\,N" }, { t: " وتكون الجهة جهة القوة الأكبر." }],
+          explain: [{ tex: "F = 80 - 50 = 30\\,\\mathrm{N}" }, { t: " وتكون الجهة جهة القوة الأكبر." }],
         },
       ],
     },
@@ -218,11 +218,11 @@ export const forceOnOneSupportLesson: Lesson = {
           title: "مسألة شد الحبل بين فريقين (ص 36)",
           book: true,
           steps: [
-            [{ t: "الفريق الأول: " }, { tex: "230 + 350 + 220 = 800\,N" }],
-            [{ t: "الفريق الثاني: " }, { tex: "360 + 340 = 700\,N" }],
+            [{ t: "الفريق الأول: " }, { tex: "230 + 350 + 220 = 800\\,\\mathrm{N}" }],
+            [{ t: "الفريق الثاني: " }, { tex: "360 + 340 = 700\\,\\mathrm{N}" }],
             [{ t: "بما أن القوتين متعاكستان على حامل واحد: " }, { tex: "F = F' - F'' = 800 - 700" }],
           ],
-          result: [{ tex: "F = 100\,N" }, { t: " وتكون الجهة جهة الفريق الأول، لذلك هو الفائز." }],
+          result: [{ tex: "F = 100\\,\\mathrm{N}" }, { t: " وتكون الجهة جهة الفريق الأول، لذلك هو الفائز." }],
         },
       ],
     },
@@ -280,7 +280,7 @@ export const forceOnOneSupportLesson: Lesson = {
     },
     {
       kind: "draw",
-      instruction: [{ t: "ارسم شعاعين " }, { tex: "\vec{F_1}" }, { t: " و " }, { tex: "\vec{F_2}" }, { t: " في نفس الجهة وعلى نفس الحامل، ثم ارسم شعاع المحصلة " }, { tex: "\vec{F}" }, { t: " أطول منهما في نفس الجهة." }],
+      instruction: [{ t: "ارسم شعاعين " }, { tex: "\\vec{F_1}" }, { t: " و " }, { tex: "\\vec{F_2}" }, { t: " في نفس الجهة وعلى نفس الحامل، ثم ارسم شعاع المحصلة " }, { tex: "\\vec{F}" }, { t: " أطول منهما في نفس الجهة." }],
       figure: { id: "same-nb", kind: "svg", src: "resultant-same-direction", alt: "محصلة قوتين بجهة واحدة للدفتر", bookPage: 31, reproduction: "redrawn", notebook: true },
     },
     { kind: "h2", text: "ثالثاً: محصلة قوتين بجهتين متعاكستين" },
@@ -292,7 +292,7 @@ export const forceOnOneSupportLesson: Lesson = {
     {
       kind: "law",
       name: "القانون",
-      formula: "F = F_2 - F_1 \;\; \text{إذا كانت} \; F_2 > F_1",
+      formula: "F = F_2 - F_1 \\;\\; \\text{إذا كانت} \\; F_2 > F_1",
       symbols: [
         { sym: "F", meaning: "شدة المحصلة", unit: "N" },
         { sym: "F_1", meaning: "القوة الأصغر", unit: "N" },

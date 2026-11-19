@@ -1,4 +1,4 @@
-import { SvgTeX } from "@/components/math/TeX";
+import { AutoTex, SvgTeX } from "@/components/math/TeX";
 
 /*
  * رسومات الدرس الثاني — أسلوب أكاديمي نظيف:
@@ -85,8 +85,8 @@ export function SpringMagnetExperiment() {
       <g transform="translate(312, 176)">
         <rect x={0} y={0} width={32} height={26} rx={5} fill={C.red} />
         <rect x={32} y={0} width={32} height={26} rx={5} fill={C.blue} />
-        <text x={16} y={18} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>N</text>
-        <text x={48} y={18} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>S</text>
+        <SvgTeX tex="\mathrm{N}" x={4} y={4} width={24} height={20} align="middle" color="white" fontSize="12px" />
+        <SvgTeX tex="\mathrm{S}" x={36} y={4} width={24} height={20} align="middle" color="white" fontSize="12px" />
       </g>
 
       {/* سهم قوة الجذب المغناطيسي: من النابض نحو المغناطيس (إلى اليمين) */}
@@ -310,8 +310,8 @@ export function ForceScaleDrawing() {
         <line x1={0} y1={0} x2={40} y2={0} stroke={C.ink} strokeWidth={2.5} />
         <line x1={0} y1={-6} x2={0} y2={6} stroke={C.ink} strokeWidth={2} />
         <line x1={40} y1={-6} x2={40} y2={6} stroke={C.ink} strokeWidth={2} />
-        <text x={20} y={-10} textAnchor="middle" fill={C.muted} fontSize={11} fontWeight={700}>1 cm</text>
-        <text x={20} y={22} textAnchor="middle" fill={C.muted} fontSize={11} fontWeight={700}>= 10 N</text>
+        <SvgTeX tex="1\,\text{cm}" x={0} y={-24} width={40} height={18} align="middle" color={C.muted} fontSize="11px" />
+        <SvgTeX tex="= 10\,\text{N}" x={0} y={8} width={40} height={18} align="middle" color={C.muted} fontSize="11px" />
       </g>
 
       {/* أسطورة */}
@@ -319,9 +319,16 @@ export function ForceScaleDrawing() {
         {forces.map((f, i) => (
           <g key={i} transform={`translate(0, ${i * 22})`}>
             <line x1={0} y1={6} x2={24} y2={6} stroke={f.color} strokeWidth={3.5} strokeLinecap="round" />
-            <text x={30} y={10} fill={C.muted} fontSize={11} fontWeight={600}>
-              {i === 0 ? "أفقية → يمين" : i === 1 ? "شاقولية ↓ أسفل" : "45° ↗ أعلى"}
-            </text>
+            {i === 2 ? (
+              <>
+                <SvgTeX tex="45^\circ" x={30} y={0} width={34} height={18} color={C.muted} fontSize="11px" />
+                <text x={68} y={10} fill={C.muted} fontSize={11} fontWeight={600}>↗ أعلى</text>
+              </>
+            ) : (
+              <text x={30} y={10} fill={C.muted} fontSize={11} fontWeight={600}>
+                {i === 0 ? "أفقية → يمين" : "شاقولية ↓ أسفل"}
+              </text>
+            )}
           </g>
         ))}
       </g>
