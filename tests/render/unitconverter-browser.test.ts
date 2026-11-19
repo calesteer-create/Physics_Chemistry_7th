@@ -1,11 +1,12 @@
 /**
  * اختبار المتصفح الفعلي لمحوّل الوحدات (وليس renderToStaticMarkup):
- * يبني حزمة لل componente، يفتحها في Chromium حقيقي (playwright-core +
- * @sparticuz/chromium من npm)، وتحقق في DOM الحيّ من أن:
- *  1) عناصر <option> نصّ صرف بلا أي عناصر HTML داخلها (قاعدة المتصفحات)،
- *  2) الوحدات تظهر بصيغة KaTeX في الواجهة (معاينة الوحدة المختارة + النتيجة + الأمثلة)،
- *  3) النتيجة رتبها قيمة ثم وحدة داخل صيغة KaTeX،
- *  4) التفاعل (تغيير الوحدة) يحدّث المعاينة والنتيجة، وتبقى الخيارات نصًّا.
+ * يبني حزمة للـ component، يفتحها في Chromium حقيقي (playwright-core +
+ * @sparticuz/chromium)، وتحقق في DOM الحيّ من:
+ *  1) استبدال القوائم الأصلية بمكوّن اختيار مخصص (combobox/listbox بـ ARIA).
+ *  2) رمز كل وحدة يظهر بـ KaTeX داخل القائمة نفسها — لا نصًّا عاديًا —
+ *     وكذلك في زر الاختيار والمعاينة أسفله.
+ *  3) فتح القائمة واختيار الوحدات فعليًا بالفأرة وبلوحة المفاتيح في Chromium.
+ *  4) تغيير الوحدة يحدّث النتيجة بشكل صحيح، ويبقى ترتيب «قيمة قبل وحدة».
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -72,7 +73,9 @@ async function buildBundle(outDir: string): Promise<string> {
   return html;
 }
 
-test("محوّل الوحدات في متصفح حقيقي: options نصّ فقط والوحدات بصيغة KaTeX والتفاعل يعمل", { timeout: 120_000 }, async () => {
+const strip = (s: string | null | undefined) => (s ?? "").replace(/\s+/g, "");
+
+test("محوّل الوحدات في Chromium: اختيار مخصص برموز KaTeX داخل القائمة والتفاعل يعمل", { timeout: 120_000 }, async () => {
   ensureBrowserLibs();
   const outDir = join(tmpdir(), "unitconverter-browser-test");
   rmSync(outDir, { recursive: true, force: true });
@@ -94,54 +97,107 @@ test("محوّل الوحدات في متصفح حقيقي: options نصّ فق�
     await page.goto(pathToFileURL(htmlPath).href);
     await page.waitForSelector(".katex", { timeout: 15000 });
 
-    // (1) لا HTML داخل <option> إطلاقًا — نصّ صرف فقط
-    const options = await page.$$eval("option", (els) =>
-      els.map((el) => ({ childElements: el.children.length, text: el.textContent ?? "" })),
+    // (1) لا قوائم أصلية — مكوّن مخصص بوسوم ARIA
+    const nativeSelects = await page.$$eval("select", (els) => els.length);
+    const nativeOptions = await page.$$eval("option", (els) => els.length);
+    assert.equal(nativeSelects, 0, "ما زالت عناصر select أصلية موجودة");
+    assert.equal(nativeOptions, 0, "ما زالت عناصر option أصلية موجودة");
+    const combos = page.locator('button[aria-haspopup="listbox"]');
+    assert.equal(await combos.count(), 2, "زرّا combobox (من/إلى وحدة)");
+    assert.equal(await page.$$eval('[role="listbox"]', (e) => e.length), 0, "القائمة مغلقة أولًا");
+
+    const fromBtn = page.locator('button[aria-label="من وحدة"]');
+    const toBtn = page.locator('button[aria-label="إلى وحدة"]');
+
+    // (2) KaTeX في زر الاختيار + المعاينة أسفله (رمز الوحدة لا يظهر نصًّا عاديًا)
+    assert.equal(strip(await fromBtn.locator(".katex").first().textContent()), "km", "رمز km بـ KaTeX في الزر");
+    assert.equal(strip(await toBtn.locator(".katex").first().textContent()), "m", "رمز m بـ KaTeX في الزر");
+    const katexPerField = await fromBtn.evaluate(
+      (b) => (b.parentElement?.parentElement?.querySelectorAll(".katex").length) ?? 0,
     );
-    assert.ok(options.length >= 8, `عدد الخيارات: ${options.length}`);
-    for (const o of options) {
-      assert.equal(o.childElements, 0, `عنصر HTML داخل option: ${JSON.stringify(o)}`);
-      assert.ok(o.text.trim().length > 0, `option فارغ: ${JSON.stringify(o)}`);
+    assert.ok(katexPerField >= 2, `الزر + المعاينة أسفله KaTeX، وُجد ${katexPerField}`);
+
+    // (3) فتح القائمة: كل خيار يعرض رمزه بـ KaTeX داخل القائمة
+    await fromBtn.click();
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "true", "القائمة مفتوحة");
+    const options = page.locator('ul[role="listbox"] li[role="option"]');
+    assert.equal(await options.count(), 4, "خيارات الطول الأربعة");
+    const optInfo = await page.$$eval('ul[role="listbox"] li[role="option"]', (els) =>
+      els.map((el) => ({
+        hasKatex: !!el.querySelector(".katex"),
+        symbol: (el.querySelector(".katex")?.textContent ?? "").replace(/\s+/g, ""),
+        selected: el.getAttribute("aria-selected"),
+      })),
+    );
+    for (const o of optInfo) {
+      assert.ok(o.hasKatex, `خيار بلا KaTeX: ${JSON.stringify(o)}`);
+      assert.ok(o.symbol.length > 0, `رمز فارغ: ${JSON.stringify(o)}`);
     }
-    assert.ok(
-      options.some((o) => o.text.includes("كيلومتر")),
-      "نصّ عربي في الخيارات كما هو",
-    );
+    assert.deepEqual(optInfo.map((o) => o.symbol).sort(), ["cm", "km", "m", "mm"], "رموز الخيارات بـ KaTeX");
+    assert.ok(optInfo.some((o) => o.selected === "true"), "الخيار الحالي معلَّم aria-selected");
+    const listboxKatex = await page.$$eval('ul[role="listbox"] .katex', (els) => els.length);
+    assert.equal(listboxKatex, 4, "أربع صيغ KaTeX داخل القائمة");
 
-    // (2) الوحدات بصيغة KaTeX في الواجهة: معاينتا الوحدتين + النتيجة + الأمثلة
-    const katexCount = await page.$$eval(".katex", (els) => els.length);
-    assert.ok(katexCount >= 6, `عدد صيغ KaTeX الظاهرة: ${katexCount} (متوقع ≥6)`);
-
-    const previewText = async (label: string) => {
-      const loc = page.locator(`label:has-text("${label}") .katex`).first();
-      return (await loc.textContent())?.replace(/\s+/g, "") ?? "";
-    };
-    assert.equal(await previewText("من وحدة"), "km", "معاينة الوحدة المصدر بصيغة KaTeX");
-    assert.equal(await previewText("إلى وحدة"), "m", "معاينة الوحدة الهدف بصيغة KaTeX");
-
-    // (3) النتيجة: قيمة ثم وحدة داخل صيغة KaTeX (2.5 km = 2500 m)
-    const katexTexts = await page.$$eval(".katex", (els) => els.map((e) => e.textContent ?? ""));
-    const resultKatex = katexTexts.find((t) => t.replace(/\s+/g, "").includes("2500"));
-    assert.ok(resultKatex, `لا توجد صيغة النتيجة 2500 في: ${JSON.stringify(katexTexts)}`);
-    const flat = resultKatex.replace(/\s+/g, "");
-    assert.ok(flat.indexOf("2500") < flat.indexOf("m"), `ترتيب قيمة قبل وحدة: ${flat}`);
-
-    // (4) التفاعل: تغيير «من وحدة» إلى cm يحدّث المعاينة والنتيجة
-    await page.selectOption(`label:has-text("من وحدة") select`, "cm");
-    for (let i = 0; i < 50 && (await previewText("من وحدة")) !== "cm"; i++) {
+    // (4) اختيار بالفأرة: km → cm، النتيجة تتحدّث (2.5 cm = 0.025 m)
+    await page.locator('ul[role="listbox"] li[role="option"]', { hasText: "cm" }).first().click();
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "false", "القائمة تُغلق بعد الاختيار");
+    for (let i = 0; i < 50; i++) {
+      const texts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+      if (texts.some((t) => t.includes("0.025"))) break;
       await page.waitForTimeout(100);
     }
-    assert.equal(await previewText("من وحدة"), "cm", "المعاينة تتحدّث بعد التفاعل");
+    const afterMouse = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+    assert.ok(afterMouse.some((t) => t.includes("0.025")), `النتيجة بعد اختيار cm: ${JSON.stringify(afterMouse)}`);
+    assert.equal(strip(await fromBtn.locator(".katex").first().textContent()), "cm", "الزر يعرض cm بعد الاختيار");
 
-    const afterTexts = await page.$$eval(".katex", (els) => els.map((e) => e.textContent ?? ""));
-    assert.ok(
-      afterTexts.some((t) => t.replace(/\s+/g, "").includes("0.025")),
-      `النتيجة بعد التفاعل (2.5 cm = 0.025 m) في: ${JSON.stringify(afterTexts)}`,
+    // (5) لوحة المفاتيح: Escape يغلق، ثم Enter يفتح، الأسهم تتنقّل، Enter يختار
+    await fromBtn.click(); // افتح بالفأرة
+    await page.keyboard.press("Escape");
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "false", "Escape يغلق");
+    await fromBtn.focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "true", "Enter يفتح");
+    // الفهرس الحالي cm (2): ArrowDown → mm (3) → ArrowDown → km (0) → ArrowDown → m (1)
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "false", "Enter يختار ويغلق");
+    assert.equal(strip(await fromBtn.locator(".katex").first().textContent()), "m", "الاختيار بلوحة المفاتيح: m");
+    for (let i = 0; i < 50; i++) {
+      const texts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+      if (texts.some((t) => t.includes("2500"))) break;
+      await page.waitForTimeout(100);
+    }
+    const afterKb = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+    // من=m وإلى=m ⇒ النتيجة 2.5 (تبدّل من cm إلى m في الخطوة 4)
+    assert.ok(afterKb.some((t) => t.includes("2.5") && t.endsWith("m")), `النتيجة بعد اختيار m: ${JSON.stringify(afterKb)}`);
+
+    // (6) القائمة الثانية (إلى وحدة): فتح واختيار بالفأرة → mm (2.5 m = 2500 mm)
+    await toBtn.click();
+    const toOptions = await page.$$eval('ul[role="listbox"] li[role="option"]', (els) =>
+      els.map((el) => (el.querySelector(".katex")?.textContent ?? "").replace(/\s+/g, "")),
     );
+    assert.deepEqual(toOptions.sort(), ["cm", "km", "m", "mm"], "خيارات الهدف بـ KaTeX");
+    await page.locator('ul[role="listbox"] li[role="option"]', { hasText: "mm" }).first().click();
+    for (let i = 0; i < 50; i++) {
+      const texts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+      if (texts.some((t) => t.includes("2500mm") || (t.includes("2500") && t.includes("mm")))) break;
+      await page.waitForTimeout(100);
+    }
+    const finalTexts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+    const result = finalTexts.find((t) => t.includes("2500") && t.includes("mm"));
+    assert.ok(result, `النتيجة 2500 mm: ${JSON.stringify(finalTexts)}`);
+    assert.ok(result.indexOf("2500") < result.indexOf("mm"), `ترتيب قيمة قبل وحدة: ${result}`);
 
-    // الخيارات تبقى نصًّا بعد التفاعل أيضًا
-    const optionsAfter = await page.$$eval("option", (els) => els.map((el) => el.children.length));
-    assert.ok(optionsAfter.every((n) => n === 0), "HTML داخل option بعد التفاعل");
+    // (7) تفاعل الفئة محفوظ: «الكتلة» يبدّل الخيارات إلى kg/g
+    await page.locator("button", { hasText: "الكتلة" }).first().click();
+    await fromBtn.click();
+    const massOptions = await page.$$eval('ul[role="listbox"] li[role="option"]', (els) =>
+      els.map((el) => (el.querySelector(".katex")?.textContent ?? "").replace(/\s+/g, "")),
+    );
+    assert.deepEqual(massOptions.sort(), ["g", "kg"], "خيارات الكتلة بـ KaTeX بعد تبديل الفئة");
+    await page.keyboard.press("Escape");
   } finally {
     await browser.close();
   }
