@@ -94,6 +94,12 @@ test("محوّل الوحدات في Chromium: اختيار مخصص برموز 
   const browser = await pw.launch({ executablePath, args: chromium.args, headless: true });
   try {
     const page = await browser.newPage();
+    const consoleErrors: string[] = [];
+    const pageErrors: string[] = [];
+    page.on("console", (msg) => {
+      if (msg.type() === "error") consoleErrors.push(msg.text());
+    });
+    page.on("pageerror", (err) => pageErrors.push(String(err)));
     await page.goto(pathToFileURL(htmlPath).href);
     await page.waitForSelector(".katex", { timeout: 15000 });
 
@@ -198,6 +204,66 @@ test("محوّل الوحدات في Chromium: اختيار مخصص برموز 
     );
     assert.deepEqual(massOptions.sort(), ["g", "kg"], "خيارات الكتلة بـ KaTeX بعد تبديل الفئة");
     await page.keyboard.press("Escape");
+
+    // (8) فئة الزمن: افتحها، ثم قائمة «من وحدة» بخيارات h/min/s — كلها KaTeX فعلي داخل القائمة
+    await page.locator("button", { hasText: "الزمن" }).first().click();
+    // بعد التبديل: من=h وإلى=min ⇒ 2.5 h = 150 min
+    assert.equal(strip(await fromBtn.locator(".katex").first().textContent()), "h", "الزمن: رمز h في الزر");
+    for (let i = 0; i < 50; i++) {
+      const texts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+      if (texts.some((t) => t.includes("150") && t.includes("min"))) break;
+      await page.waitForTimeout(100);
+    }
+    const timeInitial = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+    assert.ok(
+      timeInitial.some((t) => t.includes("150") && t.includes("min")),
+      `النتيجة بعد فئة الزمن (2.5 h = 150 min): ${JSON.stringify(timeInitial)}`,
+    );
+
+    await fromBtn.click();
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "true", "قائمة الزمن تُفتح");
+    const timeOptions = await page.$$eval('ul[role="listbox"] li[role="option"]', (els) =>
+      els.map((el) => ({
+        symbol: (el.querySelector(".katex")?.textContent ?? "").replace(/\s+/g, ""),
+        hasKatexElement: !!el.querySelector(".katex"),
+        insideListbox: !!el.closest('ul[role="listbox"]'),
+      })),
+    );
+    assert.equal(timeOptions.length, 3, `خيارات الزمن الثلاثة، وُجد ${timeOptions.length}`);
+    assert.deepEqual(
+      timeOptions.map((o) => o.symbol).sort(),
+      ["h", "min", "s"],
+      "خيارات الزمن h/min/s بـ KaTeX داخل القائمة",
+    );
+    for (const o of timeOptions) {
+      assert.ok(o.hasKatexElement && o.insideListbox, `الخيار لا يحمل عنصر KaTeX داخل القائمة: ${JSON.stringify(o)}`);
+    }
+    const timeListKatex = await page.$$eval('ul[role="listbox"] .katex', (els) => els.length);
+    assert.equal(timeListKatex, 3, "ثلاثة عناصر KaTeX فعلية داخل قائمة الزمن");
+
+    // اختيار s بالفأرة → 2.5 s = 0.041667 min
+    await page.locator('ul[role="listbox"] li[role="option"]', { hasText: "ثانية" }).first().click();
+    assert.equal(await fromBtn.getAttribute("aria-expanded"), "false", "القائمة تُغلق بعد اختيار s");
+    assert.equal(strip(await fromBtn.locator(".katex").first().textContent()), "s", "الزر يعرض s بعد الاختيار");
+    for (let i = 0; i < 50; i++) {
+      const texts = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+      if (texts.some((t) => t.includes("0.041667"))) break;
+      await page.waitForTimeout(100);
+    }
+    const timeFinal = await page.$$eval(".katex", (els) => els.map((e) => (e.textContent ?? "").replace(/\s+/g, "")));
+    const timeResult = timeFinal.find((t) => t.includes("0.041667"));
+    assert.ok(timeResult, `النتيجة بعد اختيار s (2.5 s = 0.041667 min): ${JSON.stringify(timeFinal)}`);
+    assert.ok(timeResult.indexOf("0.041667") < timeResult.indexOf("min"), `ترتيب قيمة قبل وحدة: ${timeResult}`);
+
+    // (9) لا أخطاء عرض على الإطلاق: لا katex-error ولا أخطاء console ولا استثناءات
+    const katexErrors = await page.$$eval(".katex-error", (els) => els.length);
+    assert.equal(katexErrors, 0, "عناصر katex-error في الصفحة");
+    assert.deepEqual(pageErrors, [], "استثناءات JavaScript في الصفحة");
+    assert.deepEqual(
+      consoleErrors.filter((t) => !t.includes("favicon")),
+      [],
+      "أخطاء console أثناء العرض والتفاعل",
+    );
   } finally {
     await browser.close();
   }
