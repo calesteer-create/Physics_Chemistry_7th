@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { CheckCircle2, ChevronDown, Eye, Lightbulb, XCircle } from "lucide-react";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, TeX } from "@/components/math/TeX";
 import { HangingBallForcesDiagram, ForceScaleDrawing } from "@/components/figures/force-figures";
 
 /* ─── atom: بطاقة سؤال بزر إظهار الحل ─── */
@@ -29,7 +29,7 @@ function QuestionCard({
           <span className="grid h-9 w-9 place-items-center rounded-xl text-[14px] font-black text-white"
             style={{ background: p.text }}>{number}</span>
           <span className="rounded-full px-3 py-1 text-[11.5px] font-black" style={{ background: p.border, color: p.text }}>{type}</span>
-          <h4 className="text-[15px] font-black text-[var(--color-fog)]">{title}</h4>
+          <h4 className="text-[15px] font-black text-[var(--color-fog)]"><AutoTex text={title} /></h4>
         </div>
         <div className="text-[14.5px] font-bold leading-9 text-[var(--color-fog)]">{question}</div>
         {children && <div className="mt-4">{children}</div>}
@@ -78,7 +78,7 @@ function TrueFalseItem({ number, text, correct, explanation }: {
     <div className="rounded-xl border border-[var(--color-line2)] bg-[rgba(255,255,255,0.02)] p-4">
       <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)] mb-3">
         <span className="ml-2 text-[12px] font-black text-[var(--color-mist)]">{number}.</span>
-        {text}
+        <AutoTex text={text} />
       </p>
       <div className="flex gap-2">
         {[true, false].map(val => {
@@ -103,7 +103,7 @@ function TrueFalseItem({ number, text, correct, explanation }: {
           right ? "border-[rgba(52,211,153,0.3)] bg-[rgba(52,211,153,0.07)] text-[#a7f3d0]"
                 : "border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.07)] text-[#fde68a]"
         }`}>
-          {!correct ? `✗ خطأ — ${explanation}` : `✓ صحيحة — ${explanation}`}
+          <>{!correct ? "✗ خطأ — " : "✓ صحيحة — "}<AutoTex text={explanation} /></>
         </div>
       )}
     </div>
@@ -122,7 +122,7 @@ function MCQItem({ number, text, options, correct, explanation, formula }: {
     <div className="rounded-xl border border-[var(--color-line2)] bg-[rgba(255,255,255,0.02)] p-4">
       <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)] mb-3">
         <span className="ml-2 text-[12px] font-black text-[var(--color-mist)]">{number}.</span>
-        {text}
+        <AutoTex text={text} />
         {formula && <span className="mr-1"><TeX>{formula}</TeX></span>}
       </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -137,7 +137,7 @@ function MCQItem({ number, text, options, correct, explanation, formula }: {
                 : "border-[var(--color-line2)] text-[var(--color-mist)] hover:border-[rgba(60,224,244,0.35)] hover:text-white"
               }`}>
               <span className="font-black text-[11px] opacity-70">{letters[i]})</span>
-              {opt}
+              <AutoTex text={opt} />
               {state === "correct" && <CheckCircle2 className="ml-auto h-4 w-4" />}
               {state === "wrong" && <XCircle className="ml-auto h-4 w-4" />}
             </button>
@@ -150,7 +150,7 @@ function MCQItem({ number, text, options, correct, explanation, formula }: {
                          : "border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.07)] text-[#fde68a]"
         }`}>
           <span className="mb-1 block text-[12px] font-black">{sel === correct ? "✓ صحيح — لماذا؟" : "✗ ليست الإجابة الصحيحة — والسبب:"}</span>
-          {explanation}
+          <AutoTex text={explanation} />
           <button onClick={() => setSel(null)} className="mt-3 block rounded-lg border border-[var(--color-line2)] px-3 py-1.5 text-[11.5px] font-black text-[var(--color-mist)] hover:text-white">
             جرّب مرة أخرى
           </button>
@@ -197,7 +197,7 @@ export function ForceBookQuestions() {
             explanation="الصحيح: ثقل الجسم. الجسم المقذوف يتحرك للأعلى أولًا بسرعته الابتدائية، لكن قوة الثقل (جذب الأرض له) تؤثر فيه طوال الوقت نحو الأسفل، فتُبطئ صعوده حتى يتوقف لحظيًا ثم تُسرّع سقوطه عائدًا. لماذا لا تصلح البدائل؟ الكتلة مقدار مادة وليست قوة فلا «تشدّ» الجسم، والحجم والطول وصفان هندسيان لا يؤثران في اتجاه الحركة." />
           <MCQItem number={3}
             text="جسم كتلته 4 kg، وبفرض تسارع الجاذبية الأرضية"
-            formula="g = 10\\,\\text{m.s}^{-2}"
+            formula={String.raw`g = 10\,\text{m.s}^{-2}`}
             options={["400 N", "40 N", "0.4 N", "4 N"]}
             correct={1}
             explanation="نطبق علاقة الثقل بالكتلة: w = m × g = 4 × 10 = 40 N — فيجب ضرب الكتلة في g لا قسمتها (لو قسمت لحصلت على 0.4) ولا تركها كما هي (4). الجواب b." />
@@ -258,9 +258,9 @@ export function ForceBookQuestions() {
             <div className="mb-4 text-[13px]">
               <p className="font-black text-[var(--color-chem)] mb-2">خطوات الحل:</p>
               <ul className="space-y-2">
-                <li>• القوة 1: <TeX>{"40 \\div 10 = 4\\,\\text{cm}"}</TeX> → سهم أفقي طوله 4 cm نحو اليمين من B.</li>
-                <li>• القوة 2: <TeX>{"30 \\div 10 = 3\\,\\text{cm}"}</TeX> → سهم عمودي طوله 3 cm نحو الأسفل من B.</li>
-                <li>• القوة 3: <TeX>{"50 \\div 10 = 5\\,\\text{cm}"}</TeX> → سهم طوله 5 cm بزاوية 45° فوق الأفق من B.</li>
+                <li>• القوة 1: <TeX>{"40 \\div 10 = 4\\,\\text{cm}"}</TeX> → <AutoTex text="سهم أفقي طوله 4 cm نحو اليمين من B" />.</li>
+                <li>• القوة 2: <TeX>{"30 \\div 10 = 3\\,\\text{cm}"}</TeX> → <AutoTex text="سهم عمودي طوله 3 cm نحو الأسفل من B" />.</li>
+                <li>• القوة 3: <TeX>{"50 \\div 10 = 5\\,\\text{cm}"}</TeX> → <AutoTex text="سهم طوله 5 cm بزاوية 45° فوق الأفق من B" />.</li>
               </ul>
             </div>
             <ForceScaleDrawing />
@@ -350,7 +350,7 @@ export function ForceBookQuestions() {
                 <div className="rounded-xl border border-[rgba(52,211,153,0.4)] bg-[rgba(52,211,153,0.07)] px-4 py-3 text-center font-black text-[var(--color-success)]">
                   <TeX>{"m = 300\\,\\text{kg}"}</TeX>
                 </div>
-                <p className="text-[12.5px] text-[var(--color-mist)]">ملاحظة: 300 kg تعادل تقريبًا وزن 4 أشخاص بالغين.</p>
+                <p className="text-[12.5px] text-[var(--color-mist)]"><AutoTex text="ملاحظة: 300 kg تعادل تقريبًا وزن 4 أشخاص بالغين." /></p>
               </div>
             </>} />
         </div>

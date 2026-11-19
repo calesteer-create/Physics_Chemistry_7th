@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Play, Rocket, RotateCcw, Sigma, Split } from "lucide-react";
-import { TeX } from "@/components/math/TeX";
+import { SvgTeX, TeX } from "@/components/math/TeX";
 
 const TABS = [
   { id: "same", label: "الجمع على نفس الجهة", icon: Sigma },
@@ -49,16 +49,16 @@ function SameDirectionLab() {
         <svg viewBox="0 0 540 240" className="w-full h-auto">
           <line x1="40" y1="120" x2="500" y2="120" stroke="#64748b" strokeDasharray="6 5" strokeWidth="2" />
           <circle cx="80" cy="120" r="6" fill="#fff" stroke="#24304a" strokeWidth="2" />
-          <text x="72" y="96" fill="#c96a4f" fontSize="14" fontWeight="800">O</text>
+          <SvgTeX tex="O" x={66} y={84} width={22} height={18} color="#c96a4f" fontSize="14px" />
           <line x1="80" y1="120" x2={80 + f1*px} y2="120" stroke="#f2b632" strokeWidth="5" strokeLinecap="round" />
           <polygon points={`${80 + f1*px},120 ${80 + f1*px - 14},112 ${80 + f1*px - 14},128`} fill="#f2b632" />
-          <text x={110} y="94" fill="#f2b632" fontSize="15" fontWeight="800">F₁</text>
+          <SvgTeX tex="F_1" x={110} y={80} width={34} height={20} color="#f2b632" fontSize="15px" />
           <line x1="80" y1="120" x2={80 + f2*px} y2="120" stroke="#4aa9df" strokeWidth="5" strokeLinecap="round" />
           <polygon points={`${80 + f2*px},120 ${80 + f2*px - 14},112 ${80 + f2*px - 14},128`} fill="#4aa9df" />
-          <text x={150} y="94" fill="#4aa9df" fontSize="15" fontWeight="800">F₂</text>
+          <SvgTeX tex="F_2" x={150} y={80} width={34} height={20} color="#4aa9df" fontSize="15px" />
           <line x1="80" y1="120" x2={80 + F*px} y2="120" stroke="#c4634a" strokeWidth="6.5" strokeLinecap="round" />
           <polygon points={`${80 + F*px},120 ${80 + F*px - 18},110 ${80 + F*px - 18},130`} fill="#c4634a" />
-          <text x={220} y="94" fill="#c4634a" fontSize="15" fontWeight="800">F</text>
+          <SvgTeX tex="F" x={220} y={80} width={26} height={20} color="#c4634a" fontSize="15px" />
         </svg>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div>
@@ -94,25 +94,25 @@ function OppositeDirectionLab() {
         <svg viewBox="0 0 560 240" className="w-full h-auto">
           <line x1="50" y1="120" x2="510" y2="120" stroke="#64748b" strokeDasharray="6 5" strokeWidth="2" />
           <circle cx="240" cy="120" r="6" fill="#fff" stroke="#24304a" strokeWidth="2" />
-          <text x="232" y="96" fill="#c4634a" fontSize="14" fontWeight="800">O</text>
+          <SvgTeX tex="O" x={226} y={84} width={22} height={18} color="#c4634a" fontSize="14px" />
           <line x1="240" y1="120" x2={240 - f1*px} y2="120" stroke="#f2b632" strokeWidth="5" strokeLinecap="round" />
           <polygon points={`${240 - f1*px},120 ${240 - f1*px + 14},112 ${240 - f1*px + 14},128`} fill="#f2b632" />
-          <text x={240 - f1*px + 10} y="94" fill="#f2b632" fontSize="15" fontWeight="800">F₁</text>
+          <SvgTeX tex="F_1" x={240 - f1*px + 10} y={80} width={34} height={20} color="#f2b632" fontSize="15px" />
           <line x1="240" y1="120" x2={240 + f2*px} y2="120" stroke="#c4634a" strokeWidth="6" strokeLinecap="round" />
           <polygon points={`${240 + f2*px},120 ${240 + f2*px - 14},112 ${240 + f2*px - 14},128`} fill="#c4634a" />
-          <text x={240 + f2*px - 18} y="94" fill="#c4634a" fontSize="15" fontWeight="800">F₂</text>
+          <SvgTeX tex="F_2" x={240 + f2*px - 18} y={80} width={34} height={20} color="#c4634a" fontSize="15px" />
           {F > 0 && bigger === "F2" && (
             <>
               <line x1="240" y1="152" x2={240 + F*px} y2="152" stroke="#4aa9df" strokeWidth="5" strokeLinecap="round" />
               <polygon points={`${240 + F*px},152 ${240 + F*px - 14},144 ${240 + F*px - 14},160`} fill="#4aa9df" />
-              <text x={240 + F*px/2} y="175" textAnchor="middle" fill="#4aa9df" fontSize="15" fontWeight="800">F</text>
+              <SvgTeX tex="F" x={240 + F*px/2 - 13} y={163} width={26} height={20} color="#4aa9df" fontSize="15px" />
             </>
           )}
           {F > 0 && bigger === "F1" && (
             <>
               <line x1="240" y1="152" x2={240 - F*px} y2="152" stroke="#4aa9df" strokeWidth="5" strokeLinecap="round" />
               <polygon points={`${240 - F*px},152 ${240 - F*px + 14},144 ${240 - F*px + 14},160`} fill="#4aa9df" />
-              <text x={240 - F*px/2} y="175" textAnchor="middle" fill="#4aa9df" fontSize="15" fontWeight="800">F</text>
+              <SvgTeX tex="F" x={240 - F*px/2 - 13} y={163} width={26} height={20} color="#4aa9df" fontSize="15px" />
             </>
           )}
         </svg>

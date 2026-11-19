@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { CheckSquare, NotebookPen, Paintbrush, PenLine, Star, AlertOctagon } from "lucide-react";
 import type { NotebookItem, Rich } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, TeX } from "@/components/math/TeX";
+import { unitTex } from "@/lib/tex-format"; // وحدة نقية — Notebook مكوّن خادم
 import { NotebookFigure } from "@/components/figures";
 
 type NotebookNotation = {
@@ -25,7 +26,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
         <div className="border-b-2 border-[#22304a] pb-3">
           <h3 className="text-[22px] font-black text-[#152238]">
             <span className="ml-2 text-[#1d4ed8]">١.</span>
-            {item.text}
+            <AutoTex text={item.text} />
           </h3>
         </div>
       );
@@ -34,7 +35,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
       return (
         <h4 className="flex items-center gap-2 text-[17px] font-black text-[#1d4ed8]">
           <span className="h-5 w-1 rounded-full bg-[#1d4ed8]" />
-          {item.text}
+          <AutoTex text={item.text} />
         </h4>
       );
 
@@ -55,7 +56,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
       return (
         <div className="paper-def">
           <div className="flex items-center justify-between gap-3">
-            <h4 className="text-[15px] font-black text-[#1d4ed8]">{item.title}</h4>
+            <h4 className="text-[15px] font-black text-[#1d4ed8]"><AutoTex text={item.title} /></h4>
             <span className="paper-tag paper-tag-write">
               <PenLine className="h-3.5 w-3.5" />
               اكتب التعريف
@@ -71,7 +72,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
       return (
         <div className="paper-law">
           <div className="flex items-center justify-between gap-3">
-            <h4 className="text-[15px] font-black text-[#0f766e]">{item.name}</h4>
+            <h4 className="text-[15px] font-black text-[#0f766e]"><AutoTex text={item.name} /></h4>
             <span className="paper-tag paper-tag-draw">
               <PenLine className="h-3.5 w-3.5" />
               انسخ القانون ثم معنى كل رمز
@@ -91,7 +92,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
                   <span>{s.meaning}</span>
                   {s.unit && (
                     <span dir="ltr" className="font-black text-[#0f766e]">
-                      ({notation?.inline(s.unit) ?? s.unit})
+                      ({notation?.inline(s.unit) ?? <TeX>{unitTex(s.unit)}</TeX>})
                     </span>
                   )}
                 </li>
@@ -120,7 +121,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
         <div>
           <span className="paper-tag paper-tag-write">
             <PenLine className="h-3.5 w-3.5" />
-            {item.title ?? "انسخ الجدول التالي"}
+            <AutoTex text={item.title ?? "انسخ الجدول التالي"} />
           </span>
           <div className="mt-3 overflow-x-auto rounded-xl border-2 border-[#22304a]">
             <table className="w-full border-collapse text-[13.5px] font-bold text-[#22304a]">
@@ -128,7 +129,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
                 <tr>
                   {item.head.map((h) => (
                     <th key={h} className="border border-[#22304a] bg-[#22304a] px-4 py-2.5 text-white">
-                      {h}
+                      <AutoTex text={h} />
                     </th>
                   ))}
                 </tr>
@@ -138,7 +139,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
                   <tr key={i}>
                     {row.map((cell, j) => (
                       <td key={j} className="border border-[#22304a] px-4 py-2.5">
-                        {cell}
+                        <AutoTex text={cell} />
                       </td>
                     ))}
                   </tr>
@@ -152,7 +153,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
     case "steps":
       return (
         <div>
-          {item.title && <h4 className="mb-3 text-[15px] font-black text-[#152238]">{item.title}</h4>}
+          {item.title && <h4 className="mb-3 text-[15px] font-black text-[#152238]"><AutoTex text={item.title} /></h4>}
           <ol className="space-y-2.5">
             {item.items.map((s, i) => (
               <li key={i} className="flex items-start gap-3 text-[14px] font-bold leading-8 text-[#22304a]">
@@ -187,7 +188,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
           {item.title && (
             <h4 className="mb-3 flex items-center gap-2 text-[15px] font-black text-[#152238]">
               <Star className="h-4.5 w-4.5 text-[#b98a37]" />
-              {item.title}
+              <AutoTex text={item.title} />
             </h4>
           )}
           <ul className="space-y-2">
@@ -214,7 +215,7 @@ function NotebookItemRenderer({ item, index, notation }: { item: NotebookItem; i
             {item.items.map((c, i) => (
               <li key={i} className="flex items-center gap-3 text-[13.5px] font-bold text-[#22304a]">
                 <span className="grid h-5.5 w-5.5 shrink-0 place-items-center rounded-md border-2 border-[#0f766e] bg-white px-0.5" />
-                {notation?.inline(c) ?? c}
+                {notation?.inline(c) ?? <AutoTex text={c} />}
               </li>
             ))}
           </ul>

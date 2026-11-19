@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ArrowLeftRight, Equal, Ruler, Scale, Timer } from "lucide-react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { ArrowLeftRight, Check, ChevronDown, Equal, Ruler, Scale, Timer } from "lucide-react";
+import { TeX, unitTex } from "@/components/math/TeX";
 
 /**
  * محوّل الوحدات — أداة تعليمية عامة (غير منهجية) للتدريب على التحويلات
@@ -51,6 +53,146 @@ function format(n: number): string {
   if (n !== 0 && (Math.abs(n) >= 1e9 || Math.abs(n) < 1e-6)) return n.toExponential(4);
   const rounded = Math.round(n * 1e6) / 1e6;
   return String(rounded);
+}
+
+/**
+ * قائمة اختيار مخصّصة تحلّ محلّ `<select>` الأصلي:
+ * - رمز كل وحدة يُعرض بـ KaTeX داخل القائمة نفسها (لا نصًّا عاديًا).
+ * - متوافقة مع لوحة المفاتيح وإمكانية الوصول: `combobox`/`listbox` بـ ARIA،
+ *   تنقّل بالأسهم/Home/End، اختيار بـ Enter/Space، إغلاق بـ Escape/Tab،
+ *   إغلاق بالنقر خارجًا، و`aria-activedescendant` مع بقاء التركيز على الزر.
+ * - متجاوبة: لوحة بنفس عرض الزر، بحدّ أقصى للتمرير، وصفوف لمس كبيرة.
+ */
+function UnitSelect({
+  label,
+  units,
+  value,
+  onChange,
+  focusClass,
+}: {
+  label: string;
+  units: Record<string, { label: string; factor: number }>;
+  value: string;
+  onChange: (k: string) => void;
+  focusClass: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+  const keys = Object.keys(units);
+  const nameOf = (k: string) => units[k].label.split("—")[1]?.trim() ?? units[k].label;
+
+  // إغلاق عند النقر خارج القائمة
+  useEffect(() => {
+    if (!open) return;
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocMouseDown);
+    return () => document.removeEventListener("mousedown", onDocMouseDown);
+  }, [open]);
+
+  // إبقاء الخيار النشط مرئيًا أثناء التنقّل بلوحة المفاتيح
+  useEffect(() => {
+    if (!open) return;
+    document.getElementById(`${listId}::${activeIdx}`)?.scrollIntoView({ block: "nearest" });
+  }, [open, activeIdx, listId]);
+
+  function openList() {
+    setActiveIdx(Math.max(0, keys.indexOf(value)));
+    setOpen(true);
+  }
+  function choose(k: string | undefined) {
+    if (!k) return;
+    onChange(k);
+    setOpen(false);
+  }
+  function onKeyDown(e: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (!open) {
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openList();
+      }
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIdx((i) => (i + 1) % keys.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIdx((i) => (i - 1 + keys.length) % keys.length);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setActiveIdx(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setActiveIdx(keys.length - 1);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      choose(keys[activeIdx]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+    } else if (e.key === "Tab") {
+      setOpen(false);
+    }
+  }
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        dir="ltr"
+        role="combobox"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-activedescendant={open ? `${listId}::${activeIdx}` : undefined}
+        aria-label={label}
+        onClick={() => (open ? setOpen(false) : openList())}
+        onKeyDown={onKeyDown}
+        className={`flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-[var(--color-line2)] bg-[rgba(6,14,30,0.7)] px-4 py-3 text-[14px] font-black text-white outline-none transition-colors ${focusClass}`}
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <TeX>{unitTex(value)}</TeX>
+          <span className="truncate text-[12px] font-bold text-[var(--color-mist)]">{nameOf(value)}</span>
+        </span>
+        <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className="absolute inset-x-0 top-[calc(100%+6px)] z-30 max-h-60 overflow-y-auto rounded-xl border border-[var(--color-line2)] bg-[#0b1830] py-1 shadow-2xl"
+        >
+          {keys.map((k, i) => (
+            <li
+              key={k}
+              id={`${listId}::${i}`}
+              role="option"
+              aria-selected={k === value}
+              onMouseEnter={() => setActiveIdx(i)}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => choose(k)}
+              className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-[13px] font-black transition-colors ${
+                i === activeIdx
+                  ? "bg-[rgba(60,224,244,0.14)] text-[#8ceeff]"
+                  : "text-[var(--color-mist)] hover:bg-[rgba(148,178,220,0.07)]"
+              }`}
+            >
+              <span dir="ltr" className="flex items-center gap-2">
+                <TeX>{unitTex(k)}</TeX>
+                <span className="text-[12px] font-bold">{nameOf(k)}</span>
+              </span>
+              {k === value && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export function UnitConverter() {
@@ -124,21 +266,19 @@ export function UnitConverter() {
               placeholder="أدخل قيمة"
             />
           </label>
-          <label className="block">
+          <div className="block">
             <span className="mb-2 block text-[12px] font-black text-[var(--color-mist)]">من وحدة</span>
-            <select
-              dir="ltr"
+            <UnitSelect
+              label="من وحدة"
+              units={units}
               value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              className="w-full cursor-pointer rounded-xl border border-[var(--color-line2)] bg-[rgba(6,14,30,0.7)] px-4 py-3 text-[14px] font-black text-white outline-none focus:border-[rgba(60,224,244,0.6)]"
-            >
-              {Object.entries(units).map(([k, u]) => (
-                <option key={k} value={k} className="bg-[#0b1830]">
-                  {u.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={setFrom}
+              focusClass="focus:border-[rgba(60,224,244,0.6)]"
+            />
+            <span dir="ltr" className="mt-1.5 block text-center text-[12px] font-black text-[#8ceeff]">
+              <TeX>{unitTex(from)}</TeX>
+            </span>
+          </div>
           <button
             onClick={() => {
               const f = from;
@@ -151,37 +291,35 @@ export function UnitConverter() {
           >
             <ArrowLeftRight className="h-5 w-5" />
           </button>
-          <label className="block">
+          <div className="block">
             <span className="mb-2 block text-[12px] font-black text-[var(--color-mist)]">إلى وحدة</span>
-            <select
-              dir="ltr"
+            <UnitSelect
+              label="إلى وحدة"
+              units={units}
               value={to}
-              onChange={(e) => setTo(e.target.value)}
-              className="w-full cursor-pointer rounded-xl border border-[var(--color-line2)] bg-[rgba(6,14,30,0.7)] px-4 py-3 text-[14px] font-black text-white outline-none focus:border-[rgba(255,176,58,0.6)]"
-            >
-              {Object.entries(units).map(([k, u]) => (
-                <option key={k} value={k} className="bg-[#0b1830]">
-                  {u.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={setTo}
+              focusClass="focus:border-[rgba(255,176,58,0.6)]"
+            />
+            <span dir="ltr" className="mt-1.5 block text-center text-[12px] font-black text-[#8ceeff]">
+              <TeX>{unitTex(to)}</TeX>
+            </span>
+          </div>
           <div className="rounded-xl border border-[rgba(60,224,244,0.3)] bg-[rgba(60,224,244,0.07)] px-4 py-3 text-center">
             <span className="mb-1 flex items-center justify-center gap-1 text-[11px] font-black text-[var(--color-mist)]">
               <Equal className="h-3.5 w-3.5" />
               النتيجة
             </span>
             <span dir="ltr" className="block text-[19px] font-black text-[#8ceeff]">
-              {result === null ? "—" : `${format(result)} ${to}`}
+              {result === null ? "—" : <TeX>{`${format(result)}\\,${unitTex(to)}`}</TeX>}
             </span>
           </div>
         </div>
 
         <p className="mt-5 rounded-xl bg-[rgba(6,14,30,0.55)] px-4 py-3 text-[12.5px] font-bold leading-6 text-[var(--color-mist)]">
           الفكرة: نحوّل القيمة إلى الوحدة الأساسية أولًا ثم إلى الوحدة المطلوبة. مثال:
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 km = 1000 m</span>،
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 kg = 1000 g</span>،
-          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]">1 min = 60 s</span>.
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{km} = 1000\\,\\text{m}"}</TeX></span>،
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{kg} = 1000\\,\\text{g}"}</TeX></span>،
+          <span dir="ltr" className="mx-1 font-black text-[#bfe9ff]"><TeX>{"1\\,\\text{min} = 60\\,\\text{s}"}</TeX></span>.
         </p>
       </div>
     </div>

@@ -1,16 +1,22 @@
-import katex from "katex";
+"use client";
 
 /**
- * منظومة الرياضيات المشتركة:
- * - كل معادلة/كسر يُعرض عبر KaTeX باتجاه LTR ومعزول عن RTL.
- * - الكسور الرياضية عمودية دائمًا عبر \frac{a}{b}.
- * - الوحدات المركبة مثل m/s تبقى خطية.
- * - الكمية الفيزيائية: الرقم أولًا ثم الوحدة إلى يمينه.
- * - يدعم أيضًا إدراج KaTeX داخل SVG عبر foreignObject لاستخدامه في الرسومات.
+ * الطبقة الموحدة لعرض الصيغ العلمية عبر KaTeX في كل المنصّة:
+ * - `TeX`   صيغة علمية (كتلية أو مضمّنة) — كل مسار عرض يمرّ بـ `normalizeTex`.
+ * - `Q`     قيمة + وحدة كتعبير واحد `\(0.5\,\text{N}\)` بترتيب ثابت LTR
+ *            لا ينقلب داخل السياق العربي.
+ * - `SvgTeX` صيغ داخل SVG (تسميات الرسوم) بنفس الطبقة المركزية.
+ * - `AutoTex` نصّ عربي مختلط: يعزل القيم/الوحدات/الرموز المعادلات تلقائيًا
+ *            إلى `TeX` دون أن يمسّ النصّ الأصلي في ملفات المحتوى.
  */
+import katex from "katex";
+import { normalizeTex, unitTex } from "@/lib/tex-format";
+import { splitAutoTex } from "@/lib/auto-tex";
 
-export function renderTeXToHtml(children: string, block = false) {
-  return katex.renderToString(children, {
+export { normalizeTex, unitTex };
+
+export function renderTeXToHtml(children: string, block: boolean): string {
+  return katex.renderToString(normalizeTex(children), {
     throwOnError: false,
     displayMode: block,
     strict: false,
@@ -19,74 +25,61 @@ export function renderTeXToHtml(children: string, block = false) {
 }
 
 export function TeX({ children, block = false }: { children: string; block?: boolean }) {
-  const html = renderTeXToHtml(children, block);
-  if (block) {
-    return <div dir="ltr" className="tex-box text-center text-[#d9ecff]" dangerouslySetInnerHTML={{ __html: html }} />;
-  }
-  return <span dir="ltr" className="tex-inline" dangerouslySetInnerHTML={{ __html: html }} />;
+  if (!children) return null;
+  return (
+    <span
+      className={block ? "tex-box" : "tex-inline"}
+      dir="ltr"
+      dangerouslySetInnerHTML={{ __html: renderTeXToHtml(children, block) }}
+    />
+  );
 }
 
-/** كمية فيزيائية: قيمة + وحدة باتجاه LTR — الرقم أولًا ثم الوحدة يمينه. */
-export function Q({ v, u }: { v: string; u?: string }) {
+/** قيمة + وحدة: `0.5 N` تُعرض صيغة واحدة بترتيب الرقم ثم الوحدة (LTR). */
+export function Q({ v, u, className = "" }: { v: string; u?: string; className?: string }) {
+  const tex = u ? `${v}\\,${unitTex(u)}` : v;
   return (
-    <span dir="ltr" className="tex-inline whitespace-nowrap font-bold text-[#bfe9ff]">
-      <span>{v}</span>
-      {u ? <span className="ml-1 text-[#8fd4ec]">{u}</span> : null}
+    <span dir="ltr" className={`whitespace-nowrap ${className}`.trim()}>
+      <TeX>{tex}</TeX>
     </span>
   );
 }
 
-/**
- * KaTeX داخل SVG:
- * يُستخدم لتسميات المحاور والرموز داخل الرسومات العلمية.
- */
-export function SvgTeX({
-  tex,
-  x,
-  y,
-  width,
-  height,
-  align = "center",
-  color = "currentColor",
-  block = false,
-  fontSize = "13px"
-}: {
-  tex: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  align?: "start" | "center" | "end";
-  color?: string;
-  block?: boolean;
-  fontSize?: string;
+export function SvgTeX({ x, y, width, height, tex, align = "start", block = false, color, fontSize, title }: {
+  x: number; y: number; width: number; height: number; tex: string;
+  align?: "start" | "middle" | "end" | "center"; block?: boolean; color?: string; fontSize?: string; title?: string;
 }) {
-  // استخدام التنسيق المباشر لتفادي أخطاء الهروب في السلاسل النصية
-  const html = katex.renderToString(tex, {
-    throwOnError: false,
-    displayMode: block,
-    output: "html",
-  });
-  
-  const justifyContent = align === "start" ? "flex-start" : align === "end" ? "flex-end" : "center";
-
+  if (!tex) return null;
+  const justify = align === "middle" || align === "center" ? "center" : align === "end" ? "flex-end" : "flex-start";
   return (
-    <foreignObject x={x} y={y} width={width} height={height}>
+    <foreignObject x={x} y={y} width={width} height={height} style={{ overflow: "visible" }}>
       <div
         style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent,
-          color,
-          fontSize,
-          lineHeight: 1,
-          overflow: "visible",
-          whiteSpace: "nowrap"
+          display: "flex", alignItems: "center",
+          justifyContent: justify,
+          width: "100%", height: "100%", color, fontSize,
         }}
-        dangerouslySetInnerHTML={{ __html: html }}
+        title={title}
+        dangerouslySetInnerHTML={{ __html: renderTeXToHtml(tex, block) }}
       />
     </foreignObject>
+  );
+}
+
+/**
+ * مكوّن النصّ المختلط — يُستدعى على كل قطعة `t` في المنصّة (بما فيها
+ * دفتر الطالب: النصّ يبقى كما هو والعرض فقط يمرّ عبر KaTeX).
+ * بلا خطّافات حتى يعمل داخل مكوّنات الخادم والعميل معًا.
+ */
+export function AutoTex({ text }: { text: string }) {
+  if (!text) return null;
+  const segs = splitAutoTex(text);
+  if (segs.length === 1 && segs[0].type === "text") return <>{segs[0].value}</>;
+  return (
+    <>
+      {segs.map((seg, i) =>
+        seg.type === "text" ? <span key={i}>{seg.value}</span> : <TeX key={i}>{seg.value}</TeX>,
+      )}
+    </>
   );
 }

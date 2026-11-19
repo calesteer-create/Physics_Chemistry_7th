@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Gauge, Magnet, MoveHorizontal, RotateCcw } from "lucide-react";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, SvgTeX, TeX } from "@/components/math/TeX";
 import {
   carrierSegment, fittedVectorScale, nextPosition, nextVelocity,
   springElongationCm, vectorTip, weightArrowPx, weightSpringPx,
@@ -198,7 +198,7 @@ function ForceEffectLab() {
           </div>
           <input type="range" min={0} max={50} step={5} value={force} aria-label="شدة القوة المطبقة بالنيوتن"
             onChange={e => setForce(Number(e.target.value))} className="w-full accent-[var(--color-chem)]" />
-          <div className="flex justify-between text-[11px] text-[var(--color-dim)]">{[0, 10, 20, 30, 40, 50].map(v => <span key={v}>{v}N</span>)}</div>
+          <div className="flex justify-between text-[11px] text-[var(--color-dim)]">{[0, 10, 20, 30, 40, 50].map(v => <span key={v}><AutoTex text={`${v}N`} /></span>)}</div>
         </div>
         {mode === "motion" && (
           <div className="space-y-2">
@@ -238,12 +238,12 @@ function ForceEffectLab() {
               <line x1="20" y1="86" x2="20" y2="8" stroke="#64748b" strokeWidth="1.5" />
               <polyline points={graphPts} fill="none" stroke="#ffb03a" strokeWidth="2.5" />
               <circle cx={20 + force * 1.6} cy={86 - elong * 7} r="4" fill="#dc2626" />
-              <text x="64" y="95" textAnchor="middle" fontSize="8" fill="#94a3b8">F (N)</text>
-              <text x="8" y="20" fontSize="8" fill="#94a3b8">ΔL</text>
+              <SvgTeX tex="F\,(\text{N})" x={44} y={84} width={40} height={14} align="middle" color="#94a3b8" fontSize="8px" />
+              <SvgTeX tex="\Delta L" x={4} y={10} width={34} height={14} color="#94a3b8" fontSize="8px" />
             </svg>
             <table className="w-full text-center text-[12px]">
-              <thead><tr><th className="py-1">F (N)</th>{[10, 20, 30, 40, 50].map(v => <td key={v}>{v}</td>)}</tr></thead>
-              <tbody><tr><th className="py-1">ΔL (cm)</th>{[10, 20, 30, 40, 50].map(v => <td key={v}>{springElongationCm(v).toFixed(0)}</td>)}</tr></tbody>
+              <thead><tr><th className="py-1"><AutoTex text="F (N)" /></th>{[10, 20, 30, 40, 50].map(v => <td key={v}>{v}</td>)}</tr></thead>
+              <tbody><tr><th className="py-1"><AutoTex text="ΔL (cm)" /></th>{[10, 20, 30, 40, 50].map(v => <td key={v}>{springElongationCm(v).toFixed(0)}</td>)}</tr></tbody>
             </table>
             <p className="rounded-xl bg-[rgba(255,176,58,0.1)] border border-[rgba(255,176,58,0.2)] px-3 py-2">
               <span className="font-black text-[var(--color-chem)]">الخلاصة: </span>
@@ -291,18 +291,18 @@ function ForceVectorLab() {
             {Object.entries(origins).map(([k, pos]) => (
               <g key={k}>
                 <circle cx={pos.x} cy={pos.y} r="7" fill={pointPos === k ? "#ffb03a" : "#1e3a5f"} stroke="#334155" strokeWidth="2" />
-                <text x={pos.x} y={pos.y + 24} textAnchor="middle" fontSize="13" fill="#94a3b8" fontWeight="800">{k}</text>
+                <SvgTeX tex={k} x={pos.x - 12} y={pos.y + 12} width={24} height={18} align="middle" color="#94a3b8" fontSize="13px" />
               </g>
             ))}
             <line x1={origin.x} y1={origin.y} x2={tip.x} y2={tip.y} stroke="#dc2626" strokeWidth="5" strokeLinecap="round" />
             <polygon points={arrowHead(tip.x, tip.y, Math.atan2(-(tip.y - origin.y), tip.x - origin.x))} fill="#dc2626" />
             <text x={tipLabelX} y={tipLabelY} fontSize="12" fill="#fca5a5" fontWeight="800">رأس الشعاع</text>
-            <text x={(origin.x + tip.x) / 2 - 20} y={clamp((origin.y + tip.y) / 2 - 12, 14, H - 8)} fontSize="12" fill="#fca5a5" fontWeight="800">{magnitudeN} N</text>
+            <SvgTeX tex={`${magnitudeN}\\,\\text{N}`} x={(origin.x + tip.x) / 2 - 24} y={clamp((origin.y + tip.y) / 2 - 18, 8, H - 14)} width={64} height={18} color="#fca5a5" fontSize="12px" />
             {angleDeg !== 0 && (
               <path d={`M${origin.x + 36},${origin.y} A36,36 0 0,${angleDeg > 0 ? "0" : "1"} ${origin.x + 36 * Math.cos(rad)},${origin.y - 36 * Math.sin(rad)}`} fill="none" stroke="#f59e0b" strokeWidth="2" />
             )}
             {angleDeg !== 0 && (
-              <text x={clamp(origin.x + 48 * Math.cos(rad / 2), 8, W - 40)} y={clamp(origin.y - 48 * Math.sin(rad / 2), 14, H - 8)} fontSize="12" fill="#f59e0b" fontWeight="800">{angleDeg}°</text>
+              <SvgTeX tex={`${angleDeg}^\\circ`} x={clamp(origin.x + 48 * Math.cos(rad / 2), 8, W - 40)} y={clamp(origin.y - 48 * Math.sin(rad / 2) - 6, 8, H - 14)} width={44} height={18} color="#f59e0b" fontSize="12px" />
             )}
             <text x={origin.x} y={clamp(origin.y - 20, 14, H - 8)} textAnchor="middle" fontSize="11" fill="#94a3b8">{pointPos} (نقطة التأثير)</text>
           </svg>
@@ -326,9 +326,9 @@ function ForceVectorLab() {
           </div>
         </div>
         <div>
-          <p className="mb-2 text-[12px] font-black text-[var(--color-mist)]">الجهة (الزاوية مع الأفق): <span className="text-white">{angleDeg}°</span></p>
+          <p className="mb-2 text-[12px] font-black text-[var(--color-mist)]">الجهة (الزاوية مع الأفق): <span className="text-white"><AutoTex text={`${angleDeg}°`} /></span></p>
           <input type="range" min={-90} max={90} step={15} value={angleDeg} aria-label="زاوية جهة القوة مع الأفق" onChange={e => setAngleDeg(Number(e.target.value))} className="w-full accent-[#f59e0b]" />
-          <div className="flex justify-between text-[10px] text-[var(--color-dim)] mt-1"><span>−90°</span><span>−45°</span><span>0°</span><span>+45°</span><span>+90°</span></div>
+          <div className="flex justify-between text-[10px] text-[var(--color-dim)] mt-1">{["−90°", "−45°", "0°", "+45°", "+90°"].map(t => <span key={t}><AutoTex text={t} /></span>)}</div>
           <p className="mt-1 text-[11px] font-bold text-[var(--color-dim)]">عند الشدات والزوايا الكبيرة يُصغَّر مقياس الرسم تلقائيًا كي يبقى السهم كاملًا داخل الإطار.</p>
         </div>
       </div>
@@ -338,7 +338,7 @@ function ForceVectorLab() {
         <div className="space-y-3 text-[13.5px] font-bold">
           <div className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#ffb03a]" /><div><span className="text-[#ffb03a]">نقطة التأثير:</span><span className="text-white mr-2">النقطة {pointPos}</span></div></div>
           <div className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#64748b]" /><div><span className="text-[#94a3b8]">الحامل:</span><span className="text-white mr-2">المستقيم المار بالنقطة {pointPos} وباتجاه القوة نفسه (يدور معها)</span></div></div>
-          <div className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#f59e0b]" /><div><span className="text-[#f59e0b]">الجهة:</span><span className="text-white mr-2">{angleDeg === 0 ? "أفقية نحو اليمين" : angleDeg > 0 ? `${angleDeg}° فوق الأفق` : `${-angleDeg}° تحت الأفق`}</span></div></div>
+          <div className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#f59e0b]" /><div><span className="text-[#f59e0b]">الجهة:</span><span className="text-white mr-2"><AutoTex text={angleDeg === 0 ? "أفقية نحو اليمين" : angleDeg > 0 ? `${angleDeg}° فوق الأفق` : `${-angleDeg}° تحت الأفق`} /></span></div></div>
           <div className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#dc2626]" /><div><span className="text-[#f87171]">الشدة:</span><span className="text-white mr-2"><TeX>{`${magnitudeN}\\,N`}</TeX> (المقياس الحالي <TeX>{`${scale.toFixed(1)}\\,\\text{px/N}`}</TeX>)</span></div></div>
         </div>
         <div className="mt-4 rounded-xl bg-[rgba(167,139,250,0.1)] border border-[rgba(167,139,250,0.2)] p-4 text-[13px] font-bold leading-7 text-[#ddd6fe]">
@@ -404,7 +404,7 @@ function WeightMassLab() {
               return (
                 <g key={f}>
                   <line x1="124" y1={y} x2="136" y2={y} stroke="#64748b" strokeWidth="1.5" />
-                  <text x="140" y={y + 3} fontSize="9" fill="#475569" fontWeight="700">{val} N</text>
+                  <SvgTeX tex={`${val}\\,\\text{N}`} x={140} y={y - 7} width={44} height={16} color="#475569" fontSize="9px" />
                 </g>
               );
             })}
@@ -420,7 +420,7 @@ function WeightMassLab() {
             <rect x={110 - (24 + mass * 0.14)} y={bodyY} width={48 + mass * 0.28} height={bodyH} rx="10" fill="#ffb03a" />
             <line x1="110" y1={bodyY + bodyH + 4} x2="110" y2={bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)} stroke="#dc2626" strokeWidth="4" />
             <polygon points={`110,${bodyY + bodyH + 4 + arrowPx} 102,${bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)} 118,${bodyY + bodyH + 4 + Math.max(arrowPx - 10, 0)}`} fill="#dc2626" />
-            <text x="122" y={bodyY + bodyH + 12 + arrowPx / 2} fontSize="11" fill="#fca5a5" fontWeight="800">w = {w} N</text>
+            <SvgTeX tex={`w = ${w}\\,\\text{N}`} x={122} y={bodyY + bodyH + 6 + arrowPx / 2} width={70} height={18} color="#fca5a5" fontSize="11px" />
           </svg>
           <p className="mt-2 text-center text-[11.5px] font-bold text-[var(--color-dim)]">لاحظ: الربيعة نفسها تستطيل أكثر كلما ازداد الثقل، ويقصر سهم الثقل على القمر رغم بقاء الكتلة نفسها.</p>
         </div>

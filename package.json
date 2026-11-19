@@ -9,8 +9,9 @@
     "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
-    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts"
+    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts && node --import tsx --test tests/render/*.test.ts",
+    "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
+    "test:render": "node --import tsx --test tests/render/*.test.ts"
   },
   "dependencies": {
     "@types/katex": "^0.16.8",
@@ -21,12 +22,15 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
+    "@sparticuz/chromium": "^153.0.0",
     "@tailwindcss/postcss": "4.1.17",
     "@types/node": "22.19.15",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "esbuild": "^0.28.2",
     "eslint": "9.39.4",
     "eslint-config-next": "16.4.2",
+    "playwright-core": "^1.65.1",
     "postcss": "8.5.23",
     "tailwindcss": "4.1.17",
     "tsx": "4.23.15",

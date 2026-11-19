@@ -1,4 +1,4 @@
-import { SvgTeX } from "@/components/math/TeX";
+import { AutoTex, SvgTeX } from "@/components/math/TeX";
 
 /**
  * رسوم شرح إضافية لدرس القوة والحركة — للشرح فقط.
@@ -21,7 +21,7 @@ function Frame({ children, w, h, title, caption }: {
           {children}
         </svg>
       </div>
-      <figcaption className="mt-2 text-center text-[12.5px] leading-6" style={{ color: C.muted }}>{caption}</figcaption>
+      <figcaption className="mt-2 text-center text-[12.5px] leading-6" style={{ color: C.muted }}><AutoTex text={caption} /></figcaption>
     </figure>
   );
 }
@@ -51,7 +51,8 @@ export function ForceVectorDiagramExplained() {
       <text x={494} y={52} textAnchor="middle" fill={C.coral} fontSize={12} fontWeight={700}>الجهة</text>
       {/* تسمية الحامل على خط الحامل نفسه مع خلفية تمحو التقطيع خلفها */}
       <rect x={52} y={88} width={76} height={24} rx={6} fill={C.surface} />
-      <text x={90} y={104} textAnchor="middle" fill={C.muted} fontSize={12} fontWeight={700}>الحامل xx′</text>
+      <text x={118} y={104} textAnchor="end" fill={C.muted} fontSize={12} fontWeight={700}>الحامل</text>
+      <SvgTeX tex="xx'" x={122} y={92} width={34} height={18} color={C.muted} fontSize="12px" />
       <line x1={220} y1={140} x2={496} y2={140} stroke={C.blue} strokeWidth={2.5} />
       <circle cx={220} cy={140} r={3.5} fill={C.blue} />
       <circle cx={496} cy={140} r={3.5} fill={C.blue} />
@@ -87,7 +88,7 @@ export function SpringWeightExplained() {
             <line x1={x} y1={42 + c.coils + 44} x2={x} y2={42 + c.coils + 62} stroke={C.coral} strokeWidth={4} />
             <Head x={x} y={42 + c.coils + 68} angle={Math.PI / 2} color={C.coral} size={11} />
             <text x={x} y={236} textAnchor="middle" fill={C.muted} fontSize={12} fontWeight={700}>{c.label}</text>
-            <text x={x} y={258} textAnchor="middle" fill={C.ink} fontSize={12} fontWeight={800}>{c.w}</text>
+            <SvgTeX tex={c.w.replace(" ", "\\,")} x={x - 30} y={246} width={60} height={20} align="middle" color={C.ink} fontSize="12px" />
           </g>
         );
       })}
@@ -121,12 +122,12 @@ export function MassWeightExplained() {
           <g key={i}>
             <circle cx={x} cy={86} r={44} fill={moon ? "#cbd5e1" : "#93c5fd"} stroke={moon ? "#94a3b8" : C.blue} strokeWidth={2.5} />
             <text x={x} y={80} textAnchor="middle" fill={C.ink} fontSize={13} fontWeight={800}>{moon ? "القمر" : "الأرض"}</text>
-            <text x={x} y={100} textAnchor="middle" fill={C.muted} fontSize={11} fontWeight={700}>{moon ? "g ≈ 1.62" : "g ≈ 9.8"} N/kg</text>
+            <SvgTeX tex={moon ? "g \approx 1.62\,\text{N/kg}" : "g \approx 9.8\,\text{N/kg}"} x={x - 45} y={88} width={90} height={18} align="middle" color={C.muted} fontSize="11px" />
             <rect x={x - 34} y={164} width={68} height={40} rx={9} fill="#ffb03a" />
-            <text x={x} y={189} textAnchor="middle" fill="#1c1000" fontSize={12} fontWeight={800}>m = 10 kg</text>
+            <SvgTeX tex="m = 10\,\text{kg}" x={x - 40} y={177} width={80} height={20} align="middle" color="#1c1000" fontSize="12px" />
             <line x1={x} y1={arrowTop} x2={x} y2={shaftEnd} stroke={C.coral} strokeWidth={4.5} />
             <Head x={x} y={arrowTop + len} angle={Math.PI / 2} color={C.coral} size={headSize} />
-            <text x={x} y={292} textAnchor="middle" fill={C.coral} fontSize={13} fontWeight={800}>{moon ? "w ≈ 16 N" : "w ≈ 98 N"}</text>
+            <SvgTeX tex={moon ? "w \approx 16\,\text{N}" : "w \approx 98\,\text{N}"} x={x - 45} y={280} width={90} height={20} align="middle" color={C.coral} fontSize="13px" />
           </g>
         );
       })}

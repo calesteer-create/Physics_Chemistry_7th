@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, XCircle, Eye, EyeOff, Lightbulb } from "lucide-react";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, TeX } from "@/components/math/TeX";
 import { ActionReactionExamplesGrid, ParachuteFigure } from "@/components/figures/one-support-figures";
 import { ForceScaleDrawing, HangingBallForcesDiagram } from "@/components/figures/force-figures";
 
@@ -51,7 +51,7 @@ function MCQ({ n, q, options, correct, explain }: { n: number; q: React.ReactNod
               : "border-[var(--color-line2)] text-[var(--color-mist)] hover:border-[var(--color-phys)] hover:text-white"
             }`}>
               <span className="font-black text-[11px] opacity-70">{letters[i]})</span>
-              <span className="flex-1">{opt}</span>
+              <span className="flex-1">{typeof opt === "string" ? <AutoTex text={opt} /> : opt}</span>
               {state === "correct" && <CheckCircle2 className="h-4 w-4" />}
               {state === "wrong" && <XCircle className="h-4 w-4" />}
             </button>
@@ -77,10 +77,10 @@ export function OneSupportBookQuestions() {
         <div className="space-y-3">
           <MCQ n={1} q={<><TeX>{"F_1, F_2"}</TeX> قوتان على حامل واحد وبجهة واحدة، فإن شدة محصلتهما تعطى بالعلاقة:</>} options={[<TeX key="a">{"F = F_1 - F_2"}</TeX>,<TeX key="b">{"F = F_1 + F_2"}</TeX>,<TeX key="c">{"F = \\frac{F_1}{F_2}"}</TeX>,<TeX key="d">{"F = \\sqrt{F_1^2 + F_2^2}"}</TeX>]} correct={1} explain={<><TeX>{"F = F_1 + F_2"}</TeX> لأن الجهة واحدة والحامل واحد، فتتعاون القوتان.</>} />
           <MCQ n={2} q={<><TeX>{"F_1, F_2"}</TeX> قوتان على حامل واحد وبجهتين متعاكستين حيث <TeX>{"F_1 > F_2"}</TeX>، فإن شدة محصلتهما تعطى بالعلاقة:</>} options={[<TeX key="a">{"F = F_1 - F_2"}</TeX>,<TeX key="b">{"F = F_2 - F_1"}</TeX>,<TeX key="c">{"F = F_1 + F_2"}</TeX>,<TeX key="d">{"F = \\frac{F_1}{F_2}"}</TeX>]} correct={0} explain={<><TeX>{"F = F_1 - F_2"}</TeX> لأن الجهتين متعاكستان والجهة النهائية جهة القوة الأكبر.</>} />
-          <MCQ n={3} q={<>إذا كانت <TeX>{"F_1 = 850\,N"}</TeX> و <TeX>{"F_2 = 750\,N"}</TeX> في شد الحبل، فالمحصلة:</>} options={["100 N وبجهة الفريق الأول","50 N وبجهة الفريق الأول","100 N وبجهة الفريق الثاني","50 N وبجهة الفريق الثاني"]} correct={0} explain={<><TeX>{"F = 850 - 750 = 100\,N"}</TeX> وجهتها جهة الفريق الأول لأن قوته أكبر.</>} />
-          <MCQ n={4} q={<>إذا كانت <TeX>{"F_1 = 920\,N"}</TeX> والمحصلـة <TeX>{"F = 40\,N"}</TeX>، فإن <TeX>{"F_2"}</TeX> تساوي:</>} options={["880 N","960 N","23 N","36800 N"]} correct={0} explain={<><TeX>{"F = F_1 - F_2"}</TeX> → <TeX>{"40 = 920 - F_2"}</TeX> → <TeX>{"F_2 = 880\,N"}</TeX>.</>} />
-          <MCQ n={5} q={<>إذا كانت <TeX>{"F_1 = 40\,N"}</TeX> ومحصلـة قوتين في جهة واحدة <TeX>{"F = 80\,N"}</TeX>، فإن <TeX>{"F_2"}</TeX> تساوي:</>} options={["40 N","120 N","3200 N","2 N"]} correct={0} explain={<><TeX>{"F = F_1 + F_2"}</TeX> → <TeX>{"80 = 40 + F_2"}</TeX> → <TeX>{"F_2 = 40\,N"}</TeX>.</>} />
-          <MCQ n={6} q={<>قوتان متعاكستان مباشرة شدة كل منهما <TeX>{"30\,N"}</TeX>، فالمحصلة:</>} options={["60 N","0 N","30 N","15 N"]} correct={1} explain={<>لأن القوتين متساويتان ومتعاكستان مباشرةً، فالمحصلة <TeX>{"0\,N"}</TeX>.</>} />
+          <MCQ n={3} q={<>إذا كانت <TeX>{"F_1 = 850\\,N"}</TeX> و <TeX>{"F_2 = 750\\,N"}</TeX> في شد الحبل، فالمحصلة:</>} options={["100 N وبجهة الفريق الأول","50 N وبجهة الفريق الأول","100 N وبجهة الفريق الثاني","50 N وبجهة الفريق الثاني"]} correct={0} explain={<><TeX>{"F = 850 - 750 = 100\\,N"}</TeX> وجهتها جهة الفريق الأول لأن قوته أكبر.</>} />
+          <MCQ n={4} q={<>إذا كانت <TeX>{"F_1 = 920\\,N"}</TeX> والمحصلـة <TeX>{"F = 40\\,N"}</TeX>، فإن <TeX>{"F_2"}</TeX> تساوي:</>} options={["880 N","960 N","23 N","36800 N"]} correct={0} explain={<><TeX>{"F = F_1 - F_2"}</TeX> → <TeX>{"40 = 920 - F_2"}</TeX> → <TeX>{"F_2 = 880\\,N"}</TeX>.</>} />
+          <MCQ n={5} q={<>إذا كانت <TeX>{"F_1 = 40\\,N"}</TeX> ومحصلـة قوتين في جهة واحدة <TeX>{"F = 80\\,N"}</TeX>، فإن <TeX>{"F_2"}</TeX> تساوي:</>} options={["40 N","120 N","3200 N","2 N"]} correct={0} explain={<><TeX>{"F = F_1 + F_2"}</TeX> → <TeX>{"80 = 40 + F_2"}</TeX> → <TeX>{"F_2 = 40\\,N"}</TeX>.</>} />
+          <MCQ n={6} q={<>قوتان متعاكستان مباشرة شدة كل منهما <TeX>{"30\\,N"}</TeX>، فالمحصلة:</>} options={["60 N","0 N","30 N","15 N"]} correct={1} explain={<>لأن القوتين متساويتان ومتعاكستان مباشرةً، فالمحصلة <TeX>{"0\\,N"}</TeX>.</>} />
           <MCQ n={7} q={<>القوتان المتعاكستان مباشرة هما قوتان:</>} options={["متوازيتان حاملاً ومتعاكستان جهة ومختلفتان شدة","منطبقتان حاملاً ومتعاكستان جهة ومتساويتان شدة","منطبقتان حاملاً ومتفقتان جهة ومختلفتان شدة","منطبقتان حاملاً ومتعاكستان جهة ومتساويتان شدة"]} correct={1} explain={<>التعريف الدقيق: منطبقتان حاملاً، متعاكستان جهة، ومتساويتان شدة.</>} />
           <MCQ n={8} q={<>لكل فعل رد فعل:</>} options={["يساويه بالقيمة ويماثله بالاتجاه","يساويه بالقيمة ويعاكسه بالاتجاه","يوازيه بالحامل ويماثله بالاتجاه","لا يساويه بالقيمة ويعاكسه بالاتجاه"]} correct={1} explain={<>مبدأ نيوتن الثالث: رد الفعل يساوي الفعل شدة ويعاكسه جهة.</>} />
         </div>
@@ -133,33 +133,33 @@ export function OneSupportBookQuestions() {
       <QuestionCard title="السؤال الرابع — حل المسألتين (ص 39–40)">
         <div className="space-y-5">
           <div className="rounded-2xl border border-[var(--color-line)] bg-[rgba(255,255,255,0.02)] p-4">
-            <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)]"><strong>المسألة الأولى:</strong> تؤثر في النقطة <TeX>{"(O)"}</TeX> قوتان شدتهما <TeX>{"F_1 = 15\,N"}</TeX> و <TeX>{"F_2 = 30\,N"}</TeX> على حامل واحد وبجهة واحدة.</p>
+            <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)]"><strong>المسألة الأولى:</strong> تؤثر في النقطة <TeX>{"(O)"}</TeX> قوتان شدتهما <TeX>{"F_1 = 15\\,N"}</TeX> و <TeX>{"F_2 = 30\\,N"}</TeX> على حامل واحد وبجهة واحدة.</p>
             <RevealAnswer answer={<>
               <p><strong>1) عناصر محصلة القوتين:</strong></p>
               <p>• نقطة التأثير: النقطة <TeX>{"(O)"}</TeX>.</p>
               <p>• الحامل: حامل القوتين نفسه.</p>
               <p>• الجهة: نفس جهة القوتين.</p>
-              <p>• الشدة: <TeX>{"F = F_1 + F_2 = 15 + 30 = 45\,N"}</TeX>.</p>
+              <p>• الشدة: <TeX>{"F = F_1 + F_2 = 15 + 30 = 45\\,N"}</TeX>.</p>
               <p className="mt-2"><strong>2) إذا أثرت في النقطة (O) قوة أخرى F&apos; بقيت متوازنة:</strong></p>
               <p>حتى يبقى الجسم متوازنًا، يجب أن تكون القوة الجديدة <TeX>{"F'"}</TeX> مساوية للمحصلة في الشدة ومعاكسة لها في الجهة:</p>
-              <p><TeX>{"F' = 45\,N"}</TeX> في الجهة المعاكسة.</p>
-              <p className="mt-2"><strong>3) التمثيل البياني:</strong> نرسم <TeX>{"F_1"}</TeX> و <TeX>{"F_2"}</TeX> في الجهة نفسها من O، ثم نرسم المحصلة <TeX>{"F"}</TeX> بطول 4.5 cm إذا كان المقياس 1cm = 10N، ثم نرسم <TeX>{"F'"}</TeX> بطول مماثل في الجهة المعاكسة.</p>
+              <p><TeX>{"F' = 45\\,N"}</TeX> في الجهة المعاكسة.</p>
+              <p className="mt-2"><strong>3) التمثيل البياني:</strong> نرسم <TeX>{"F_1"}</TeX> و <TeX>{"F_2"}</TeX> في الجهة نفسها من O، ثم نرسم المحصلة <TeX>{"F"}</TeX> بطول <AutoTex text="4.5 cm" /> إذا كان المقياس <AutoTex text="1cm = 10N" />، ثم نرسم <TeX>{"F'"}</TeX> بطول مماثل في الجهة المعاكسة.</p>
             </>} />
           </div>
           <div className="rounded-2xl border border-[var(--color-line)] bg-[rgba(255,255,255,0.02)] p-4">
-            <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)]"><strong>المسألة الثانية:</strong> تؤثر في النقطة <TeX>{"(O)"}</TeX> قوتان شدتهما <TeX>{"F_1 = 25\,N"}</TeX> و <TeX>{"F_2 = 75\,N"}</TeX> على حامل واحد وبجهتين متعاكستين.</p>
+            <p className="text-[14px] font-bold leading-8 text-[var(--color-fog)]"><strong>المسألة الثانية:</strong> تؤثر في النقطة <TeX>{"(O)"}</TeX> قوتان شدتهما <TeX>{"F_1 = 25\\,N"}</TeX> و <TeX>{"F_2 = 75\\,N"}</TeX> على حامل واحد وبجهتين متعاكستين.</p>
             <RevealAnswer answer={<>
               <p><strong>1) عناصر محصلة القوتين:</strong></p>
               <p>• نقطة التأثير: النقطة <TeX>{"(O)"}</TeX>.</p>
               <p>• الحامل: حامل القوتين نفسه.</p>
               <p>• الجهة: جهة القوة الأكبر <TeX>{"F_2"}</TeX>.</p>
-              <p>• الشدة: <TeX>{"F = F_2 - F_1 = 75 - 25 = 50\,N"}</TeX>.</p>
+              <p>• الشدة: <TeX>{"F = F_2 - F_1 = 75 - 25 = 50\\,N"}</TeX>.</p>
               <p className="mt-2"><strong>2) إذا أثرت في O قوة أخرى F&apos; وبقيت متوازنة:</strong></p>
-              <p>يجب أن تكون <TeX>{"F' = 50\,N"}</TeX> في الجهة المعاكسة للمحصلة.</p>
-              <p className="mt-2"><strong>3) التمثيل البياني:</strong> نرسم <TeX>{"F_1"}</TeX> و <TeX>{"F_2"}</TeX> متعاكسين، ثم نرسم المحصلة في جهة القوة الأكبر بطول يتناسب مع 50N، وأخيرًا نرسم <TeX>{"F'"}</TeX> بالعكس للموازنة.</p>
-              <p className="mt-2"><strong>4) إذا كانت شدة القوة الثانية F₂ = 25N، فما شدة محصلة القوتين عندئذ؟</strong></p>
-              <p>تصبح القوتان <TeX>{"F_1 = 25\,N"}</TeX> و <TeX>{"F_2 = 25\,N"}</TeX> متساويتين ومتعاكستين، لذلك:</p>
-              <p><TeX>{"F = 0\,N"}</TeX></p>
+              <p>يجب أن تكون <TeX>{"F' = 50\\,N"}</TeX> في الجهة المعاكسة للمحصلة.</p>
+              <p className="mt-2"><strong>3) التمثيل البياني:</strong> نرسم <TeX>{"F_1"}</TeX> و <TeX>{"F_2"}</TeX> متعاكسين، ثم نرسم المحصلة في جهة القوة الأكبر بطول يتناسب مع <AutoTex text="50N" />، وأخيرًا نرسم <TeX>{"F'"}</TeX> بالعكس للموازنة.</p>
+              <p className="mt-2"><strong>4) <AutoTex text="إذا كانت شدة القوة الثانية F₂ = 25N، فما شدة محصلة القوتين عندئذ؟" /></strong></p>
+              <p>تصبح القوتان <TeX>{"F_1 = 25\\,N"}</TeX> و <TeX>{"F_2 = 25\\,N"}</TeX> متساويتين ومتعاكستين، لذلك:</p>
+              <p><TeX>{"F = 0\\,N"}</TeX></p>
             </>} />
           </div>
         </div>
