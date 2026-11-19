@@ -20,6 +20,11 @@ import {
   SpringMagnetExperiment,
 } from "./force-figures";
 import {
+  ForceVectorDiagramExplained,
+  SpringWeightExplained,
+  MassWeightExplained,
+} from "./force-explanation-figures";
+import {
   BookOnTableFigure,
   TugOfWarFigure,
   CarPullersFigure,
@@ -115,6 +120,9 @@ const FIGURES: Record<string, () => ReactElement> = {
 const EXPLANATION_FIGURES: Record<string, () => ReactElement> = {
   "motion-explained-nonuniform": ExplainedNonUniformMotionChart,
   "motion-explained-speedometer": () => <ExplainedSpeedometerSVG />,
+  "force-vector-explained": ForceVectorDiagramExplained,
+  "force-spring-weight-explained": SpringWeightExplained,
+  "force-mass-weight-explained": MassWeightExplained,
 };
 
 /** مواصفة طريقة الإنتاج للعرض */

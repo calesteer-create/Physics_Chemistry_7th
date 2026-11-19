@@ -81,18 +81,18 @@ export function SpringMagnetExperiment() {
         <line key={x} x1={x} y1={182} x2={x} y2={196} stroke="#a0aec0" strokeWidth={1.5} />
       ))}
 
-      {/* المغناطيس */}
-      <g transform="translate(310, 168)">
-        {/* جسم المغناطيس */}
-        <rect x={0} y={0} width={50} height={24} rx={5} fill={C.red} />
-        <rect x={0} y={24} width={50} height={24} rx={5} fill={C.blue} />
-        <text x={25} y={16} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>N</text>
-        <text x={25} y={40} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>S</text>
+      {/* المغناطيس — قضيب أفقي قطبه الشمالي يواجه النابض */}
+      <g transform="translate(312, 176)">
+        <rect x={0} y={0} width={32} height={26} rx={5} fill={C.red} />
+        <rect x={32} y={0} width={32} height={26} rx={5} fill={C.blue} />
+        <text x={16} y={18} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>N</text>
+        <text x={48} y={18} textAnchor="middle" fill="white" fontSize={12} fontWeight={800}>S</text>
       </g>
 
-      {/* سهم القوة المغناطيسية */}
-      <line x1={295} y1={189} x2={234} y2={189} stroke={C.blue} strokeWidth={4.5} strokeLinecap="round" />
-      <ArrowHead x={228} y={189} angle={Math.PI} color={C.blue} />
+      {/* سهم قوة الجذب المغناطيسي: من النابض نحو المغناطيس (إلى اليمين) */}
+      <line x1={226} y1={189} x2={298} y2={189} stroke={C.blue} strokeWidth={4.5} strokeLinecap="round" />
+      <ArrowHead x={304} y={189} angle={0} color={C.blue} />
+      <SvgTeX tex="\vec{F}" x={238} y={158} width={30} height={22} color={C.blue} fontSize="17px" />
 
       {/* تسمية (1) */}
       <SvgTeX tex="(1)" x={140} y={148} width={40} height={22} align="center" color={C.ink} fontSize="16px" />
@@ -126,18 +126,17 @@ export function SpringMagnetExperiment() {
       {/* خط التعليق */}
       <line x1={510} y1={254} x2={510} y2={270} stroke="#64748b" strokeWidth={3} />
 
-      {/* يد تشد الربيعة */}
-      <g transform="translate(530, 260)">
-        <path d="M0,0 Q18,-8 30,-4 Q42,0 38,14 Q34,26 18,24 Q4,22 0,12 Z"
+      {/* يد تشدّ الثقل نحو الأسفل على محور الربيعة نفسه */}
+      <g transform="translate(510, 284)">
+        <path d="M-16,-12 Q-20,2 -10,8 Q0,14 10,8 Q20,2 16,-12 Q8,-6 0,-6 Q-8,-6 -16,-12 Z"
           fill="#f5d0b0" stroke="#d4a574" strokeWidth={1.5} />
-        <line x1={0} y1={12} x2={-22} y2={12} stroke={C.coral} strokeWidth={4} strokeLinecap="round" />
-        <ArrowHead x={-28} y={12} angle={Math.PI} color={C.coral} size={10} />
       </g>
 
-      {/* سهم F */}
-      <line x1={555} y1={170} x2={600} y2={170} stroke={C.coral} strokeWidth={4.5} strokeLinecap="round" />
-      <ArrowHead x={606} y={170} angle={0} color={C.coral} />
-      <SvgTeX tex="\vec{F}" x={610} y={160} width={30} height={22} color={C.coral} fontSize="17px" />
+      {/* سهم قوة الشدّ F: نحو الأسفل على امتداد محور الربيعة */}
+      <line x1={552} y1={222} x2={552} y2={282} stroke={C.coral} strokeWidth={4.5} strokeLinecap="round" />
+      <ArrowHead x={552} y={288} angle={Math.PI / 2} color={C.coral} />
+      <line x1={532} y1={238} x2={546} y2={248} stroke={C.coral} strokeWidth={1.5} strokeDasharray="3 3" />
+      <SvgTeX tex="\vec{F}" x={564} y={242} width={30} height={22} color={C.coral} fontSize="17px" />
 
       {/* تسمية (2) */}
       <SvgTeX tex="(2)" x={540} y={86} width={40} height={22} align="center" color={C.ink} fontSize="16px" />
@@ -234,14 +233,14 @@ export function HangingBallForcesDiagram() {
       {/* كتلة الكرة */}
       <SvgTeX tex="100\,\text{g}" x={105} y={188} width={70} height={20} align="center" color="#ffffff" fontSize="14px" />
 
-      {/* سهم قوة الشد t (أزرق مائي لأعلى) */}
-      <line x1={140} y1={145} x2={140} y2={62} stroke={C.teal} strokeWidth={5} strokeLinecap="round" />
-      <ArrowHead x={140} y={56} angle={-Math.PI / 2} color={C.teal} size={15} />
+      {/* سهم قوة الشد t (لأعلى، من نقطة اتصال الحبل بالكرة، وطوله يساوي طول سهم الثقل لأن t = w) */}
+      <line x1={140} y1={151} x2={140} y2={61} stroke={C.teal} strokeWidth={5} strokeLinecap="round" />
+      <ArrowHead x={140} y={55} angle={-Math.PI / 2} color={C.teal} size={15} />
       <SvgTeX tex="\vec{t}" x={154} y={80} width={30} height={22} color={C.teal} fontSize="18px" />
 
-      {/* سهم قوة الثقل w (مرجاني لأسفل) */}
-      <line x1={140} y1={244} x2={140} y2={340} stroke={C.coral} strokeWidth={5} strokeLinecap="round" />
-      <ArrowHead x={140} y={346} angle={Math.PI / 2} color={C.coral} size={15} />
+      {/* سهم قوة الثقل w (لأسفل، من مركز ثقل الكرة، وبنفس طول سهم الشد) */}
+      <line x1={140} y1={195} x2={140} y2={285} stroke={C.coral} strokeWidth={5} strokeLinecap="round" />
+      <ArrowHead x={140} y={291} angle={Math.PI / 2} color={C.coral} size={15} />
       <SvgTeX tex="\vec{w}" x={154} y={306} width={30} height={22} color={C.coral} fontSize="18px" />
 
       {/* نقطة مركز الثقل */}
@@ -262,7 +261,7 @@ export function HangingBallForcesDiagram() {
    4. تمثيل القوى الثلاث بمقياس رسم (ص 27)
    ═══════════════════════════════════════════════════════════ */
 export function ForceScaleDrawing() {
-  const origin = { x: 140, y: 260 };
+  const origin = { x: 140, y: 238 };
   const pxPerN = 4; // 1 N = 4 px (مقياس: 1cm = 10N → 10 N = 40px)
   const forces: { F: number; deg: number; color: string; label: string }[] = [
     { F: 40, deg: 0,    color: C.blue,  label: "40\\,\\text{N}" },
