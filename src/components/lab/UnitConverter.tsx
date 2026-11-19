@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowLeftRight, Equal, Ruler, Scale, Timer } from "lucide-react";
-import { AutoTex, TeX, unitTex } from "@/components/math/TeX";
+import { TeX, unitTex } from "@/components/math/TeX";
 
 /**
  * محوّل الوحدات — أداة تعليمية عامة (غير منهجية) للتدريب على التحويلات
@@ -135,10 +135,13 @@ export function UnitConverter() {
             >
               {Object.entries(units).map(([k, u]) => (
                 <option key={k} value={k} className="bg-[#0b1830]">
-                  <AutoTex text={u.label} />
+                  {u.label}
                 </option>
               ))}
             </select>
+            <span dir="ltr" className="mt-1.5 block text-center text-[12px] font-black text-[#8ceeff]">
+              <TeX>{unitTex(from)}</TeX>
+            </span>
           </label>
           <button
             onClick={() => {
@@ -162,10 +165,13 @@ export function UnitConverter() {
             >
               {Object.entries(units).map(([k, u]) => (
                 <option key={k} value={k} className="bg-[#0b1830]">
-                  <AutoTex text={u.label} />
+                  {u.label}
                 </option>
               ))}
             </select>
+            <span dir="ltr" className="mt-1.5 block text-center text-[12px] font-black text-[#8ceeff]">
+              <TeX>{unitTex(to)}</TeX>
+            </span>
           </label>
           <div className="rounded-xl border border-[rgba(60,224,244,0.3)] bg-[rgba(60,224,244,0.07)] px-4 py-3 text-center">
             <span className="mb-1 flex items-center justify-center gap-1 text-[11px] font-black text-[var(--color-mist)]">
