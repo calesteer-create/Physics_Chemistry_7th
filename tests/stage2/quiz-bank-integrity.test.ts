@@ -1,7 +1,7 @@
 /**
  * اختبارات سلامة بنك الاختبارات — P1-4a.
  *
- * تتحقق من البنوك الفعلية الأربعة، ثم من قدرة الفحص على كشف كل نوع خلل
+ * تتحقق من بنوك الاختبارات الخمسة الفعلية، ثم من قدرة الفحص على كشف كل نوع خلل
  * عبر نسخ معدّلة في الذاكرة فقط. لا تُعدّل أي محتوى ولا تلمس قاعدة بيانات.
  */
 import test from "node:test";
@@ -25,7 +25,7 @@ test("البنك الحالي سليم بالكامل", () => {
 
   assert.deepEqual(
     quizzes.map((quiz) => quiz.id).sort(),
-    ["quiz-force-2", "quiz-motion-1", "quiz-one-support-3", "quiz-orientation"],
+    ["quiz-force-2", "quiz-motion-1", "quiz-one-support-3", "quiz-orientation", "quiz-work-power-4"],
   );
   assert.deepEqual(validateQuizBank(quizzes), []);
   for (const quiz of quizzes) {

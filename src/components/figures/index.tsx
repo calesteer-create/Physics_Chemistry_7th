@@ -36,6 +36,13 @@ import {
   ActionReactionExamplesGrid,
   ParachuteFigure,
 } from "./one-support-figures";
+import {
+  WorkStoppedCarFigure,
+  WorkLiftCarryFigure,
+  WorkDirectionCasesFigure,
+  WorkCarForcesFigure,
+  WorkHorsepowerFigure,
+} from "./work-power-figures";
 import type { ReactNode } from "react";
 
 /**
@@ -114,6 +121,11 @@ const FIGURES: Record<string, () => ReactElement> = {
   "action-reaction": ActionReactionFigure,
   "action-reaction-examples": ActionReactionExamplesGrid,
   "parachute": ParachuteFigure,
+  "work-stopped-car": WorkStoppedCarFigure,
+  "work-lift-carry": WorkLiftCarryFigure,
+  "work-direction-cases": WorkDirectionCasesFigure,
+  "work-car-forces": WorkCarForcesFigure,
+  "work-horsepower": WorkHorsepowerFigure,
 };
 
 // رسوم محسّنة للشرح فقط؛ لا تدخل سجل رسوم دفتر الطالب.

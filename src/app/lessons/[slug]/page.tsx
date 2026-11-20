@@ -26,9 +26,11 @@ import { LessonShell, type StageNavItem } from "@/components/lesson/LessonShell"
 import { ForcePlayground } from "@/components/lab/ForcePlayground";
 import { MotionPlayground } from "@/components/lab/MotionPlayground";
 import { OneSupportPlayground } from "@/components/lab/OneSupportPlayground";
+import { WorkPowerPlayground } from "@/components/lab/WorkPowerPlayground";
 import { UnitConverter } from "@/components/lab/UnitConverter";
 import { ForceBookQuestions } from "@/components/lesson/ForceBookQuestions";
 import { OneSupportBookQuestions } from "@/components/lesson/OneSupportBookQuestions";
+import { WorkPowerBookQuestions } from "@/components/lesson/WorkPowerBookQuestions";
 import { MotionQuizBookQuestions } from "@/components/lesson/BookQuestions";
 import { Reveal } from "@/components/ui/Reveal";
 import { EngineerMark } from "@/components/brand/EngineerMark";
@@ -157,6 +159,11 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
             <OneSupportPlayground />
           </div>
         )}
+        {stageId === "lab" && lesson.slug === "work-and-power" && (
+          <div className="mt-7">
+            <WorkPowerPlayground />
+          </div>
+        )}
         {stageId === "quiz" && lesson.slug === "motion-and-rest" && (
           <div className="mt-7">
             <MotionQuizBookQuestions />
@@ -170,6 +177,11 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         {stageId === "quiz" && lesson.slug === "forces-on-one-support" && (
           <div className="mt-7">
             <OneSupportBookQuestions />
+          </div>
+        )}
+        {stageId === "quiz" && lesson.slug === "work-and-power" && (
+          <div className="mt-7">
+            <WorkPowerBookQuestions />
           </div>
         )}
         {stageId === "quiz" && lesson.quizId && (
