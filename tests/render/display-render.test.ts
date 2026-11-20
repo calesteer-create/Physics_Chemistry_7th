@@ -18,6 +18,7 @@ import { RichText } from "@/components/content/RichText";
 import { AutoTex, Q, TeX } from "@/components/math/TeX";
 import { ForceBookQuestions } from "@/components/lesson/ForceBookQuestions";
 import { OneSupportBookQuestions } from "@/components/lesson/OneSupportBookQuestions";
+import { WorkPowerBookQuestions } from "@/components/lesson/WorkPowerBookQuestions";
 import { InlineCheck } from "@/components/lesson/InlineCheck";
 import { BlockRenderer } from "@/components/lesson/Blocks";
 import { UnitConverter } from "@/components/lab/UnitConverter";
@@ -32,6 +33,13 @@ import {
   SpringWeightExplained,
   MassWeightExplained,
 } from "@/components/figures/force-explanation-figures";
+import {
+  WorkStoppedCarFigure,
+  WorkLiftCarryFigure,
+  WorkDirectionCasesFigure,
+  WorkCarForcesFigure,
+  WorkHorsepowerFigure,
+} from "@/components/figures/work-power-figures";
 import {
   BookOnTableFigure,
   TugOfWarFigure,
@@ -145,8 +153,14 @@ test("مكوّنات المحتوى (أسئلة، فحوص، رسوم) تُعر�
     ["ActionReactionFigure", () => renderToStaticMarkup(h(ActionReactionFigure, {}))],
     ["ActionReactionExamplesGrid", () => renderToStaticMarkup(h(ActionReactionExamplesGrid, {}))],
     ["ParachuteFigure", () => renderToStaticMarkup(h(ParachuteFigure, {}))],
+    ["WorkStoppedCarFigure", () => renderToStaticMarkup(h(WorkStoppedCarFigure, {}))],
+    ["WorkLiftCarryFigure", () => renderToStaticMarkup(h(WorkLiftCarryFigure, {}))],
+    ["WorkDirectionCasesFigure", () => renderToStaticMarkup(h(WorkDirectionCasesFigure, {}))],
+    ["WorkCarForcesFigure", () => renderToStaticMarkup(h(WorkCarForcesFigure, {}))],
+    ["WorkHorsepowerFigure", () => renderToStaticMarkup(h(WorkHorsepowerFigure, {}))],
     ["ForceBookQuestions", () => renderToStaticMarkup(h(ForceBookQuestions, {}))],
     ["OneSupportBookQuestions", () => renderToStaticMarkup(h(OneSupportBookQuestions, {}))],
+    ["WorkPowerBookQuestions", () => renderToStaticMarkup(h(WorkPowerBookQuestions, {}))],
     ["InlineCheck", () => renderToStaticMarkup(h(InlineCheck, CHECK_PROPS))],
     ["UnitConverter", () => renderToStaticMarkup(h(UnitConverter, {}))],
   ];

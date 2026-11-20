@@ -71,10 +71,12 @@ jobs:
             lessons/motion-and-rest/index.html \
             lessons/force-and-motion/index.html \
             lessons/forces-on-one-support/index.html \
+            lessons/work-and-power/index.html \
             quizzes/quiz-orientation/index.html \
             quizzes/quiz-motion-1/index.html \
             quizzes/quiz-force-2/index.html \
             quizzes/quiz-one-support-3/index.html \
+            quizzes/quiz-work-power-4/index.html \
             units/unit-1/index.html \
             404.html
           do

@@ -9,7 +9,8 @@
  * strings the approved display layer (`oneSupportTeX`) has always produced —
  * verified byte-identical: `oneSupportTeX(oldNotebook) === newNotebook`.
  * Text, order, structure and scientific meaning are unchanged; the other three
- * baselines remain untouched. */
+ * baselines remain untouched. The work-and-power notebook hash locks the exact
+ * approved content and order, including the cat-example assumption. */
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -20,6 +21,7 @@ const baseline: Record<string, string> = {
   "motion-and-rest": "3c6c15db863fcd452bfa693aea65cd8da8ba935ca496f04f3b2db2c2537608e4",
   "force-and-motion": "2e3afb768c31ac5a810cd8cd013928abd29244f929610c8701c34e42185dcc0f",
   "forces-on-one-support": "b0320f71ae611d10425dc0bf8fd7259849825d68582f7a6d57e4a2d942a44d08",
+  "work-and-power": "ed55fc49a39afa36e9e0e0a0c2cad956798c4e108f5ba0c1e04e2afeb7eae970",
 };
 
 test("محتوى دفتر الطالب وبنيته وترتيبه مطابق لخط الأساس المعتمد", () => {
