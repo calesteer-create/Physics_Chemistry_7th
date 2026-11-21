@@ -31,6 +31,10 @@ jobs:
     steps:
       - name: تنزيل الشيفرة
         uses: actions/checkout@v5
+        with:
+          # اختبار ثبات الملفات القديمة يقارنها بـ commit الأساس عبر git show.
+          # العمق الافتراضي (1) يحذف ذلك المرجع ويُفشل الاختبار في CI فقط.
+          fetch-depth: 0
 
       - name: تهيئة Node.js
         uses: actions/setup-node@v5
