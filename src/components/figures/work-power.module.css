@@ -1,0 +1,40 @@
+/* Lesson 4 only: scientific plates (العمل والاستطاعة).
+   Scoped here so the shared math layer (TeX.tsx) stays untouched. */
+
+.holder { width: 100%; }
+
+.plate {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  margin-inline: auto;
+  /* KaTeX boxes must be laid out left-to-right even inside an RTL page. */
+  direction: ltr;
+}
+
+/* Symbol order (F₁ / d = 0 / W > 0) stays LTR inside the label boxes. */
+.plate foreignObject > div {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.plate foreignObject :global(.katex) { color: inherit; }
+
+/* Arabic captions inside the drawing keep their own RTL run. */
+.plate text[dir="rtl"] { direction: rtl; }
+
+.plate text {
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Two composed variants: wide plate and narrow (phone) plate.
+   Both carry the same labels; only the arrangement changes. */
+.onlyWide { display: block; }
+.onlyNarrow { display: none; }
+
+@media (max-width: 40rem) {
+  .onlyWide { display: none; }
+  .onlyNarrow { display: block; }
+}
