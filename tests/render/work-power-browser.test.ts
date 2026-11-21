@@ -43,6 +43,61 @@ async function buildBundle(outDir: string): Promise<string> {
   return htmlPath;
 }
 
+test("ألوان السؤال والتلميح والحل مع accent ترثها صيغ KaTeX ولا تتغير الافتراضيات", { timeout: 120_000 }, async () => {
+  ensureBrowserLibs();
+  const outDir = join(tmpdir(), "work-power-book-browser-test");
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(outDir, { recursive: true });
+  const entry = join(outDir, "entry.ts");
+  writeFileSync(entry, [
+    `import { createElement as h } from "react";`,
+    `import { createRoot } from "react-dom/client";`,
+    `import { BookExercise } from "@/components/lesson/BookExercise";`,
+    `const rich = [{ t: "نص " }, { tex: "5+1" }];`,
+    `const props = { number: "1", title: "عنوان", question: rich, hint: rich, solution: rich };`,
+    `createRoot(document.getElementById("root")!).render(h("div", null,`,
+    `  h("div", { id: "accent" }, h(BookExercise, { ...props, accent: "#5b4781" })),`,
+    `  h("div", { id: "default" }, h(BookExercise, props))));`,
+  ].join("\n"));
+  const { build } = require("esbuild") as typeof import("esbuild");
+  await build({
+    entryPoints: [entry], bundle: true, outfile: join(outDir, "bundle.js"), format: "iife", platform: "browser", jsx: "automatic",
+    alias: { "@": join(ROOT, "src") }, nodePaths: [join(ROOT, "node_modules")], define: { "process.env.NODE_ENV": '"development"' }, logLevel: "silent",
+  });
+  const htmlPath = join(outDir, "index.html");
+  writeFileSync(htmlPath, `<!doctype html><html dir="rtl"><head><meta charset="utf-8"></head><body><div id="root"></div><script src="bundle.js"></script></body></html>`);
+  interface Chromium { executablePath(): Promise<string>; args: string[] }
+  const mod = require("@sparticuz/chromium") as { default?: Chromium } & Chromium;
+  const chromium: Chromium = mod.default ?? mod;
+  const { chromium: pw } = require("playwright-core") as typeof import("playwright-core");
+  const browser = await pw.launch({ executablePath: await chromium.executablePath(), args: chromium.args, headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(pathToFileURL(htmlPath).href);
+    for (const id of ["accent", "default"]) {
+      const exercise = page.locator(`#${id}`);
+      await exercise.getByRole("button", { name: "تلميح", exact: true }).click();
+      await exercise.getByRole("button", { name: "إظهار الحل التفصيلي" }).click();
+      const wrappers = [
+        exercise.locator('[class~="text-white"]'),
+        exercise.locator('[class*="text-[#fff3c4]"]'),
+        exercise.locator('[class*="text-[#c8ffd4]"]'),
+      ];
+      const expected = ["rgb(26, 36, 56)", "rgb(120, 86, 24)", "rgb(18, 100, 93)"];
+      for (const [i, wrapper] of wrappers.entries()) {
+        if (id === "default") {
+          assert.equal(await wrapper.getAttribute("style"), null, "لا تتغير ألوان الدروس دون accent");
+        } else {
+          assert.equal(await wrapper.evaluate((el) => getComputedStyle(el).color), expected[i]);
+          assert.equal(await wrapper.locator(".katex").first().evaluate((el) => getComputedStyle(el).color), expected[i], "ترث KaTeX لون النص");
+        }
+      }
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
 test("مختبر العمل والاستطاعة يعمل تفاعلياً على شاشة هاتف", { timeout: 120_000 }, async () => {
   ensureBrowserLibs();
   const outDir = join(tmpdir(), "work-power-browser-test");

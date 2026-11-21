@@ -13,6 +13,7 @@ export function BookExercise({
   hint,
   solution,
   color = "phys",
+  accent,
   children,
 }: {
   number: string;
@@ -21,6 +22,9 @@ export function BookExercise({
   hint?: Rich;
   solution: Rich;
   color?: "phys" | "chem" | "vio" | "gold";
+  /** لون تجميلي اختياري (hex) يضمن تبايناً كافياً على الخلفية الفاتحة.
+   *  عند إهماله يبقى المظهر الافتراضي لكل الدروس الأخرى كما هو تماماً. */
+  accent?: string;
   children?: ReactNode;
 }) {
   const [showHint, setShowHint] = useState(false);
@@ -32,7 +36,14 @@ export function BookExercise({
     vio:  { accent: "#b388ff", bg: "rgba(179,136,255,0.04)", border: "rgba(179,136,255,0.25)", glow: "shadow-[0_0_30px_-10px_rgba(179,136,255,0.3)]" },
     gold: { accent: "#ffd740", bg: "rgba(255,215,64,0.04)", border: "rgba(255,215,64,0.25)", glow: "shadow-[0_0_30px_-10px_rgba(255,215,64,0.3)]" },
   };
-  const p = palette[color];
+  const base = palette[color];
+  const p = accent
+    ? { ...base, accent, bg: `${accent}0d`, border: `${accent}55` }
+    : base;
+  /* عند تمرير accent (الدرس الرابع فقط) نستخدم ألواناً داكنة كافية للتباين
+     على الخلفية الفاتحة. بدون accent يبقى كل شيء كما هو تماماً. */
+  const hintInk = accent ? "#785618" : "#ffd740";
+  const solInk = accent ? "#0f6b52" : "#00e676";
 
   return (
     <div className={`relative rounded-3xl overflow-hidden transition-all duration-500 ${showSol ? p.glow : ""}`}
@@ -53,7 +64,8 @@ export function BookExercise({
                 {title}
               </h4>
             )}
-            <div className="whitespace-pre-line text-[15.5px] font-bold leading-9 text-white">
+            <div className="whitespace-pre-line text-[15.5px] font-bold leading-9 text-white"
+                 style={accent ? { color: "#1a2438" } : undefined}>
               <RichText rich={question} />
             </div>
           </div>
@@ -67,18 +79,26 @@ export function BookExercise({
         {hint && (
           <button onClick={() => setShowHint(!showHint)}
                   className="flex items-center gap-2 rounded-xl px-4 py-2 text-[12.5px] font-black transition-all hover:scale-[1.02]"
-                  style={{ color: "#ffd740", background: "rgba(255,215,64,0.08)", border: "1px solid rgba(255,215,64,0.2)" }}>
+                  style={accent
+                    ? { color: hintInk, background: "rgba(138,90,0,0.07)", border: "1px solid rgba(138,90,0,0.28)" }
+                    : { color: "#ffd740", background: "rgba(255,215,64,0.08)", border: "1px solid rgba(255,215,64,0.2)" }}>
             <Lightbulb className="h-4 w-4" />
             {showHint ? "إخفاء التلميح" : "تلميح"}
           </button>
         )}
         <button onClick={() => setShowSol(!showSol)}
                 className="flex items-center gap-2 rounded-xl px-5 py-2 text-[12.5px] font-black transition-all hover:scale-[1.02]"
-                style={{
-                  color: showSol ? "#111" : "#00e676",
-                  background: showSol ? "#00e676" : "rgba(0,230,118,0.08)",
-                  border: `1px solid ${showSol ? "#00e676" : "rgba(0,230,118,0.25)"}`,
-                }}>
+                style={accent
+                  ? {
+                      color: showSol ? "#ffffff" : solInk,
+                      background: showSol ? solInk : "rgba(15,107,82,0.07)",
+                      border: `1px solid ${showSol ? solInk : "rgba(15,107,82,0.28)"}`,
+                    }
+                  : {
+                      color: showSol ? "#111" : "#00e676",
+                      background: showSol ? "#00e676" : "rgba(0,230,118,0.08)",
+                      border: `1px solid ${showSol ? "#00e676" : "rgba(0,230,118,0.25)"}`,
+                    }}>
           {showSol ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           {showSol ? "إخفاء الحل" : "إظهار الحل التفصيلي"}
         </button>
@@ -88,10 +108,11 @@ export function BookExercise({
       {showHint && hint && (
         <div className="mx-6 mb-3 rounded-2xl p-4" style={{ background: "rgba(255,215,64,0.06)", border: "1px solid rgba(255,215,64,0.15)" }}>
           <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="h-4 w-4 text-[#ffd740]" />
-            <span className="text-[12px] font-black text-[#ffd740]">تلميح</span>
+            <Lightbulb className="h-4 w-4" style={{ color: hintInk }} />
+            <span className="text-[12px] font-black" style={{ color: hintInk }}>تلميح</span>
           </div>
-          <div className="text-[14px] font-bold leading-8 text-[#fff3c4]">
+          <div className="text-[14px] font-bold leading-8 text-[#fff3c4]"
+               style={accent ? { color: "#785618" } : undefined}>
             <RichText rich={hint} />
           </div>
         </div>
@@ -101,10 +122,11 @@ export function BookExercise({
       {showSol && (
         <div className="mx-4 mb-4 rounded-2xl p-5" style={{ background: "rgba(0,230,118,0.05)", border: "1px solid rgba(0,230,118,0.2)" }}>
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 className="h-5 w-5 text-[#00e676]" />
-            <span className="text-[13px] font-black text-[#00e676]">الحل التفصيلي</span>
+            <CheckCircle2 className="h-5 w-5" style={{ color: solInk }} />
+            <span className="text-[13px] font-black" style={{ color: solInk }}>الحل التفصيلي</span>
           </div>
-          <div className="whitespace-pre-line text-[15px] font-bold leading-10 text-[#c8ffd4]">
+          <div className="whitespace-pre-line text-[15px] font-bold leading-10 text-[#c8ffd4]"
+               style={accent ? { color: "#12645d" } : undefined}>
             <RichText rich={solution} />
           </div>
         </div>
