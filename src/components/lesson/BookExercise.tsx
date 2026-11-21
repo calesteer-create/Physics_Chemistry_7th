@@ -64,7 +64,8 @@ export function BookExercise({
                 {title}
               </h4>
             )}
-            <div className="whitespace-pre-line text-[15.5px] font-bold leading-9 text-white">
+            <div className="whitespace-pre-line text-[15.5px] font-bold leading-9 text-white"
+                 style={accent ? { color: "#1a2438" } : undefined}>
               <RichText rich={question} />
             </div>
           </div>
@@ -110,7 +111,8 @@ export function BookExercise({
             <Lightbulb className="h-4 w-4" style={{ color: hintInk }} />
             <span className="text-[12px] font-black" style={{ color: hintInk }}>تلميح</span>
           </div>
-          <div className="text-[14px] font-bold leading-8 text-[#fff3c4]">
+          <div className="text-[14px] font-bold leading-8 text-[#fff3c4]"
+               style={accent ? { color: "#785618" } : undefined}>
             <RichText rich={hint} />
           </div>
         </div>
@@ -123,7 +125,8 @@ export function BookExercise({
             <CheckCircle2 className="h-5 w-5" style={{ color: solInk }} />
             <span className="text-[13px] font-black" style={{ color: solInk }}>الحل التفصيلي</span>
           </div>
-          <div className="whitespace-pre-line text-[15px] font-bold leading-10 text-[#c8ffd4]">
+          <div className="whitespace-pre-line text-[15px] font-bold leading-10 text-[#c8ffd4]"
+               style={accent ? { color: "#12645d" } : undefined}>
             <RichText rich={solution} />
           </div>
         </div>
