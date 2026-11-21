@@ -1,3 +1,6 @@
+import { BodyLevers } from "./simple-machines-body";
+import { OpenerDiagram, LeverTypes } from "./simple-machines-tools";
+import { MachineAtlas, InclineDiagram, WedgeDiagram, PulleyDiagram, ScrewDiagram, LeverDiagram, WheelDiagram } from "./simple-machines-figures";
 import type { ReactElement } from "react";
 import type { FigureRef, Rich } from "@/content/types";
 import { RichText } from "@/components/content/RichText";
@@ -98,6 +101,20 @@ function NotebookPageLayoutSVG() {
 }
 
 const FIGURES: Record<string, () => ReactElement> = {
+  "machine-body": BodyLevers,
+  "machine-opener": OpenerDiagram,
+  "machine-atlas": MachineAtlas,
+  "machine-incline": () => <InclineDiagram/>,
+  "machine-wedge": WedgeDiagram,
+  "machine-fixed": () => <PulleyDiagram mode="fixed"/>,
+  "machine-moving": () => <PulleyDiagram/>,
+  "machine-pulley-pair": () => <div style={{width:"100%"}}><PulleyDiagram mode="fixed"/><PulleyDiagram/></div>,
+  "machine-screw": () => <ScrewDiagram/>,
+  "machine-lever1": () => <LeverDiagram/>,
+  "machine-lever2": () => <LeverDiagram type={2}/>,
+  "machine-lever3": () => <LeverDiagram type={3}/>,
+  "machine-lever-types": LeverTypes,
+  "machine-wheel": () => <WheelDiagram/>,
   "notebook-page-layout": NotebookPageLayoutSVG,
   "uniform-motion-chart": UniformMotionChart,
   "uniform-motion-chart-2": UniformMotionChart2,

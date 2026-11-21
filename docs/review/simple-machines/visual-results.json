@@ -1,0 +1,1080 @@
+{
+  "date": "2026-11-21T21:53:25.439Z",
+  "root": "http://localhost:3000/Physics_Chemistry_7th",
+  "widths": [
+    320,
+    360,
+    390,
+    768,
+    1024,
+    1440,
+    1920
+  ],
+  "failures": [],
+  "measurements": [
+    {
+      "width": 320,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.375
+    },
+    {
+      "width": 320,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 14.024999999999999
+    },
+    {
+      "width": 320,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.375
+    },
+    {
+      "width": 320,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.6375
+    },
+    {
+      "width": 320,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.6375
+    },
+    {
+      "width": 320,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 320,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 320,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.375
+    },
+    {
+      "width": 320,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.375
+    },
+    {
+      "width": 320,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 320,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.5
+    },
+    {
+      "width": 320,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 14.875
+    },
+    {
+      "width": 320,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.125
+    },
+    {
+      "width": 320,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 320,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 320,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 360,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.875
+    },
+    {
+      "width": 360,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.775
+    },
+    {
+      "width": 360,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.875
+    },
+    {
+      "width": 360,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.3875
+    },
+    {
+      "width": 360,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.3875
+    },
+    {
+      "width": 360,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 360,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 360,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.875
+    },
+    {
+      "width": 360,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.875
+    },
+    {
+      "width": 360,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 360,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16
+    },
+    {
+      "width": 360,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.375
+    },
+    {
+      "width": 360,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.625
+    },
+    {
+      "width": 360,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 360,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 360,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 390,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.75
+    },
+    {
+      "width": 390,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 18.8375
+    },
+    {
+      "width": 390,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.75
+    },
+    {
+      "width": 390,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.45
+    },
+    {
+      "width": 390,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.45
+    },
+    {
+      "width": 390,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 390,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 390,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.75
+    },
+    {
+      "width": 390,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.75
+    },
+    {
+      "width": 390,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 390,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 17.875
+    },
+    {
+      "width": 390,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.25
+    },
+    {
+      "width": 390,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.5
+    },
+    {
+      "width": 390,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 390,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 390,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 768,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 15.69375
+    },
+    {
+      "width": 768,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 18.28125
+    },
+    {
+      "width": 768,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 18.28125
+    },
+    {
+      "width": 768,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 768,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 768,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 768,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.650000000000002
+    },
+    {
+      "width": 768,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.650000000000002
+    },
+    {
+      "width": 768,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 768,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 14.85
+    },
+    {
+      "width": 768,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 18.16875
+    },
+    {
+      "width": 768,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 18.28125
+    },
+    {
+      "width": 768,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 768,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 768,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 1024,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 14.34375
+    },
+    {
+      "width": 1024,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.931250000000002
+    },
+    {
+      "width": 1024,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 16.931250000000002
+    },
+    {
+      "width": 1024,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1024,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1024,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1024,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 13.5
+    },
+    {
+      "width": 1024,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1024,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1024,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1024,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 1440,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 20.41875
+    },
+    {
+      "width": 1440,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 23.006249999999998
+    },
+    {
+      "width": 1440,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 23.006249999999998
+    },
+    {
+      "width": 1440,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1440,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1440,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.375
+    },
+    {
+      "width": 1440,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.375
+    },
+    {
+      "width": 1440,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1440,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.575
+    },
+    {
+      "width": 1440,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1440,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1440,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1440,
+      "errors": [],
+      "unexpectedNetwork": []
+    },
+    {
+      "width": 1920,
+      "state": "stage-1",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "stage-2",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 20.41875
+    },
+    {
+      "width": 1920,
+      "state": "stage-3",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "stage-4",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "lab-الرافعة-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "lab-البكرات-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "pulley-fixed",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "pulley-combined",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "lab-المستوى المائل-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 23.006249999999998
+    },
+    {
+      "width": 1920,
+      "state": "lab-البرغي-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 23.006249999999998
+    },
+    {
+      "width": 1920,
+      "state": "lab-العجلة والمحور-complete",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "stage-5",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1920,
+      "state": "stage-6",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1920,
+      "state": "stage-7",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.375
+    },
+    {
+      "width": 1920,
+      "state": "book-all-open",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 21.375
+    },
+    {
+      "width": 1920,
+      "state": "stage-8",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1920,
+      "state": "stage-9",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 19.575
+    },
+    {
+      "width": 1920,
+      "state": "unit-results",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "unit-retry",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": 24.75
+    },
+    {
+      "width": 1920,
+      "state": "unit-page",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1920,
+      "state": "lesson-quiz",
+      "overflow": 0,
+      "katexErrors": [],
+      "minLabel": null
+    },
+    {
+      "width": 1920,
+      "errors": [],
+      "unexpectedNetwork": []
+    }
+  ]
+}

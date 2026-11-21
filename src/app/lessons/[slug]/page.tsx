@@ -1,3 +1,7 @@
+import machineStyles from "@/components/figures/simple-machines.module.css";
+import { SimpleMachinesNotebook } from "@/components/lesson/SimpleMachinesNotebook";
+import { SimpleMachinesPlayground } from "@/components/lab/SimpleMachinesPlayground";
+import { SimpleMachinesBookQuestions } from "@/components/lesson/SimpleMachinesBookQuestions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -104,7 +108,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
       return (
         <section key="notebook">
           <StageHeader meta={STAGE_META.notebook} idx={idx} notebook />
-          <Notebook items={lesson.notebook} lessonTitle={lesson.title} notation={isOneSupport ? oneSupportNotation : undefined} />
+          {lesson.slug === "simple-machines" ? <SimpleMachinesNotebook/> : <Notebook items={lesson.notebook} lessonTitle={lesson.title} notation={isOneSupport ? oneSupportNotation : undefined} />}
           {/* توقيع المهندس */}
           <div className="card mt-10 flex flex-col items-start justify-between gap-5 border-[rgba(230,192,122,0.3)] p-6 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
@@ -159,6 +163,8 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
             <OneSupportPlayground />
           </div>
         )}
+        {stageId === "lab" && lesson.slug === "simple-machines" && <div className="mt-7"><SimpleMachinesPlayground/></div>}
+        {stageId === "quiz" && lesson.slug === "simple-machines" && <div className="mt-7"><SimpleMachinesBookQuestions/></div>}
         {stageId === "lab" && lesson.slug === "work-and-power" && (
           <div className="mt-7">
             <WorkPowerPlayground />
@@ -203,7 +209,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
   });
 
   return (
-    <div className="container-x py-14">
+    <div className={`container-x py-14 ${lesson.slug === "simple-machines" ? machineStyles.lesson : ""}`}>
       {/* ترويسة الدرس */}
       <Reveal>
         <div className="card relative overflow-hidden p-8 md:p-10">
