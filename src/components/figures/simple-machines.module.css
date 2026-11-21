@@ -1,0 +1,233 @@
+.scope {
+  color: #1a2438;
+  line-height: 2;
+  min-width: 0;
+  --machine-panel: #f7fafc;
+}
+.scene {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  margin-inline: auto;
+  overflow: visible;
+  background: #f7fafc;
+  border-radius: 16px;
+}
+.label {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.5;
+  color: #1a2438;
+  text-align: center;
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 30px;
+}
+.label :global(.katex) {
+  font-size: 1em;
+}
+.grid {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 20px;
+}
+.panel {
+  border: 1px solid #d1d7df;
+  border-radius: 18px;
+  padding: 20px;
+  background: #fff;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+.heading {
+  font-size: 21px;
+  font-weight: 700;
+  color: #33568f;
+  margin: 0 0 14px;
+}
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 16px;
+  margin-block: 20px;
+}
+.control {
+  display: grid;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.control input[type="number"] {
+  width: 90px;
+  max-width: 100%;
+  border: 1px solid #78879c;
+  border-radius: 8px;
+  padding: 4px 8px;
+  direction: ltr;
+  background: #fff;
+  color: #1a2438;
+}
+.control input[type="range"] {
+  width: 100%;
+  accent-color: #33568f;
+  min-height: 36px;
+  direction: ltr;
+}
+.button {
+  border: 1px solid #33568f;
+  background: #eef2f9;
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-height: 44px;
+  color: #254575;
+  font-weight: 700;
+  cursor: pointer;
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.button:focus-visible,
+.control input:focus-visible {
+  outline: 3px solid #8a6420;
+  outline-offset: 3px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-block: 14px;
+}
+.result {
+  background: #eef5f3;
+  color: #125b49;
+  border: 1px solid #9bc7b7;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.note {
+  background: #f9f3e6;
+  color: #705012;
+  border-inline-start: 4px solid #8a6420;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.selected {
+  background: #33568f !important;
+  color: #fff !important;
+}
+.options {
+  display: grid;
+  gap: 10px;
+  margin-block: 16px;
+}
+.option {
+  width: 100%;
+  text-align: right;
+  line-height: 1.9;
+}
+.question {
+  scroll-margin-top: 100px;
+}
+.status {
+  font-size: 14px;
+  color: #4b5568;
+}
+.review {
+  border-inline-start: 5px solid #16706b;
+}
+.wrong {
+  border-inline-start-color: #b42318;
+}
+.scope :global(.tex-box) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.scope :global(a) {
+  color: #254575;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 480px) {
+  .panel {
+    padding: 14px 10px;
+  }
+  .label {
+    font-size: 20px;
+  }
+  .heading {
+    font-size: 19px;
+  }
+  .controls {
+    gap: 10px;
+  }
+  .scene {
+    border-radius: 10px;
+  }
+  .scope {
+    font-size: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scope * {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.notebookFigure > div {
+  padding: 4px;
+}
+@media (max-width: 480px) {
+  .grid .panel {
+    padding-inline: 4px;
+  }
+  .grid .label {
+    font-size: 22px;
+  }
+}
+
+.lesson {
+  min-width: 0;
+}
+.lesson :global(.tex-box) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+@media (max-width: 480px) {
+  .lesson
+    :global(.scroll-mt-24)
+    :global(.mt-10.flex.items-center.justify-between) {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+  .lesson :global(.scroll-mt-24) :global(.btn) {
+    min-width: 0;
+    white-space: normal;
+  }
+}
+
+.book :global(.mr-16) {
+  margin-right: 0;
+}
+.book > .grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+.book :global(.flex.items-center.gap-2.px-6.py-3) {
+  flex-wrap: wrap;
+}
+
+.book [style*="#785618"],
+.book [style*="rgb(120, 86, 24)"] {
+  color: #62410c !important;
+}

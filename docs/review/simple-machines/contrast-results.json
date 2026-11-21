@@ -1,0 +1,47 @@
+{
+  "method": "Sample background pixels under text-range centers after making text transparent. Disabled/translucent text excluded; gradients remain in background. Diagnostic sampling, not a proof of every pixel.",
+  "results": [
+    {
+      "width": 390,
+      "state": "explain",
+      "count": 29,
+      "minimum": 5.6,
+      "below45": []
+    },
+    {
+      "width": 390,
+      "state": "lab",
+      "count": 30,
+      "minimum": 5.6,
+      "below45": []
+    },
+    {
+      "width": 390,
+      "state": "book",
+      "count": 32,
+      "minimum": 5.02,
+      "below45": []
+    },
+    {
+      "width": 1440,
+      "state": "explain",
+      "count": 25,
+      "minimum": 5.6,
+      "below45": []
+    },
+    {
+      "width": 1440,
+      "state": "lab",
+      "count": 30,
+      "minimum": 5.6,
+      "below45": []
+    },
+    {
+      "width": 1440,
+      "state": "book",
+      "count": 27,
+      "minimum": 5.47,
+      "below45": []
+    }
+  ]
+}

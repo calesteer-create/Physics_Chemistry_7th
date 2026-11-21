@@ -1,3 +1,4 @@
+import { simpleMachinesLesson } from "./lessons/unit1/simple-machines";
 import type { Lesson, Unit } from "./types";
 import { orientationLesson } from "./lessons/orientation";
 import { motionAndRestLesson } from "./lessons/unit1/motion-and-rest";
@@ -10,7 +11,7 @@ import { workAndPowerLesson } from "./lessons/unit1/work-and-power";
  * تُضاف الدروس المنهجية هنا بعد ورود صور الكتاب المدرسي واعتمادها.
  */
 
-const LESSONS: Lesson[] = [orientationLesson, motionAndRestLesson, forceAndMotionLesson, forceOnOneSupportLesson, workAndPowerLesson];
+const LESSONS: Lesson[] = [orientationLesson, motionAndRestLesson, forceAndMotionLesson, forceOnOneSupportLesson, workAndPowerLesson, simpleMachinesLesson];
 
 export const units: Unit[] = [
   {
@@ -24,7 +25,7 @@ export const units: Unit[] = [
       { slug: "force-and-motion", title: "القوة والحركة", status: "published" },
       { slug: "forces-on-one-support", title: "القوى على حامل واحد", status: "published" },
       { slug: "work-and-power", title: "العمل والاستطاعة", status: "published" },
-      { slug: "simple-machines", title: "الآلات البسيطة", status: "pending" },
+      { slug: "simple-machines", title: "الآلات البسيطة", status: "published" },
     ],
   },
   {

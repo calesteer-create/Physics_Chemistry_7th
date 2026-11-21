@@ -7,7 +7,7 @@ import { listQuizzesMeta } from "@/content/quiz-bank";
 export const metadata: Metadata = { title: "الاختبارات" };
 
 export default function QuizzesPage() {
-  const quizzes = listQuizzesMeta();
+  const quizzes = [...listQuizzesMeta(), {id:"quiz-simple-machines-5", title:"اختبار الدرس الخامس — الآلات البسيطة", curricular:true, durationMin:20, count:10, lessonSlug:"simple-machines"}, {id:"quiz-unit-1", title:"اختبار الوحدة الأولى الشامل — الحركة والتحريك", curricular:true, durationMin:50, count:30, lessonSlug:null}];
 
   return (
     <div className="container-x py-16">
@@ -20,7 +20,7 @@ export default function QuizzesPage() {
           <h1 className="mt-5 text-[34px] font-black text-white md:text-[44px]">منطقة الاختبارات</h1>
           <p className="mt-4 text-[15px] leading-9 text-[var(--color-mist)]">
             لكل درس اختباره الخاص؛ وعند اكتمال وحدة كاملة يُضاف اختبار شامل لها. أسئلة متنوعة —
-            اختيار من متعدد، صح وخطأ، إكمال — بتصحيح آمن في الخادم وتغذية راجعة تشرح السبب.
+            اختيار من متعدد، صح وخطأ، إكمال. الاختبارات الجديدة تُصحّح محلياً مع تفسير بعد التسليم؛ أما الاختبارات السابقة فتبقى بآلية التسليم الحالية.
           </p>
         </div>
       </Reveal>

@@ -17,6 +17,7 @@ import { createHash } from "node:crypto";
 import { listLessons } from "../../src/content/registry";
 
 const baseline: Record<string, string> = {
+  "simple-machines": "22b525b055dbcb43383b83911e8aa43cdcb7d994b9c479ee053b83dc79f7c402",
   "platform-orientation": "ced181969a16d872527d69cc3b2c90f8cdd34a20c07694280c5e0b2188111530",
   "motion-and-rest": "3c6c15db863fcd452bfa693aea65cd8da8ba935ca496f04f3b2db2c2537608e4",
   "force-and-motion": "2e3afb768c31ac5a810cd8cd013928abd29244f929610c8701c34e42185dcc0f",
