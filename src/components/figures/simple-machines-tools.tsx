@@ -110,7 +110,7 @@ export function ToolElements({
           <Support x={66} y={237} />
           <Arrow x1={149} y1={110} x2={149} y2={161} />
           <Arrow x1={278} y1={194} x2={278} y2={141} color={MC.green} />
-          <ML x={159} y={49}>
+          <ML x={159} y={49} width={220}>
             المقاومة: الحمل
           </ML>
         </>
@@ -126,7 +126,7 @@ export function ToolElements({
           <Support x={139} y={161} />
           <Arrow x1={257} y1={33} x2={257} y2={78} color={MC.green} />
           <Arrow x1={98} y1={189} x2={98} y2={144} />
-          <ML x={175} y={232}>
+          <ML x={175} y={232} width={220}>
             الارتكاز عند الحاجز
           </ML>
         </>
@@ -154,10 +154,10 @@ export function ToolElements({
           />
           <Arrow x1={64} y1={201} x2={108} y2={201} color={MC.green} />
           <Arrow x1={258} y1={201} x2={214} y2={201} color={MC.green} />
-          <ML x={164} y={48}>
+          <ML x={164} y={48} width={220}>
             المقاومة عند الفكين
           </ML>
-          <ML x={160} y={256}>
+          <ML x={160} y={256} width={220}>
             الارتكاز: المفصل
           </ML>
         </>

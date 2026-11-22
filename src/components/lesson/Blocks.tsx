@@ -39,7 +39,7 @@ export function BlockRenderer({ block }: { block: DisplayBlock }) {
 
     case "law":
       return (
-        <div className="card border-r-4 border-r-[var(--color-chem)] p-7 bg-gradient-to-l from-[rgba(255,176,58,0.06)] to-transparent">
+        <div className="card law-card border-r-4 border-r-[var(--color-chem)] p-7 bg-gradient-to-l from-[rgba(255,176,58,0.06)] to-transparent">
           <div className="flex flex-wrap items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-xl bg-[rgba(255,176,58,0.15)]"><Sigma className="h-6 w-6 text-[var(--color-chem)]" /></div>
             <h4 className="text-[19px] font-black text-[#ffd08a]"><AutoTex text={block.name} /></h4>

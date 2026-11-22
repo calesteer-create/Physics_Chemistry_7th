@@ -451,7 +451,7 @@ export function WheelDiagram({
       />
       <MathLabel x={112} y={145} tex="R" />
       <MathLabel x={179} y={117} tex="r" />
-      <ML x={160} y={17}>
+      <ML x={160} y={17} width={220}>
         الجهد عند العجلة
       </ML>
     </MachineScene>

@@ -103,6 +103,12 @@
   gap: 10px;
   margin-block: 14px;
 }
+.mathPair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 8px;
+  direction: ltr;
+}
 .result {
   background: #eef5f3;
   color: #125b49;
@@ -198,12 +204,43 @@
 .lesson {
   min-width: 0;
 }
+/* KaTeX's TeX font metrics do not account for the full height of Arabic
+   glyphs inside \\text. The inner display must not be a scroll container:
+   it clips the ink above/below those metrics. Keep scrolling on the padded
+   outer box instead, and reserve room for Arabic fractions at any font size. */
+.lesson :global(.katex-display) {
+  overflow: visible;
+  padding-block: 0.6em;
+  width: max-content;
+  min-width: 100%;
+}
 .lesson :global(.tex-box) {
   display: block;
   max-width: 100%;
   overflow-x: auto;
 }
 @media (max-width: 480px) {
+  /* Allow long display formulas to wrap at KaTeX's own break points. Extra
+     line height keeps Arabic fraction ink clear of the preceding line. */
+  .lesson :global(.tex-box .katex-display) {
+    width: 100%;
+    min-width: 0;
+  }
+  .lesson :global(.tex-box .katex-display > .katex) {
+    white-space: normal;
+  }
+  .lesson :global(.tex-box .katex-display > .katex > .katex-html) {
+    line-height: 2.5;
+  }
+  .lesson :global(.law-card) {
+    padding: 16px;
+  }
+  .lesson :global(.law-card > .mt-5) {
+    padding: 12px;
+  }
+  .lesson :global(.law-card .tex-box) {
+    padding-inline: 10px;
+  }
   .lesson
     :global(.scroll-mt-24)
     :global(.mt-10.flex.items-center.justify-between) {
