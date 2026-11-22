@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Lock, PlayCircle } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, GraduationCap, Lock, PlayCircle } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { getLessonMeta, units } from "@/content/registry";
 
@@ -53,24 +53,48 @@ export default async function UnitPage({ params }: { params: Promise<{ slug: str
         })}
       </div>
       {unit.slug === "unit-1" && (
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <Link href="/units/unit-1/review" className="card card-hover block p-7">
-            <span className="eyebrow">مراجعة ختامية — أسئلة الكتاب ص 63–64</span>
-            <h2 className="mt-3 text-xl font-bold">أراجع وأختبر نفسي — الوحدة الأولى</h2>
-            <p className="mt-3">
-              أربع محطات وعشرون بندًا تفاعليًا: صحّ/خطأ مع التصحيح، وجدول الكتلة والثقل،
-              وقراءة الخطوط البيانية، والمسائل الثلاث، مع تلميحات وحلول خطوة بخطوة.
-            </p>
+        <section aria-label="اختبار الوحدة الأولى ومراجعتها الختامية" className="mt-8 grid gap-4">
+          {/* اختبار الوحدة الأولى الشامل — بعد الدروس الخمسة وقبل القسم الختامي */}
+          <Link href="/quizzes/quiz-unit-1" className="card card-hover group flex items-center gap-5 p-6">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[rgba(51,86,143,0.08)] text-[#33568f]">
+                <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <span className="eyebrow">اختبار مستقل — الدروس الخمسة</span>
+                <h2 className="mt-2 text-[17px] font-black text-[var(--color-fog)]">اختبار الوحدة الأولى الشامل</h2>
+                <p className="mt-1 text-[12.5px] font-bold leading-7 text-[var(--color-mist)]">
+                  30 سؤالاً متوازناً من بنك معتمد، مع تنويع المحاولات وتصحيح محلي وتفسيرات بعد التسليم.
+                </p>
+              </div>
+              <ChevronLeft
+                className="ms-auto h-6 w-6 shrink-0 text-[var(--color-phys)] transition-transform duration-300 group-hover:-translate-x-1"
+                aria-hidden="true"
+              />
+            </Link>
+
+          {/* القسم الختامي — آخر عنصر في تسلسل الوحدة الأولى، بعد الدروس الخمسة واختبار الوحدة الشامل.
+              يُعرض مباشرةً دون كشف تدريجي حتى لا يبقى مخفيًا قبل التمرير. */}
+          <Link
+              href="/units/unit-1/review"
+              className="card card-hover group flex items-center gap-5 border-[1.5px] border-[rgba(51,86,143,0.45)] p-6"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--color-phys-lt)] text-[var(--color-phys)]">
+                <GraduationCap className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <span className="eyebrow">القسم الختامي للوحدة — أسئلة الكتاب ص 63–64</span>
+                <h2 className="mt-2 text-[17px] font-black text-[var(--color-fog)]">أراجع وأختبر نفسي — الوحدة الأولى</h2>
+                <p className="mt-1 text-[12.5px] font-bold leading-7 text-[var(--color-mist)]">
+                  قسم مراجعة تفاعلية شاملة: أربع محطات وعشرون بندًا — صحّ/خطأ مع التصحيح، وجدول الكتلة والثقل،
+                  وقراءة الخطوط البيانية، والمسائل الثلاث — مع تلميحات وحلول خطوة بخطوة.
+                </p>
+              </div>
+              <ChevronLeft
+                className="ms-auto h-6 w-6 shrink-0 text-[var(--color-phys)] transition-transform duration-300 group-hover:-translate-x-1"
+                aria-hidden="true"
+              />
           </Link>
-          <Link href="/quizzes/quiz-unit-1" className="card card-hover block p-7">
-            <span className="eyebrow">اختبار مستقل — الدروس الخمسة</span>
-            <h2 className="mt-3 text-xl font-bold">اختبار الوحدة الأولى الشامل</h2>
-            <p className="mt-3">
-              30 سؤالاً متوازناً من بنك معتمد، مع تنويع المحاولات وتصحيح محلي وتفسيرات بعد
-              التسليم.
-            </p>
-          </Link>
-        </div>
+        </section>
       )}
     </div>
   );
