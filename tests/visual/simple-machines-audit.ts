@@ -13,7 +13,7 @@ const { chromium } =
   require("playwright-core") as typeof import("playwright-core");
 const root =
   process.env.AUDIT_URL ?? "http://localhost:3000/Physics_Chemistry_7th";
-const out = "docs/review/simple-machines/captures";
+const out = process.env.AUDIT_CAPTURES ?? "docs/review/simple-machines/captures";
 mkdirSync(out, { recursive: true });
 async function main() {
   const browser = await chromium.launch({
@@ -82,7 +82,34 @@ async function main() {
                 svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
               return [parseFloat(getComputedStyle(d).fontSize) * scale];
             });
+          // A foreignObject can clip a wrapped second line even when its
+          // child has no scroll overflow. Compare the child to the SVG viewport.
+          const clippedLabels = Array.from(document.querySelectorAll('svg[role="img"] foreignObject'))
+            .flatMap((el) => {
+              const child = el.querySelector("div");
+              if (!child || !el.getBoundingClientRect().width) return [];
+              const viewport = el.getBoundingClientRect();
+              const content = child.getBoundingClientRect();
+              return content.height > viewport.height + 1 || child.scrollWidth > child.clientWidth + 2
+                ? [`${el.closest("svg")?.getAttribute("aria-label")}: ${child.textContent}`]
+                : [];
+            });
+          const clippedMath = Array.from(document.querySelectorAll('.tex-box .katex .mord.text'))
+            .flatMap((el) => {
+              const range = document.createRange();
+              range.selectNodeContents(el);
+              const ink = range.getBoundingClientRect();
+              const display = el.closest('.katex-display')!;
+              const box = el.closest('.tex-box')!;
+              return [display, box].some((ancestor) => {
+                const rect = ancestor.getBoundingClientRect();
+                const style = getComputedStyle(ancestor);
+                return style.overflowY !== 'visible' && (ink.top < rect.top - 1 || ink.bottom > rect.bottom + 1);
+              }) ? [el.textContent] : [];
+            });
           return {
+            clippedLabels,
+            clippedMath,
             overflow: Math.max(
               0,
               document.documentElement.scrollWidth - innerWidth,
@@ -93,7 +120,7 @@ async function main() {
             minLabel: svgLabels.length ? Math.min(...svgLabels) : null,
           };
         });
-        if (data.overflow > 0 || data.katexErrors.length)
+        if (data.overflow > 0 || data.katexErrors.length || data.clippedLabels.length || data.clippedMath.length)
           failures.push(`${width} ${name}: ${JSON.stringify(data)}`);
         report.push({ width, state: name, ...data });
       }
@@ -102,6 +129,14 @@ async function main() {
       for (let i = 0; i < 9; i++) {
         await stage(i);
         await metrics(`stage-${i + 1}`);
+        if (process.env.AUDIT_FULL_STAGES === "1") {
+          await page.screenshot({
+            path: `${out}/full-stage-${i + 1}-${width}.png`,
+            fullPage: true,
+            animations: "disabled",
+            style: "header {visibility:hidden!important}",
+          });
+        }
         if ((width === 390 || width === 1440) && [0, 1, 2, 8].includes(i)) {
           await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
           await page.screenshot({
@@ -164,6 +199,22 @@ async function main() {
               await lab.locator("progress").getAttribute("value"),
               "0",
             );
+            // Also inspect the extreme control values and immediate-result
+            // mode; neither is covered by the default animated experiment.
+            await lab.getByRole("checkbox").check();
+            const sliders = lab.locator('input[type="range"]');
+            for (const boundary of ["min", "max"] as const) {
+              for (let n = 0; n < await sliders.count(); n++) {
+                const slider = sliders.nth(n);
+                await slider.fill((await slider.getAttribute(boundary))!);
+              }
+              await lab.locator("fieldset button").last().click();
+              await lab.getByRole("button", { name: "شغّل التجربة", exact: true }).click();
+              assert.equal(await lab.locator("progress").getAttribute("value"), "1");
+              await metrics(`lab-${name}-${boundary}`);
+              await lab.getByRole("button", { name: "إعادة الضبط", exact: true }).click();
+            }
+            await lab.getByRole("checkbox").uncheck();
             if (name === "البكرات") {
               for (const mode of ["fixed", "combined"]) {
                 await lab.locator("select").selectOption(mode);
@@ -184,6 +235,17 @@ async function main() {
           await page.evaluate(() =>
             document.querySelector("header")!.style.removeProperty("display"),
           );
+        // Answer every inline check in this stage, inspect its feedback,
+        // then exercise the reset control before continuing.
+        const checks = page.locator('.card').filter({ has: page.locator('svg.lucide-circle-help') });
+        for (let n = 0; n < await checks.count(); n++) {
+          const check = checks.nth(n);
+          const answer = check.locator('button').first();
+          if (await answer.count()) await answer.click();
+        }
+        await metrics(`stage-${i + 1}-feedback`);
+        await page.getByRole('button', { name: 'جرّب مرة أخرى', exact: true })
+          .evaluateAll((buttons) => buttons.forEach((b) => (b as HTMLButtonElement).click()));
         if (i === 6) {
           await page
             .getByRole("button", { name: "تلميح", exact: true })
@@ -201,6 +263,12 @@ async function main() {
               path: `${out}/book-open-${width}.png`,
               fullPage: false,
             });
+          for (const name of ["إخفاء التلميح", "إخفاء الحل"]) {
+            await page.getByRole("button", { name, exact: true }).evaluateAll((buttons) =>
+              buttons.forEach((b) => (b as HTMLButtonElement).click()),
+            );
+          }
+          await metrics("book-all-closed");
         }
       }
       await page.goto(`${root}/quizzes/quiz-unit-1/`);
@@ -285,7 +353,7 @@ async function main() {
   } finally {
     await browser.close();
     writeFileSync(
-      "docs/review/simple-machines/visual-results.json",
+      process.env.AUDIT_RESULTS ?? "docs/review/simple-machines/visual-results.json",
       JSON.stringify(
         {
           date: new Date().toISOString(),

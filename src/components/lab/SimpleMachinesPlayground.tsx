@@ -297,7 +297,7 @@ function Experiment({ tab }: { tab: number }) {
           <Support x={160} y={153} />
           <MathLabel x={78} y={40} tex={`${f1}\\times${d1}`} />
           <MathLabel x={240} y={40} tex={`${f2}\\times${d2}`} />
-          <ML x={160} y={255}>
+          <ML x={160} y={255} width={260}>
             يسار ← الارتكاز → يمين
           </ML>
         </MachineScene>
@@ -403,9 +403,10 @@ function Experiment({ tab }: { tab: number }) {
                 نقارن حاصل ضرب كل قوة بذراعها. الأكبر يهبط، والتساوي يعني
                 الاتزان.
               </p>
-              <TeX
-                block
-              >{`${f1}\\times${d1}=${lv.left},\\qquad ${f2}\\times${d2}=${lv.right}`}</TeX>
+              <div className={styles.mathPair}>
+                <TeX block>{`${f1}\\times${d1}=${lv.left},`}</TeX>
+                <TeX block>{`${f2}\\times${d2}=${lv.right}`}</TeX>
+              </div>
               <p>
                 جرّب قيم الكتاب: القوة اليسرى 10 وذراعها 6، واليمنى 20 وذراعها 3.
               </p>
@@ -419,9 +420,10 @@ function Experiment({ tab }: { tab: number }) {
                 الفروع الحاملة: {pu.strands === 1 ? "فرع واحد" : "فرعان"}. تتبع
                 الحبل أثناء الحركة.
               </p>
-              <TeX
-                block
-              >{`s_{\\text{سحب}}=${(2 * progress).toFixed(2)}\\,\\mathrm{m},\\quad h=${pu.rise.toFixed(2)}\\,\\mathrm{m}`}</TeX>
+              <div className={styles.mathPair}>
+                <TeX block>{`s_{\\text{سحب}}=${(2 * progress).toFixed(2)}\\,\\mathrm{m},`}</TeX>
+                <TeX block>{`h=${pu.rise.toFixed(2)}\\,\\mathrm{m}`}</TeX>
+              </div>
               <p>
                 في التكوين ذي الفرعين يسحب الطرف الحر ضعف ارتفاع الحمل. هذه
                 ملاحظة حركية في النموذج، وليست قاعدة لكل جهاز.
@@ -433,9 +435,10 @@ function Experiment({ tab }: { tab: number }) {
                 الطريق الأطول يقلل قوة الجهد في هذه المقارنة المثالية؛ لا يعني
                 تقليل الارتفاع.
               </p>
-              <TeX
-                block
-              >{`F_{\\text{مائل}}=${inc.effort.toFixed(1)}\\,\\mathrm{N},\\quad F_{\\text{مباشر}}=${load}\\,\\mathrm{N}`}</TeX>
+              <div className={styles.mathPair}>
+                <TeX block>{`F_{\\text{مائل}}=${inc.effort.toFixed(1)}\\,\\mathrm{N},`}</TeX>
+                <TeX block>{`F_{\\text{مباشر}}=${load}\\,\\mathrm{N}`}</TeX>
+              </div>
             </>
           ) : tab === 3 ? (
             <p>
