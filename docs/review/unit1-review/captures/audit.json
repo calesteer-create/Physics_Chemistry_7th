@@ -1,0 +1,66 @@
+{
+  "url": "http://localhost:8083/Physics_Chemistry_7th/units/unit-1/review/",
+  "widths": [
+    {
+      "width": 360,
+      "horizontalOverflow": false,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-360.png"
+    },
+    {
+      "width": 390,
+      "horizontalOverflow": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-390.png"
+    },
+    {
+      "width": 768,
+      "horizontalOverflow": false,
+      "scrollWidth": 768,
+      "innerWidth": 768,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-768.png"
+    },
+    {
+      "width": 1024,
+      "horizontalOverflow": false,
+      "scrollWidth": 1024,
+      "innerWidth": 1024,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-1024.png"
+    },
+    {
+      "width": 1440,
+      "horizontalOverflow": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-1440.png"
+    },
+    {
+      "width": 1920,
+      "horizontalOverflow": false,
+      "scrollWidth": 1920,
+      "innerWidth": 1920,
+      "katexErrors": 0,
+      "clipped": [],
+      "cards": 5,
+      "screenshot": "docs/review/unit1-review/captures/review-1920.png"
+    }
+  ],
+  "failures": []
+}
