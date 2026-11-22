@@ -52,7 +52,26 @@ export default async function UnitPage({ params }: { params: Promise<{ slug: str
           );
         })}
       </div>
-      {unit.slug === "unit-1" && <Link href="/quizzes/quiz-unit-1" className="card card-hover mt-8 block p-7"><span className="eyebrow">اختبار مستقل — الدروس الخمسة</span><h2 className="mt-3 text-xl font-bold">اختبار الوحدة الأولى الشامل</h2><p className="mt-3">30 سؤالاً متوازناً من بنك معتمد، مع تنويع المحاولات وتصحيح محلي وتفسيرات بعد التسليم.</p></Link>}
+      {unit.slug === "unit-1" && (
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <Link href="/units/unit-1/review" className="card card-hover block p-7">
+            <span className="eyebrow">مراجعة ختامية — أسئلة الكتاب ص 63–64</span>
+            <h2 className="mt-3 text-xl font-bold">أراجع وأختبر نفسي — الوحدة الأولى</h2>
+            <p className="mt-3">
+              أربع محطات وعشرون بندًا تفاعليًا: صحّ/خطأ مع التصحيح، وجدول الكتلة والثقل،
+              وقراءة الخطوط البيانية، والمسائل الثلاث، مع تلميحات وحلول خطوة بخطوة.
+            </p>
+          </Link>
+          <Link href="/quizzes/quiz-unit-1" className="card card-hover block p-7">
+            <span className="eyebrow">اختبار مستقل — الدروس الخمسة</span>
+            <h2 className="mt-3 text-xl font-bold">اختبار الوحدة الأولى الشامل</h2>
+            <p className="mt-3">
+              30 سؤالاً متوازناً من بنك معتمد، مع تنويع المحاولات وتصحيح محلي وتفسيرات بعد
+              التسليم.
+            </p>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

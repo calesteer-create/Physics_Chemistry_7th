@@ -1,0 +1,127 @@
+/* رسوم قسم مراجعة الوحدة الأولى — الوضع الفاتح المنسجم مع الدرسين الرابع والخامس. */
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 620px;
+  margin-inline: auto;
+  direction: ltr;
+}
+
+.wideFigure {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 620px;
+  margin-inline: auto;
+  direction: ltr;
+}
+
+.figureBox {
+  margin: 4px 0 10px;
+  min-width: 0;
+}
+
+.point {
+  cursor: pointer;
+  outline: none;
+}
+.point:focus-visible circle:last-of-type {
+  stroke: #33568f;
+  stroke-width: 3.4;
+}
+
+.caption {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.9;
+  color: #4b5568;
+  text-align: center;
+}
+.captionKey {
+  color: #33568f;
+  font-weight: 800;
+}
+.captionValue {
+  font-weight: 800;
+  color: #1a2438;
+}
+.captionHint {
+  color: #596579;
+}
+.captionNote {
+  color: #8a6420;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #4b5568;
+}
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legendDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #c0392b;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 0 1px #c0392b;
+}
+
+/* جدول السؤال الثاني (معطى من الكتاب) */
+.bodiesWrap {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 2px 0;
+}
+.bodiesTable {
+  width: 100%;
+  max-width: 430px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: center;
+}
+.bodiesTable caption {
+  caption-side: bottom;
+  margin-top: 8px;
+}
+.bodiesTable th,
+.bodiesTable td {
+  border: 1px solid #d8dee7;
+  padding: 7px 12px;
+}
+.bodiesTable thead th {
+  background: #e9eef7;
+  color: #24304a;
+  font-weight: 800;
+}
+.bodiesTable tbody th {
+  background: #f5f7fa;
+  color: #1a2438;
+  font-weight: 800;
+}
+.bodiesTable td {
+  background: #fff;
+  color: #1a2438;
+  font-weight: 700;
+}
+@media (max-width: 560px) {
+  .bodiesTable {
+    font-size: 12.5px;
+  }
+  .bodiesTable th,
+  .bodiesTable td {
+    padding: 6px 6px;
+  }
+}
