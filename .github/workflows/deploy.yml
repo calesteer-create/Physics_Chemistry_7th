@@ -76,12 +76,19 @@ jobs:
             lessons/force-and-motion/index.html \
             lessons/forces-on-one-support/index.html \
             lessons/work-and-power/index.html \
+            lessons/simple-machines/index.html \
             quizzes/quiz-orientation/index.html \
             quizzes/quiz-motion-1/index.html \
             quizzes/quiz-force-2/index.html \
             quizzes/quiz-one-support-3/index.html \
             quizzes/quiz-work-power-4/index.html \
+            quizzes/quiz-simple-machines-5/index.html \
+            quizzes/quiz-unit-1/index.html \
             units/unit-1/index.html \
+            units/unit-1/review/index.html \
+            units/unit-2/index.html \
+            units/unit-3/index.html \
+            units/unit-4/index.html \
             404.html
           do
             if [ ! -f "out/$page" ]; then
