@@ -19,7 +19,8 @@
  *   node scripts/guard-tests.mjs --min 11 --label navigation -- <command...>
  */
 import { spawn } from "node:child_process";
-import { appendFileSync } from "node:fs";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 
 const argv = process.argv.slice(2);
 let min = 1;
@@ -99,6 +100,19 @@ child.on("close", (code) => {
       `عدد الاختبارات الناجحة (${pass}) أقل من الحد الأدنى المتوقّع (${min}) — ` +
         `الاختبارات لم تُنفَّذ فعلاً أو تم تجاوزها.`,
     );
+  }
+
+  // دليل قابل للتنزيل من صفحة التشغيل: عدد التأكيدات المنفَّذة فعلاً.
+  if (process.env.GUARD_EVIDENCE_DIR) {
+    try {
+      mkdirSync(process.env.GUARD_EVIDENCE_DIR, { recursive: true });
+      appendFileSync(
+        join(process.env.GUARD_EVIDENCE_DIR, "executed-tests.txt"),
+        `${label}\tنُفِّذ=${tests}\tناجح=${pass}\tفاشل=${fail}\tمتجاوَز=${skipped}\tالحد الأدنى=${min}\n`,
+      );
+    } catch {
+      /* لا يوقف الحارس */
+    }
   }
 
   lines.push(`### ✅ ${label}`);
