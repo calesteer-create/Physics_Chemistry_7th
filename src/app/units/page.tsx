@@ -71,12 +71,15 @@ export default function UnitsPage() {
                       <span className={`grid h-14 w-14 place-items-center rounded-2xl border ${accent.border} bg-[rgba(6,14,30,0.4)]`}>
                         <Icon className={`h-7 w-7 ${accent.text}`} />
                       </span>
-                      <div>
+                      {/* عنوان الوحدة رابط إلى صفحة الوحدة: بدون هذا الرابط تصبح صفحة
+                          الوحدة (وفيها بطاقتا اختبار الوحدة والمراجعة الختامية) صفحة
+                          يتيمة لا يصلها الطالب من التنقّل العادي. */}
+                      <Link href={`/units/${unit.slug}`} className="group/title">
                         <span className="text-[11.5px] font-black text-[var(--color-dim)]">الوحدة {unit.order}</span>
-                        <h2 className={`text-[24px] font-black ${accent.text} md:text-[28px]`}>{unit.title}</h2>
-                      </div>
+                        <h2 className={`text-[24px] font-black transition-opacity group-hover/title:opacity-80 ${accent.text} md:text-[28px]`}>{unit.title}</h2>
+                      </Link>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <span className={`rounded-full border px-3.5 py-1.5 text-[11.5px] font-black ${accent.badge}`}>
                         {publishedCount}/{totalCount} دروس منشورة
                       </span>
@@ -86,6 +89,13 @@ export default function UnitsPage() {
                           قيد الإعداد
                         </span>
                       )}
+                      <Link
+                        href={`/units/${unit.slug}`}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-phys)] bg-[var(--color-phys-lt)] px-3.5 py-1.5 text-[11.5px] font-black text-[var(--color-phys)] transition-colors hover:bg-white"
+                      >
+                        صفحة الوحدة
+                        <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                      </Link>
                     </div>
                   </div>
                   <p className="mt-3 max-w-2xl text-[13.5px] font-bold leading-8 text-[var(--color-mist)]">{unit.description}</p>

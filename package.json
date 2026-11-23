@@ -9,9 +9,11 @@
     "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts && node --import tsx --test --test-concurrency=1 tests/render/*.test.ts",
+    "test": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts && node --import tsx --test --test-concurrency=1 tests/render/*.test.ts && npm run test:navigation",
     "test:stage2": "node --conditions=react-server --import tsx --test tests/stage2/*.test.ts",
-    "test:render": "node --import tsx --test --test-concurrency=1 tests/render/*.test.ts"
+    "test:render": "node --import tsx --test --test-concurrency=1 tests/render/*.test.ts",
+    "test:export": "node scripts/guard-tests.mjs --min 7 --label \"اختبارات الوصول (التصدير المنشور)\" -- node --import tsx --test tests/export/*.test.ts",
+    "test:navigation": "node scripts/guard-tests.mjs --min 11 --label \"اختبارات التنقّل (المصدر)\" -- node --import tsx --test --test-concurrency=1 tests/navigation/*.test.ts"
   },
   "dependencies": {
     "@types/katex": "^0.16.8",
