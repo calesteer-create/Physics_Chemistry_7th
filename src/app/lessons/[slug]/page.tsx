@@ -31,10 +31,12 @@ import { ForcePlayground } from "@/components/lab/ForcePlayground";
 import { MotionPlayground } from "@/components/lab/MotionPlayground";
 import { OneSupportPlayground } from "@/components/lab/OneSupportPlayground";
 import { WorkPowerPlayground } from "@/components/lab/WorkPowerPlayground";
+import { PressurePlayground } from "@/components/lab/PressurePlayground";
 import { UnitConverter } from "@/components/lab/UnitConverter";
 import { ForceBookQuestions } from "@/components/lesson/ForceBookQuestions";
 import { OneSupportBookQuestions } from "@/components/lesson/OneSupportBookQuestions";
 import { WorkPowerBookQuestions } from "@/components/lesson/WorkPowerBookQuestions";
+import { PressureBookQuestions } from "@/components/lesson/PressureBookQuestions";
 import { MotionQuizBookQuestions } from "@/components/lesson/BookQuestions";
 import { Reveal } from "@/components/ui/Reveal";
 import { EngineerMark } from "@/components/brand/EngineerMark";
@@ -168,6 +170,16 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         {stageId === "lab" && lesson.slug === "work-and-power" && (
           <div className="mt-7">
             <WorkPowerPlayground />
+          </div>
+        )}
+        {stageId === "lab" && lesson.labWidget === "pressure-lab" && (
+          <div className="mt-7">
+            <PressurePlayground />
+          </div>
+        )}
+        {stageId === "quiz" && lesson.slug === "pressure" && (
+          <div className="mt-7">
+            <PressureBookQuestions />
           </div>
         )}
         {stageId === "quiz" && lesson.slug === "motion-and-rest" && (

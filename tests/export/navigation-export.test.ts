@@ -110,3 +110,28 @@ test("المنشور: حمولة RSC لصفحة الوحدة تحتوي البط
     "حمولة RSC المنشورة لا تحتوي البطاقة — لن تظهر عند التنقّل من جهة العميل",
   );
 });
+
+test("المنشور: درس الضغط موجود وصفحة الوحدة الثانية ترتبط به", () => {
+  assert.ok(
+    existsSync(join(OUT, "lessons", "pressure", "index.html")),
+    "صفحة درس الضغط غير موجودة في التصدير",
+  );
+  const html = read("lessons/pressure/index.html");
+  for (const needle of ["الضغط", "مختبر الإسفنجة والضغط", "دفتر الطالب"]) {
+    assert.ok(html.includes(needle), `محتوى مفقود في صفحة الضغط المنشورة: ${needle}`);
+  }
+  const all = mainHrefs(read("units/unit-2/index.html"));
+  assert.ok(
+    all.some((x) => /^\/lessons\/pressure\/?$/.test(x)),
+    "صفحة الوحدة الثانية لا ترتبط بدرس الضغط",
+  );
+});
+
+test("المنشور: اختبار الضغط الإلكتروني موجود", () => {
+  assert.ok(
+    existsSync(join(OUT, "quizzes", "quiz-pressure-6", "index.html")),
+    "صفحة اختبار الضغط غير موجودة في التصدير",
+  );
+  const html = read("quizzes/quiz-pressure-6/index.html");
+  assert.ok(html.includes("اختبار الدرس الأول — الضغط"), "عنوان اختبار الضغط مفقود في المنشور");
+});
