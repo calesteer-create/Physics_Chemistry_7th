@@ -46,6 +46,17 @@ import {
   WorkCarForcesFigure,
   WorkHorsepowerFigure,
 } from "./work-power-figures";
+import {
+  PressureCamelSkierFigure,
+  PressureNailFigure,
+  PressureSpongeFigure,
+  PressureUnitAreaFigure,
+  PressurePascalFigure,
+  PressureStatueFigure,
+  PressureBlockWeightFigure,
+  PressureApplicationsFigure,
+  PressureConceptMapFigure,
+} from "./pressure-figures";
 import type { ReactNode } from "react";
 
 /**
@@ -143,6 +154,15 @@ const FIGURES: Record<string, () => ReactElement> = {
   "work-direction-cases": WorkDirectionCasesFigure,
   "work-car-forces": WorkCarForcesFigure,
   "work-horsepower": WorkHorsepowerFigure,
+  "pressure-camel-skier": PressureCamelSkierFigure,
+  "pressure-nail": PressureNailFigure,
+  "pressure-sponge": PressureSpongeFigure,
+  "pressure-unit-area": PressureUnitAreaFigure,
+  "pressure-pascal": PressurePascalFigure,
+  "pressure-statue": PressureStatueFigure,
+  "pressure-block-weight": PressureBlockWeightFigure,
+  "pressure-applications": PressureApplicationsFigure,
+  "pressure-concept-map": PressureConceptMapFigure,
 };
 
 // رسوم محسّنة للشرح فقط؛ لا تدخل سجل رسوم دفتر الطالب.

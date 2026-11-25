@@ -7,7 +7,7 @@ import { listQuizzesMeta } from "@/content/quiz-bank";
 export const metadata: Metadata = { title: "الاختبارات" };
 
 export default function QuizzesPage() {
-  const quizzes = [...listQuizzesMeta(), {id:"quiz-simple-machines-5", title:"اختبار الدرس الخامس — الآلات البسيطة", curricular:true, durationMin:20, count:10, lessonSlug:"simple-machines"}, {id:"quiz-unit-1", title:"اختبار الوحدة الأولى الشامل — الحركة والتحريك", curricular:true, durationMin:50, count:30, lessonSlug:null}];
+  const quizzes = [...listQuizzesMeta(), {id:"quiz-simple-machines-5", title:"اختبار الدرس الخامس — الآلات البسيطة", curricular:true, durationMin:20, count:10, lessonSlug:"simple-machines"}, {id:"quiz-pressure-6", title:"اختبار الدرس الأول — الضغط (الوحدة الثانية)", curricular:true, durationMin:18, count:10, lessonSlug:"pressure"}, {id:"quiz-unit-1", title:"اختبار الوحدة الأولى الشامل — الحركة والتحريك", curricular:true, durationMin:50, count:30, lessonSlug:null}];
 
   return (
     <div className="container-x py-16">

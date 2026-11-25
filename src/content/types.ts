@@ -90,7 +90,7 @@ export interface Lesson {
   duration: string;
   objectives: string[];
   /** أداة تفاعلية مدمجة في مرحلة المختبر (اختياري) */
-  labWidget?: "unit-converter" | "motion-lab" | "force-lab" | "one-support-lab";
+  labWidget?: "unit-converter" | "motion-lab" | "force-lab" | "one-support-lab" | "pressure-lab";
   stages: LessonStage[];
   notebook: NotebookItem[];
   quizId: string | null;

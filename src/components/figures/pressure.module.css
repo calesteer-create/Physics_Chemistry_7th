@@ -1,0 +1,46 @@
+/* Lesson: الضغط (الوحدة الثانية) — scientific plates.
+   Scoped here so the shared math layer (TeX.tsx) stays untouched. */
+
+.holder { width: 100%; }
+
+.plate {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  margin-inline: auto;
+  /* KaTeX boxes must be laid out left-to-right even inside an RTL page. */
+  direction: ltr;
+}
+
+/* Symbol order (P = F/s, units) stays LTR inside the label boxes. */
+.plate foreignObject > div {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.plate foreignObject :global(.katex) { color: inherit; }
+
+/* Arabic captions inside the drawing keep their own RTL run. */
+.plate text[dir="rtl"] { direction: rtl; }
+
+.plate text {
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Two composed variants: wide plate and narrow (phone) plate.
+   Both carry the same labels; only the arrangement changes. */
+.onlyWide { display: block; }
+.onlyNarrow { display: none; }
+
+@media (max-width: 40rem) {
+  .onlyWide { display: none; }
+  .onlyNarrow { display: block; }
+}
+
+/* Lab scene: smooth visual response when the learner changes variables.
+   The indentation is a relative visual indicator only (see pressure-model). */
+.labDip {
+  transition: d 0.45s ease, transform 0.45s ease;
+}

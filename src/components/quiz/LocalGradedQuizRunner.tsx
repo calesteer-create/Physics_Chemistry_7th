@@ -27,8 +27,14 @@ export function ScienceText({ text }: { text: string }) {
 }
 export function LocalGradedQuizRunner({
   lessonQuestions,
+  title,
+  kicker,
 }: {
   lessonQuestions?: readonly AssessmentItem[];
+  /** عنوان اختبار الدرس (اختياري — الافتراضي يحفظ سلوك الدرس الخامس). */
+  title?: string;
+  /** تسمية درس كل سؤال (اختيارية — الافتراضية أسماء دروس الوحدة الأولى). */
+  kicker?: string;
 }) {
   const [questions, Q] = useState<readonly AssessmentItem[] | null>(null),
     [answers, A] = useState<Record<string, number | boolean | string>>({}),
@@ -62,7 +68,7 @@ export function LocalGradedQuizRunner({
         <h2 className={styles.heading}>
           {unit
             ? "اختبار الوحدة الأولى الشامل — الحركة والتحريك"
-            : "اختبار الدرس الخامس — الآلات البسيطة"}
+            : (title ?? "اختبار الدرس الخامس — الآلات البسيطة")}
         </h2>
         <p>
           {unit
@@ -176,7 +182,7 @@ export function LocalGradedQuizRunner({
             className={`${styles.panel} ${styles.question} ${result ? `${styles.review} ${!result.correct ? styles.wrong : ""}` : ""}`}
           >
             <p className={styles.status}>
-              السؤال {index + 1} — {lessonNames[q.lesson - 1]}
+              السؤال {index + 1} — {kicker ?? lessonNames[q.lesson - 1]}
             </p>
             <h3 className={styles.heading}>
               <ScienceText text={q.prompt} />
