@@ -54,6 +54,12 @@ export function unitTex(unit: string): string {
   if (withExponent && withExponent[1]) {
     return `\\text{${withExponent[1]}}^{${superscriptsToAscii(withExponent[2])}}`;
   }
+  // ASCII caret exponent (مثل حقل الوحدة `m^2` في بنك الأسئلة): أسّ KaTeX حقيقي،
+  // لا رقم ملتصق بالوحدة (`m2`) ولا محرف Unicode قد ينقلب في RTL.
+  const withCaret = /^(.*?)\^(\d+)$/.exec(unit);
+  if (withCaret && withCaret[1]) {
+    return `\\text{${withCaret[1]}}^{${withCaret[2]}}`;
+  }
   return `\\text{${unit}}`;
 }
 
@@ -93,7 +99,16 @@ export function normalizeTex(tex: string): string {
   // 7) `^\circ C` → `^\circ\,\text{C}` (وحدة مئوية منتصبة).
   out = out.replace(/\^\\circ\s+C(?![A-Za-z])/g, "^\\circ\\,\\text{C}");
 
-  // 8) أُس unicode متبقي خارج `\text{}`: `m.s⁻¹` → `m.s^{-1}`.
+  // 8) أُس unicode بعد وحدة نصّية: `\text{m}²` → `\text{m}^{2}` (الرمز قبل الأسّ).
+  out = out.replace(/(\\[a-zA-Z]+\{[^}]*\})([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g,
+    (_all, base: string, run: string) => `${base}^{${superscriptsToAscii(run)}}`);
+
+  // 9) أُس unicode ملتصق بوحدة لاتينية: `m²` → `\text{m}^{2}`؛
+  //    أي تعبير يمرّ بـ TeX يبقى LTR بترتيب الرمز ثم الأسّ.
+  out = out.replace(/(?<![\\{A-Za-z])(cm|mm|km|kg|Pa|N|m|s)([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g,
+    (_all, unit: string, run: string) => `\\text{${unit}}^{${superscriptsToAscii(run)}}`);
+
+  // 10) أُس unicode متبقٍّ خارج `\text{}`: `m.s⁻¹` → `m.s^{-1}`.
   out = out.replace(/(?<=[A-Za-z])[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, (run) => `^{${superscriptsToAscii(run)}}`);
 
   return out;

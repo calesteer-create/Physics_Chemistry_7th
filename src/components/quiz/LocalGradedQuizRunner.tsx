@@ -14,7 +14,7 @@ import {
 } from "@/lib/unit1-assessment";
 import { machineRich } from "@/content/simple-machines-text";
 import { RichText } from "@/components/content/RichText";
-import { TeX } from "@/components/math/TeX";
+import { TeX, unitTex } from "@/components/math/TeX";
 import { AssessmentDiagram } from "@/components/figures/simple-machines-figures";
 import styles from "@/components/figures/simple-machines.module.css";
 export function ScienceText({ text }: { text: string }) {
@@ -218,7 +218,7 @@ export function LocalGradedQuizRunner({
                       {q.unit === "بلا وحدة" ? (
                         "بلا وحدة"
                       ) : (
-                        <TeX>{`\\mathrm{${q.unit}}`}</TeX>
+                        <TeX>{unitTex(q.unit ?? "")}</TeX>
                       )}
                     </span>
                   </label>
@@ -264,7 +264,7 @@ export function LocalGradedQuizRunner({
                   {q.type === "number" && q.unit !== "بلا وحدة" && (
                     <>
                       {" "}
-                      <TeX>{`\\mathrm{${q.unit}}`}</TeX>
+                      <TeX>{unitTex(q.unit ?? "")}</TeX>
                     </>
                   )}
                 </p>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Activity, Home, Play, RotateCcw, TriangleAlert } from "lucide-react";
-import { TeX } from "@/components/math/TeX";
+import { AutoTex, TeX } from "@/components/math/TeX";
 import {
   areaFromPressureM2,
   comparePressure,
@@ -287,7 +287,7 @@ export function PressurePlayground() {
                 </button>
               ))}
             </div>
-            <p className="mt-3 text-[13px] font-bold leading-7 text-[#26406e]">{mission.instruction}</p>
+            <p className="mt-3 text-[13px] font-bold leading-7 text-[#26406e]"><AutoTex text={mission.instruction} /></p>
             {mission.kind === "predict" && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {PREDICTIONS.map((p) => (
@@ -316,12 +316,12 @@ export function PressurePlayground() {
             </div>
             {applied && prediction && mission.kind === "predict" && (
               <div role="status" className={`mt-3 rounded-xl border p-4 text-[13px] font-bold leading-7 ${prediction === mission.correct ? "border-[#9ec9b4] bg-[#edf7f1] text-[#0f5c46]" : "border-[#e3d4b6] bg-[#fdf8ee] text-[#6b4a10]"}`}>
-                {prediction === mission.correct ? "أحسنت، توقعك صحيح. " : "قارن توقعك بالنتيجة الجديدة في الأعلى. "}{mission.explain}
+                {prediction === mission.correct ? "أحسنت، توقعك صحيح. " : "قارن توقعك بالنتيجة الجديدة في الأعلى. "}<AutoTex text={mission.explain} />
               </div>
             )}
             {mission.kind === "target" && targetMsg && (
               <div role="status" className={`mt-3 rounded-xl border p-4 text-[13px] font-bold leading-7 ${targetDone ? "border-[#9ec9b4] bg-[#edf7f1] text-[#0f5c46]" : "border-[#e3d4b6] bg-[#fdf8ee] text-[#6b4a10]"}`}>
-                {targetMsg}
+                <AutoTex text={targetMsg} />
               </div>
             )}
           </div>
@@ -357,7 +357,8 @@ function PressureScene({ force, area, material, ratio, compact = false }: {
 }) {
   const W = compact ? 360 : 560;
   const H = compact ? 250 : 264;
-  const groundY = compact ? 188 : 196;
+  // السطح والتسمية في نطاقين منفصلين: لا يدخل النص في جسم الإسفنج ولا يُقصّ عند الحافة.
+  const groundY = compact ? 168 : 176;
   const cx = W / 2;
   // عرض الجسم يزداد مع مساحة التماس، وارتفاعه ينقص (متوازي مستطيلات نفسه بوجه مختلف)
   const bw = (compact ? 44 : 52) + Math.sqrt(area) * (compact ? 52 : 62);
@@ -381,13 +382,13 @@ function PressureScene({ force, area, material, ratio, compact = false }: {
       {/* الجسم والسطح */}
       <MetalBlock x={cx - bw / 2} y={blockY} w={bw} h={bh} />
       {material === "sponge" ? (
-        <Sponge x={cx - (compact ? 132 : 190)} y={groundY} w={compact ? 264 : 380} h={compact ? 40 : 44} cx={cx} dipWidth={bw + 30} depth={depth} />
+        <Sponge x={cx - (compact ? 132 : 190)} y={groundY} w={compact ? 264 : 380} h={compact ? 32 : 34} cx={cx} dipWidth={bw + 30} depth={depth} />
       ) : (
-        <DippedSurface x1={cx - (compact ? 132 : 190)} x2={cx + (compact ? 132 : 190)} y={groundY} cx={cx} dipWidth={bw + 30} depth={depth} color={matEdge} fill={matFill} />
+        <DippedSurface x1={cx - (compact ? 132 : 190)} x2={cx + (compact ? 132 : 190)} y={groundY} cx={cx} dipWidth={bw + 30} depth={depth} color={matEdge} fill={matFill} fillDepth={compact ? 32 : 34} />
       )}
       {/* بصمة التماس */}
       <rect x={cx - bw / 2} y={groundY + depth - 3} width={bw} height={6} fill="#bcd9ef" stroke={C.blue} strokeWidth={1.6} />
-      <Label at={[cx, H - 14]} tex={`s=${area}\\,\\text{m}^2`} color={C.blue} width={110} size={compact ? 20 : 15} />
+      <Label at={[cx, groundY + (compact ? 56 : 60)]} tex={`s=${area}\\,\\text{m}^2`} color={C.blue} width={110} height={compact ? 28 : 22} size={compact ? 18 : 15} />
       <ArabicLabel at={[compact ? 66 : 84, 30]} text={material === "sponge" ? "إسفنج" : material === "sand" ? "رمل ناعم" : "ثلج"} size={compact ? 18 : 14} color={C.ink2} />
     </svg>
   );

@@ -144,15 +144,15 @@ export function Panel({ x, y, w, h, fill = C.panel }: { x: number; y: number; w:
  * سطح قابل للغوص (رمل/ثلج) مع انخفاض مقوّس تحت بصمة التماسّ.
  * `depth` عمق بصري نسبي بوحدات اللوحة — مؤشر تعليمي لا قيمة مقاسة.
  */
-export function DippedSurface({ x1, x2, y, cx, dipWidth, depth, color, fill }: {
-  x1: number; x2: number; y: number; cx: number; dipWidth: number; depth: number; color: string; fill?: string;
+export function DippedSurface({ x1, x2, y, cx, dipWidth, depth, color, fill, fillDepth = 46 }: {
+  x1: number; x2: number; y: number; cx: number; dipWidth: number; depth: number; color: string; fill?: string; fillDepth?: number;
 }) {
   const left = cx - dipWidth / 2;
   const right = cx + dipWidth / 2;
   const d = `M${x1} ${y} L${left} ${y} Q${cx} ${y + depth * 1.7} ${right} ${y} L${x2} ${y}`;
   return (
     <g>
-      {fill && <path d={`${d} L${x2} ${y + 46} L${x1} ${y + 46} Z`} fill={fill} opacity={0.55} />}
+      {fill && <path d={`${d} L${x2} ${y + fillDepth} L${x1} ${y + fillDepth} Z`} fill={fill} opacity={0.55} />}
       <path d={d} fill="none" stroke={color} strokeWidth={3} strokeLinecap="round" />
     </g>
   );
