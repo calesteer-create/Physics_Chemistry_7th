@@ -64,55 +64,55 @@ function Skier({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
 export function PressureCamelSkierFigure() {
   const wide = (
     <>
-      <Panel x={12} y={10} w={216} h={300} />
+      <Panel x={12} y={10} w={216} h={304} />
       <ArabicLabel at={[120, 42]} text="الجمل على الرمل" size={18} />
-      <DippedSurface x1={28} x2={212} y={238} cx={120} dipWidth={132} depth={6} color={C.sandEdge} fill={C.sand} />
+      <DippedSurface x1={28} x2={212} y={238} cx={120} dipWidth={132} depth={6} color={C.sandEdge} fill={C.sand} fillDepth={26} />
       <Camel x={48} y={238} scale={0.92} />
-      <ArabicLabel at={[120, 268]} text="خفّ واسع — ثقل أكبر" size={15} color={C.blue} />
-      <ArabicLabel at={[120, 292]} text="يغوص قليلًا" size={15} color={C.green} />
+      <ArabicLabel at={[120, 282]} text="خفّ واسع — ثقل أكبر" size={15} color={C.blue} />
+      <ArabicLabel at={[120, 306]} text="يغوص قليلًا" size={15} color={C.green} />
 
-      <Panel x={240} y={10} w={216} h={300} />
+      <Panel x={240} y={10} w={216} h={304} />
       <ArabicLabel at={[348, 42]} text="حافر الحصان (مكبّر)" size={18} />
-      <DippedSurface x1={256} x2={440} y={238} cx={348} dipWidth={52} depth={26} color={C.sandEdge} fill={C.sand} />
+      <DippedSurface x1={256} x2={440} y={238} cx={348} dipWidth={52} depth={14} color={C.sandEdge} fill={C.sand} fillDepth={26} />
       <HorseLeg x={348} y={232} scale={1.05} />
-      <ArabicLabel at={[348, 268]} text="حافر صغير — ثقل أصغر" size={15} color={C.blue} />
-      <ArabicLabel at={[348, 292]} text="يغوص أكثر" size={15} color={C.red} />
+      <ArabicLabel at={[348, 282]} text="حافر صغير — ثقل أصغر" size={15} color={C.blue} />
+      <ArabicLabel at={[348, 306]} text="يغوص أكثر" size={15} color={C.red} />
 
-      <Panel x={468} y={10} w={216} h={300} />
+      <Panel x={468} y={10} w={216} h={304} />
       <ArabicLabel at={[576, 42]} text="المتزلج على الثلج" size={18} />
-      <DippedSurface x1={484} x2={668} y={238} cx={576} dipWidth={150} depth={5} color={C.snowEdge} fill={C.snow} />
+      <DippedSurface x1={484} x2={668} y={238} cx={576} dipWidth={150} depth={5} color={C.snowEdge} fill={C.snow} fillDepth={26} />
       <Skier x={576} y={236} scale={1.05} />
-      <ArabicLabel at={[576, 268]} text="زلاجات عريضة" size={15} color={C.blue} />
-      <ArabicLabel at={[576, 292]} text="لا يغوص في الثلج" size={15} color={C.green} />
+      <ArabicLabel at={[576, 282]} text="زلاجات عريضة" size={15} color={C.blue} />
+      <ArabicLabel at={[576, 306]} text="لا يغوص في الثلج" size={15} color={C.green} />
     </>
   );
   const narrowPanel = (y: number, title: string, scene: React.ReactNode, line1: string, line2: string, color2: string) => (
     <g>
-      <Panel x={8} y={y} w={384} h={200} />
+      <Panel x={8} y={y} w={384} h={208} />
       <ArabicLabel at={[200, y + 28]} text={title} size={18.5} />
       {/* المشاهد مرسومة بإحداثيات اللوحة الأولى (قاعدة 8) وتُزاح لكل لوحة مع هامش تحت العنوان */}
       <g transform={`translate(0 ${y + 4})`}>{scene}</g>
-      <ArabicLabel at={[200, y + 166]} text={line1} size={18} color={C.blue} />
-      <ArabicLabel at={[200, y + 190]} text={line2} size={18} color={color2} />
+      <ArabicLabel at={[200, y + 178]} text={line1} size={16} color={C.blue} />
+      <ArabicLabel at={[200, y + 202]} text={line2} size={16} color={color2} />
     </g>
   );
   const narrow = (
     <>
       {narrowPanel(8, "الجمل على الرمل", (
         <g>
-          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={150} depth={6} color={C.sandEdge} fill={C.sand} />
+          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={150} depth={6} color={C.sandEdge} fill={C.sand} fillDepth={26} />
           <Camel x={122} y={128} scale={0.82} />
         </g>
       ), "خفّ واسع — ثقل أكبر", "يغوص قليلًا", C.green)}
-      {narrowPanel(216, "حافر الحصان مكبّرًا", (
+      {narrowPanel(224, "حافر الحصان مكبّرًا", (
         <g>
-          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={56} depth={24} color={C.sandEdge} fill={C.sand} />
+          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={56} depth={14} color={C.sandEdge} fill={C.sand} fillDepth={26} />
           <HorseLeg x={200} y={122} scale={0.95} />
         </g>
       ), "حافر صغير — ثقل أصغر", "يغوص أكثر", C.red)}
-      {narrowPanel(424, "المتزلج على الثلج", (
+      {narrowPanel(440, "المتزلج على الثلج", (
         <g>
-          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={160} depth={5} color={C.snowEdge} fill={C.snow} />
+          <DippedSurface x1={24} x2={376} y={128} cx={200} dipWidth={160} depth={5} color={C.snowEdge} fill={C.snow} fillDepth={26} />
           <Skier x={200} y={126} scale={0.95} />
         </g>
       ), "زلاجات عريضة", "لا يغوص في الثلج", C.green)}
@@ -120,9 +120,9 @@ export function PressureCamelSkierFigure() {
   );
   return (
     <>
-      <Plate variant="wide" viewBox="0 0 696 330" title="الجمل والحصان والمتزلج: دور مساحة السطح"
+      <Plate variant="wide" viewBox="0 0 696 324" title="الجمل والحصان والمتزلج: دور مساحة السطح"
         desc="ثلاث لوحات: خفّ الجمل الواسع يغوص قليلًا رغم ثقله الأكبر، وحافر الحصان الصغير يغوص أكثر، وزلاجات المتزلج العريضة تمنع غوصه في الثلج." maxWidth="46rem">{wide}</Plate>
-      <Plate variant="narrow" viewBox="0 0 400 632" title="الجمل والحصان والمتزلج: دور مساحة السطح"
+      <Plate variant="narrow" viewBox="0 0 400 656" title="الجمل والحصان والمتزلج: دور مساحة السطح"
         desc="نسخة الهاتف: الجمل والحصان والمتزلج في لوحات متتابعة بنفس التسميات." maxWidth="24rem">{narrow}</Plate>
     </>
   );
@@ -171,12 +171,12 @@ export function PressureNailFigure() {
       <Panel x={8} y={8} w={384} h={292} />
       <ArabicLabel at={[200, 40]} text="الطرف الحاد في الخشب" size={21} />
       <NailScene cx={200} topY={48} sharp depth={34} />
-      <ArabicLabel at={[200, 262]} text="مساحة صغيرة ← ضغط كبير" size={19} color={C.red} />
+      <ArabicLabel at={[200, 254]} text="مساحة صغيرة ← ضغط كبير" size={18} color={C.red} />
       <ArabicLabel at={[200, 286]} text="يخترق الخشب" size={18} color={C.green} />
       <Panel x={8} y={312} w={384} h={292} />
       <ArabicLabel at={[200, 352]} text="الطرف العريض في الخشب" size={21} />
       <NailScene cx={200} topY={360} sharp={false} depth={0} />
-      <ArabicLabel at={[200, 574]} text="مساحة كبيرة ← ضغط صغير" size={19} color={C.blue} />
+      <ArabicLabel at={[200, 566]} text="مساحة كبيرة ← ضغط صغير" size={18} color={C.blue} />
       <ArabicLabel at={[200, 598]} text="لا يخترق بسهولة" size={18} color={C.red} />
     </>
   );
@@ -194,7 +194,8 @@ export function PressureNailFigure() {
 
 function SpongePanel({ x, y, w, title, mode }: { x: number; y: number; w: number; title: string; mode: "flat" | "upright" | "loaded" }) {
   const cx = x + w / 2;
-  const spongeY = y + 178;
+  // منطقة منفصلة للتسمية أسفل الإسفنج: لا يكتب النص فوق مسام الإسفنج.
+  const spongeY = y + 160;
   const depth = mode === "flat" ? 7 : mode === "upright" ? 17 : 27;
   const bw = mode === "flat" ? 118 : 52;
   const bh = mode === "flat" ? 42 : 96;
@@ -204,7 +205,7 @@ function SpongePanel({ x, y, w, title, mode }: { x: number; y: number; w: number
     <g>
       <Panel x={x} y={y} w={w} h={248} />
       <ArabicLabel at={[cx, y + 32]} text={title} size={16.5} />
-      <Sponge x={x + 16} y={spongeY} w={w - 32} h={46} cx={cx} dipWidth={bw + 26} depth={depth} />
+      <Sponge x={x + 16} y={spongeY} w={w - 32} h={38} cx={cx} dipWidth={bw + 26} depth={depth} />
       <MetalBlock x={blockX} y={blockY} w={bw} h={bh} />
       {mode === "loaded" && (
         <g>
@@ -214,7 +215,7 @@ function SpongePanel({ x, y, w, title, mode }: { x: number; y: number; w: number
       )}
       <Vector from={[x + w - 30, blockY + 6]} to={[x + w - 30, blockY + 44]} color={C.red} width={4.4} />
       <Label at={[x + w - 30, blockY - 12]} tex="F" color={C.red} width={34} size={15} />
-      <ArabicLabel at={[cx, y + 242 - 14]} text={mode === "flat" ? "وجه كبير: انضغاط صغير" : mode === "upright" ? "وجه صغير: انضغاط أكبر" : "قوة أكبر: انضغاط أكبر"} size={14.5} color={mode === "flat" ? C.green : C.red} />
+      <ArabicLabel at={[cx, y + 238]} text={mode === "flat" ? "وجه كبير: انضغاط صغير" : mode === "upright" ? "وجه صغير: انضغاط أكبر" : "قوة أكبر: انضغاط أكبر"} size={14.5} color={mode === "flat" ? C.green : C.red} />
     </g>
   );
 }
@@ -248,30 +249,41 @@ export function PressureSpongeFigure() {
 
 export function PressureUnitAreaFigure() {
   const cell = 58;
+  const gap = 20; // شريط مخصّص لأسهم الصفّ الثاني لا يصطدم بالمربّع المظلّل.
   const gx = 70;
   const gy = 96;
+  const rowY = (r: number) => gy + r * (cell + gap);
   const cells = [];
   for (let r = 0; r < 2; r++) {
     for (let c = 0; c < 3; c++) {
       const hl = r === 0 && c === 1;
+      const x = gx + c * cell;
+      const y = rowY(r);
       cells.push(
         <g key={`${r}-${c}`}>
-          <rect x={gx + c * cell} y={gy + r * cell} width={cell} height={cell}
+          <rect x={x} y={y} width={cell} height={cell}
             fill={hl ? "#bcd9ef" : "#eef4fa"} stroke={C.blue} strokeWidth={hl ? 3 : 1.8} />
-          {/* لا سهم فوق المربّع المظلّل كي تبقى تسمية المتر المربع مقروءة */}
+          {/* الأسهم في مساحة بين الصفوف: لا سهم فوق تسمية وحدة المساحة */}
           {!hl && (
-            <Vector from={[gx + c * cell + cell / 2, gy + r * cell - 34]} to={[gx + c * cell + cell / 2, gy + r * cell - 8]} color={C.red} width={4.2} />
+            <Vector from={[x + cell / 2, r === 0 ? y - 34 : y - 16]}
+              to={[x + cell / 2, r === 0 ? y - 8 : y - 4]} color={C.red} width={4.2} />
           )}
         </g>,
       );
     }
   }
+  // التسمية جزء من الشبكة: تنتقل معها في نسخة الهاتف فلا تختفي خارجها.
+  const grid = (
+    <g>
+      {cells}
+      <Label at={[gx + cell + cell / 2, gy + cell / 2]} tex="1\,\text{m}^2" color={C.blue} width={76} size={16} />
+    </g>
+  );
   const wide = (
     <>
       <Panel x={12} y={10} w={400} h={272} />
       <ArabicLabel at={[212, 42]} text="القوة تتوزّع على السطح كله" size={18} />
-      {cells}
-      <Label at={[gx + cell + cell / 2, gy + cell / 2]} tex="1\,\text{m}^2" color={C.blue} width={76} size={16} />
+      {grid}
       <ArabicLabel at={[212, 252]} text="المربّع المظلّل: وحدة مساحة واحدة" size={15} color={C.blue} />
       <Panel x={428} y={10} w={256} h={272} />
       <ArabicLabel at={[556, 52]} text="الضغط هو نصيب" size={17} />
@@ -286,8 +298,8 @@ export function PressureUnitAreaFigure() {
     <>
       <Panel x={8} y={8} w={384} h={252} />
       <ArabicLabel at={[200, 40]} text="القوة تتوزّع على السطح كله" size={20} />
-      <g transform="translate(-24 6) scale(0.94)">{cells}</g>
-      <ArabicLabel at={[200, 232]} text="المربّع المظلّل: وحدة مساحة واحدة" size={17} color={C.blue} />
+      <g transform="translate(-24 6) scale(0.94)">{grid}</g>
+      <ArabicLabel at={[200, 246]} text="المربّع المظلّل: وحدة مساحة واحدة" size={17} color={C.blue} />
       <Panel x={8} y={272} w={384} h={196} />
       <ArabicLabel at={[200, 306]} text="الضغط هو نصيب وحدة المساحة من القوة" size={19} />
       <Label at={[200, 356]} tex="P=\dfrac{F}{s}" color={C.gold} width={140} height={56} size={24} />
@@ -482,7 +494,7 @@ function AppPanel({ x, y, w, h, title, children, foot, footColor }: {
 export function PressureApplicationsFigure() {
   const camelFoot = (cx: number, gy: number) => (
     <g>
-      <DippedSurface x1={cx - 88} x2={cx + 88} y={gy} cx={cx} dipWidth={86} depth={6} color={C.sandEdge} fill={C.sand} />
+      <DippedSurface x1={cx - 88} x2={cx + 88} y={gy} cx={cx} dipWidth={86} depth={6} color={C.sandEdge} fill={C.sand} fillDepth={18} />
       <path d={`M${cx - 12} ${gy - 74} L${cx - 8} ${gy - 12} L${cx - 30} ${gy - 4} L${cx + 34} ${gy - 4} L${cx + 10} ${gy - 12} L${cx + 12} ${gy - 74} Z`} fill={C.body} stroke={C.bodyEdge} strokeWidth={2.4} strokeLinejoin="round" />
     </g>
   );
@@ -513,12 +525,12 @@ export function PressureApplicationsFigure() {
       <path d={`M${cx - 70} ${gy - 62} Q${cx - 46} ${gy - 76} ${cx - 28} ${gy - 58}`} fill="none" stroke={C.bodyEdge} strokeWidth={9} strokeLinecap="round" />
       <line x1={cx - 50} y1={gy - 66} x2={cx - 58} y2={gy - 16} stroke={C.red} strokeWidth={3.4} />
       <rect x={cx - 78} y={gy - 16} width={42} height={32} rx={6} fill="#f3c1cd" stroke={C.red} strokeWidth={2.2} />
-      <ArabicLabel at={[cx - 56, gy + 34]} text="رفيع: ضغط أكبر" size={13.5} color={C.red} />
+      <ArabicLabel at={[cx - 72, gy + 34]} text="رفيع: ضغط أكبر" size={13.5} color={C.red} />
       {/* كتف وحقيبة بحزام عريض */}
       <path d={`M${cx + 28} ${gy - 62} Q${cx + 52} ${gy - 76} ${cx + 70} ${gy - 58}`} fill="none" stroke={C.bodyEdge} strokeWidth={9} strokeLinecap="round" />
       <path d={`M${cx + 44} ${gy - 68} L${cx + 38} ${gy - 16} L${cx + 54} ${gy - 16} L${cx + 56} ${gy - 64}`} fill="#bcd9ef" stroke={C.blue} strokeWidth={2} strokeLinejoin="round" />
       <rect x={cx + 24} y={gy - 16} width={42} height={32} rx={6} fill="#dcebf7" stroke={C.blue} strokeWidth={2.2} />
-      <ArabicLabel at={[cx + 46, gy + 34]} text="عريض: ضغط أصغر" size={13.5} color={C.green} />
+      <ArabicLabel at={[cx + 72, gy + 34]} text="عريض: ضغط أصغر" size={13.5} color={C.green} />
     </g>
   );
   const wide = (
@@ -534,17 +546,19 @@ export function PressureApplicationsFigure() {
   );
   const narrow = (
     <>
-      {narrowPanel(8, "خفّ الجمل الواسع", camelFoot(200, 140), "مساحة أكبر ← ضغط أصغر", C.green)}
-      {narrowPanel(196, "إطارات الشاحنة العريضة الكثيرة", truck(200, 144), "توزيع الثقل على مساحة أكبر", C.green)}
+      {narrowPanel(8, "خفّ الجمل الواسع", camelFoot(200, 130), "مساحة أكبر ← ضغط أصغر", C.green)}
+      {narrowPanel(196, "إطارات الشاحنة العريضة الكثيرة", truck(200, 322), "توزيع الثقل على مساحة أكبر", C.green)}
       {narrowPanel(384, "الرباط العريض على الجرح", bandage(200, 492), "مساحة أكبر ← ضغط أصغر", C.green)}
-      {narrowPanel(572, "حزام الحقيبة: رفيع أم عريض؟", straps(200, 680), "المساحة تصنع الفرق", C.blue)}
+      {/* لوحة الحزام أطول قليلًا: تسميتا الحزامين ثم التذييل في نطاقات منفصلة. */}
+      <AppPanel x={8} y={572} w={384} h={200} title="حزام الحقيبة: رفيع أم عريض؟"
+        foot="المساحة تصنع الفرق" footColor={C.blue}>{straps(200, 686)}</AppPanel>
     </>
   );
   return (
     <>
       <Plate variant="wide" viewBox="0 0 696 384" title="تطبيقات الضغط في الحياة"
         desc="أربع لوحات: خفّ الجمل الواسع، إطارات الشاحنة العريضة الكثيرة، الرباط العريض، وحزام الحقيبة الرفيع مقابل العريض." maxWidth="46rem">{wide}</Plate>
-      <Plate variant="narrow" viewBox="0 0 400 756" title="تطبيقات الضغط في الحياة"
+      <Plate variant="narrow" viewBox="0 0 400 780" title="تطبيقات الضغط في الحياة"
         desc="نسخة الهاتف: لوحات التطبيقات الأربع متتابعة." maxWidth="24rem">{narrow}</Plate>
     </>
   );

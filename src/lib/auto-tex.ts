@@ -29,7 +29,11 @@ export type AutoSeg =
 const UNIT_COMPOUND = String.raw`km\/h|m\/s|km\.h[⁻¹²]*|m\.s[⁻¹²]*|px\/N`;
 /** وحدات قصيرة (تُسمح بعد رقم في قاعدة الكمية). */
 const UNIT_SHORT = String.raw`kg|km|cm|mm|min|px|m|g|h|s|N`;
-const UNIT_AFTER_NUMBER = `(?:${UNIT_COMPOUND}|${UNIT_SHORT})`;
+/** أسّ تخطيطي أو ASCII ملتصق بالوحدة: `m²` / `m^2` — قطعة واحدة لا قطعتان. */
+const POWER = String.raw`(?:[⁰¹²³⁴⁵⁶⁷⁸⁹]+|\^\d+)`;
+const UNIT_AFTER_NUMBER = `(?:${UNIT_COMPOUND}|${UNIT_SHORT})(?:${POWER})?`;
+/** وحدة مفردة بأسّ، تُعامل كقطعة KaTeX واحدة داخل النص العربي. */
+const UNIT_WITH_POWER = `(?:${UNIT_COMPOUND}|${UNIT_SHORT})${POWER}`;
 /** وحدات تُعرض مفردة بلا رقم (الحرف الواحد يُعامل رمزًا لا وحدة). */
 const UNIT_STANDALONE = `(?:${UNIT_COMPOUND}|kg|km|cm|mm|min|px)`;
 /** وحدات مسموحة داخل قوسين صريحيين `(m)`. */
@@ -37,8 +41,10 @@ const UNIT_PAREN = String.raw`km\/h|m\/s|kg|km|cm|mm|min|m|s|h|N`;
 /** رموز علمية مفردة الحرف. */
 const SYMBOLS = String.raw`gwmFdvtOBΔ`;
 const SUB_DIGITS = "₀-₉";
-/** أحرف يُسمح بها داخل معادلة (لاتينية/أرقام/مسافات وعمليات). */
-const EQ_BODY = String.raw`[A-Za-z0-9_\\^.,\t ×÷+\-*/′'=₀-₉≈≤≥≠]+`;
+/** الأسس التخطيطية داخل معادلة: يجب ألا تُترك خارجها فيصير ترتيبها مقلوبًا. */
+const RAISED = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+/** أحرف يُسمح بها داخل معادلة (لاتينية/أرقام/مسافات وعمليات وأسس). */
+const EQ_BODY = String.raw`[A-Za-z0-9_\\^.,\t ×÷+\-*/′'=₀-₉≈≤≥≠${RAISED}]+`;
 
 const SUPERSCRIPT_MAP: Record<string, string> = {
   "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4",
@@ -65,6 +71,8 @@ function unitSafe(unit: string): string {
     const exponent = Array.from(withExponent[2], (ch) => SUPERSCRIPT_MAP[ch] ?? ch).join("");
     return `\\text{${withExponent[1]}}^{${exponent}}`;
   }
+  const withCaret = /^(.*?)\^(\d+)$/.exec(unit);
+  if (withCaret && withCaret[1]) return `\\text{${withCaret[1]}}^{${withCaret[2]}}`;
   return `\\text{${unit}}`;
 }
 
@@ -77,6 +85,10 @@ function buildEquation(raw: string): { tex: string; used: number } | null {
   if (!trimmed || !/[=≈≤≥≠]/.test(trimmed)) return null;
   const tex = trimmed
     .replace(/([A-Za-z])[₀-₉]+/g, (all) => asciiSubscripts(all)) // F₂ → F_2
+    // وحدة بأسّ داخل معادلة: `s = 0.8 m²` تبقى قطعة واحدة `	ext{m}^{2}`.
+    .replace(new RegExp(`(?<![A-Za-z])(cm|mm|km|kg|Pa|N|m|s)([${RAISED}]+|\\^\\d+)`, "g"),
+      (_all, unit: string, power: string) =>
+        `\\text{${unit}}^{${power.startsWith("^") ? power.slice(1) : Array.from(power, (ch) => SUPERSCRIPT_MAP[ch] ?? ch).join("")}}`)
     .replace(/([A-Za-z])(\d)/g, "$1_$2") // F1 → F_1
     .replace(/(\d)([A-Za-z])/g, "$1\\,$2") // 25N → 25\,N
     .replace(/(\d+(?:\.\d+)?) +([A-Za-z]+)(?![A-Za-z])/g, "$1\\,$2") // 40 N → 40\,N
@@ -106,6 +118,12 @@ const RULES: Rule[] = [
     // 2) كمية: رقم (+ عشري) + وحدة.
     re: new RegExp(String.raw`(\d+(?:[.,]\d+)?)[ \t]*(${UNIT_AFTER_NUMBER})(?![A-Za-z0-9_])`, "g"),
     build: (m) => ({ tex: `${m[1]}\\,${unitSafe(m[2])}`, used: m[0].length }),
+  },
+  {
+    // 2ب) وحدة بأسّ مفردة: `m²` — تُعزل في قطعة LTR واحدة حتى لا ينقلب
+    //     ترتيب الرمز والأسّ داخل الجملة العربية (بلا مسافات أو قلب يدوي).
+    re: new RegExp(String.raw`(?<![A-Za-z0-9_])${UNIT_WITH_POWER}(?![A-Za-z0-9_⁰¹²³⁴⁵⁶⁷⁸⁹])`, "g"),
+    build: (m) => ({ tex: unitSafe(m[0]), used: m[0].length }),
   },
   {
     // 3) زاوية/مئوية: `45°` أو `20°C`.
