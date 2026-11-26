@@ -114,5 +114,6 @@
 
 ## 7) PR
 
-رابط PR واحد (غير مدمج): __PR_URL__
-آخر SHA: __COMMIT_SHA__
+رابط PR واحد (غير مدمج): https://github.com/calesteer-create/Physics_Chemistry_7th/pull/23
+SHA الإصلاح: `d87ea24a13f1f4a2ad2a5be5ec78e95a5f2e4e4b`
+(أُضيف لاحقًا commit توثيقي واحد لتحديث هذا الرابط؛ PR واحد لم يُدمج.)
