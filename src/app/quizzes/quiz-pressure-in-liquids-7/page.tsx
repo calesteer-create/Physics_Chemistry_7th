@@ -6,7 +6,7 @@ import { sanitizePressureInLiquidsQuiz } from "@/content/pressure-in-liquids-qui
 
 export const metadata: Metadata = {
   title: "اختبار الدرس الثاني — الضغط في السوائل",
-  description: "اختبار مستقل من عشرة أسئلة بثلاثة مستويات، بتصحيح محلي وتفسيرات بعد التسليم فقط.",
+  description: "اختبار مستقل من عشرة أسئلة بثلاثة مستويات، منها ترتيب تفاعلي، بتصحيح محلي وتفسيرات بعد التسليم فقط.",
 };
 
 export default function PressureInLiquidsQuizPage() {

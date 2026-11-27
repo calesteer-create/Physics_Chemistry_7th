@@ -58,7 +58,7 @@ test("المنشور: صفحة الدرس تحتوي الدفتر المعتمد
   assert.ok(rsc.includes("data-approved-notebook"), "حمولة RSC لا تحمل الدفتر المعتمد");
 });
 
-test("المنشور: صفحة الاختبار موجودة ولا تكشف مفاتيح الإجابة في الحمولة الأولى", () => {
+test("المنشور: صفحة الاختبار لا تكشف مفاتيح الإجابة ولا نسق الترتيب في الحمولة الأولى", () => {
   const html = read("quizzes/quiz-pressure-in-liquids-7/index.html");
   assert.ok(html.includes("اختبار الدرس الثاني — الضغط في السوائل"));
   assert.ok(html.includes("ابدأ الاختبار"));
@@ -67,9 +67,16 @@ test("المنشور: صفحة الاختبار موجودة ولا تكشف م�
   assert.ok(!html.includes('"steps"'));
   assert.ok(!html.includes("7000"));
   assert.ok(!html.includes("الإجابة الصحيحة"));
+  assert.ok(!html.includes("[1,3,0,2]"));
+  assert.ok(!html.includes("الترتيب الصحيح"));
+  assert.ok(!html.includes('data-ordering-correct="true"'));
   const rsc = read("quizzes/quiz-pressure-in-liquids-7/index.txt");
   assert.ok(!rsc.includes('"answer"'));
   assert.ok(!rsc.includes('"explain"'));
+  assert.ok(!rsc.includes('"steps"'));
+  assert.ok(!rsc.includes("[1,3,0,2]"));
+  assert.ok(!rsc.includes("الترتيب الصحيح"));
+  assert.ok(!rsc.includes('data-ordering-correct="true"'));
 });
 
 test("المنشور: فهرس الاختبارات يرتبط بالاختبار الجديد", () => {

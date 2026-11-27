@@ -120,23 +120,66 @@ test("صفحتا الدرس والاختبار تعملان في التصدير 
         assert.ok(overflow <= 1, `تمرير أفقي في صفحة الدرس ${overflow}px عند ${width}`);
         assert.deepEqual(await page.locator(".katex-error").allTextContents(), []);
 
-        // صفحة الاختبار: لا إجابة ولا تفسير قبل التسليم، ثم تفسيرات بعد التسليم.
+        // صفحة الاختبار: ترتيب تفاعلي حقيقي، ولا حلّ قبل التسليم.
         await page.goto(`${url}/quizzes/quiz-pressure-in-liquids-7/`, { waitUntil: "networkidle" });
         await page.getByRole("button", { name: "ابدأ الاختبار" }).waitFor();
         assert.equal(await page.locator('[data-answer-revealed="true"]').count(), 0, "كُشفت إجابة قبل بدء الاختبار");
+        assert.equal(await page.locator('[data-ordering-correct="true"]').count(), 0, "كُشف نسق الترتيب قبل البدء");
         await page.getByRole("button", { name: "ابدأ الاختبار" }).click();
         assert.equal(await page.locator('[data-answer-revealed="true"]').count(), 0, "كُشفت إجابة قبل التسليم");
         assert.equal(await page.getByText("الإجابة الصحيحة").count(), 0, "ظهرت إجابة صحيحة قبل التسليم");
+        assert.equal(await page.getByText("الترتيب الصحيح").count(), 0, "ظهر الترتيب الصحيح قبل التسليم");
+        assert.equal(await page.locator('[data-ordering-correct="true"]').count(), 0, "كُشف نسق الترتيب قبل التسليم");
+
         const sections = page.locator('section[id^="pil-"]');
         assert.equal(await sections.count(), 10, "عدد أسئلة الاختبار ليس 10");
         for (let i = 0; i < 10; i++) {
           const section = sections.nth(i);
+          const id = await section.getAttribute("id");
+          if (id === "pil-8") continue; // يُرتَّب فعليًا أدناه لا بضغط أول زر.
           if (await section.locator("input").count()) await section.locator("input").fill("1");
           else await section.locator("button").first().click();
         }
+
+        const q8 = page.locator("#pil-8");
+        await q8.locator('[data-ordering-question="true"]').waitFor();
+        assert.equal(await q8.locator('[data-ordering-item]').count(), 4, "بنود الترتيب ليست أربعة");
+        const initialOrder = await q8.locator('[data-ordering-question="true"]').getAttribute("data-ordering-current");
+        assert.equal(initialOrder, "0,1,2,3", "الترتيب الابتدائي ليس مخلوطًا كما المتوقع");
+        assert.notEqual(initialOrder, "1,3,0,2", "الترتيب الابتدائي يكشف الحل");
+        // تحويل [0,1,2,3] إلى [1,3,0,2] بأزرار نقل فعلية فقط.
+        await q8.locator('li[data-ordering-item="1"] [data-ordering-move="up"]').click();
+        await q8.locator('li[data-ordering-item="3"] [data-ordering-move="up"]').click();
+        await q8.locator('li[data-ordering-item="3"] [data-ordering-move="up"]').click();
+        assert.equal(
+          await q8.locator('[data-ordering-question="true"]').getAttribute("data-ordering-current"),
+          "1,3,0,2",
+          "أزرار الترتيب لم تغيّر النسق الفعلي",
+        );
+        assert.equal(await page.locator('[data-ordering-correct="true"]').count(), 0, "كُشف الحل بعد الترتيب وقبل التسليم");
+
         await page.getByRole("button", { name: "سلّم الاختبار" }).last().click();
         await page.locator('[data-answer-revealed="true"]').waitFor();
+        assert.equal(await page.locator('[data-ordering-correct="true"]').count(), 1, "لم يُصحَّح الترتيب بعد التسليم");
+        assert.equal(await page.locator('[data-ordering-steps="true"]').count(), 1, "لم تظهر الخطوات الصحيحة بعد التسليم");
+        assert.equal(await page.locator('[data-ordering-list="correct"]').count(), 1, "لم تظهر قائمة النسق المعتمد");
+        assert.equal(await page.locator('[data-ordering-list="mine"]').count(), 1, "لم يظهر ترتيب الطالب");
+        assert.ok(await page.getByText("الترتيب الصحيح").count() > 0, "لم يظهر نص الترتيب الصحيح");
+        assert.ok(await page.getByText("السلسلة الصحيحة").count() > 0, "لم يظهر تفسير الترتيب");
         assert.ok(await page.getByText("الإجابة الصحيحة").count() > 0, "لم تظهر التفسيرات بعد التسليم");
+        if (width === 1440) {
+          await q8.scrollIntoViewIfNeeded();
+          await page.screenshot({ path: join(SHOTS, "site-1440-ordering.png") });
+        }
+
+        // إعادة المحاولة تُعيد البنود المخلوطة وتُخفي الحل من جديد.
+        await page.getByRole("button", { name: "محاولة جديدة" }).click();
+        assert.equal(await page.locator('[data-ordering-correct="true"]').count(), 0, "الحل ما زال ظاهرًا بعد إعادة المحاولة");
+        assert.equal(
+          await page.locator('[data-ordering-question="true"]').getAttribute("data-ordering-current"),
+          "0,1,2,3",
+          "إعادة المحاولة لم تُعد الترتيب المخلوط",
+        );
 
         overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
         assert.ok(overflow <= 1, `تمرير أفقي في صفحة الاختبار ${overflow}px عند ${width}`);

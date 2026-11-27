@@ -13,7 +13,7 @@ import { createHash } from "node:crypto";
 import { join, dirname } from "node:path";
 import { getLesson, listLessons, units } from "@/content/registry";
 import { pressureInLiquidsNotebookText } from "@/content/lessons/unit2/pressure-in-liquids-notebook";
-import { pressureInLiquidsQuizPublic, sanitizePressureInLiquidsQuiz } from "@/content/pressure-in-liquids-quiz";
+import { pressureInLiquidsQuizPublic, sanitizePressureInLiquidsQuiz, type LiquidQuizOrderingQuestion } from "@/content/pressure-in-liquids-quiz";
 import { pressureInLiquidsAnswerKey } from "@/content/pressure-in-liquids-answers";
 import {
   ATM_MMHG, ATM_PA, BOOK_DENSITIES, MODEL_ASSUMPTIONS,
@@ -112,7 +112,7 @@ test("أنشطة الكتاب ص 71–80 وتمارين المنصة الثما�
   assert.ok(exercises.includes("التروجين"), "الكلمة المطبوعة «التروجين» يجب أن تبقى كما هي");
 });
 
-test("الاختبار المستقل: 10 أسئلة، 3 مستويات، بلا إجابات في الحمولة العامة", () => {
+test("الاختبار المستقل: 10 أسئلة، 3 مستويات، أنواع فعلية، بلا إجابات في الحمولة العامة", () => {
   const quiz = sanitizePressureInLiquidsQuiz();
   assert.equal(quiz.id, "quiz-pressure-in-liquids-7");
   assert.equal(quiz.questions.length, 10);
@@ -122,12 +122,18 @@ test("الاختبار المستقل: 10 أسئلة، 3 مستويات، بلا
   assert.deepEqual(quiz.questions.reduce<Record<string, number>>((acc, q) => {
     acc[q.kind] = (acc[q.kind] ?? 0) + 1; return acc;
   }, {}), { mcq: 4, tf: 2, fill: 3, ordering: 1 });
+  // `type` نفسه يجب أن يحمل ترتيبًا حقيقيًا، لا `mcq` موسومًا نصيًا فقط.
+  assert.deepEqual(quiz.questions.reduce<Record<string, number>>((acc, q) => {
+    acc[q.type] = (acc[q.type] ?? 0) + 1; return acc;
+  }, {}), { mcq: 4, tf: 2, fill: 3, ordering: 1 });
   assert.ok(quiz.questions.some((q) => q.figure?.src === "liquid-pressure-graph"));
   assert.equal(Object.keys(pressureInLiquidsAnswerKey).length, 10);
   const serialized = JSON.stringify(quiz);
   assert.ok(!serialized.includes('"answer"'));
   assert.ok(!serialized.includes('"explain"'));
   assert.ok(!serialized.includes('"steps"'));
+  assert.ok(!serialized.includes("[1,3,0,2]"));
+  assert.ok(!serialized.includes("الترتيب الصحيح"));
   assert.equal(pressureInLiquidsQuizPublic.questions.length, 10);
   const runner = read("src/components/quiz/PressureInLiquidsQuizRunner.tsx");
   assert.ok(runner.includes("data-answer-revealed"));
@@ -137,6 +143,38 @@ test("الاختبار المستقل: 10 أسئلة، 3 مستويات، بلا
   assert.ok(!runner.includes("/api/"));
   const quizPage = read("src/app/quizzes/quiz-pressure-in-liquids-7/page.tsx");
   assert.ok(quizPage.includes("sanitizePressureInLiquidsQuiz"));
+  assert.ok(!quizPage.includes("pressureInLiquidsAnswerKey"), "صفحة الخادم لا تستورد مفاتيح الإجابة");
+});
+
+test("pil-8 ترتيب تفاعلي حقيقي: بنود مخلوطة، تصحيح بعد التسليم فقط، وتفسير وخطوات", () => {
+  const quiz = sanitizePressureInLiquidsQuiz();
+  const found = quiz.questions.find((q) => q.id === "pil-8");
+  assert.ok(found && found.type === "ordering", "pil-8 ليس سؤال ترتيب فعلي");
+  const q8 = found as LiquidQuizOrderingQuestion;
+  assert.equal(q8.kind, "ordering");
+  assert.equal(q8.level, "متقدم");
+  assert.equal(q8.items.length, 4);
+  assert.ok(!("options" in q8), "ما زال يحمل خيارات mcq");
+  const key = pressureInLiquidsAnswerKey["pil-8"];
+  assert.ok(key);
+  assert.deepEqual(key.answer, [1, 3, 0, 2]);
+  assert.equal(key.steps?.length, 4, "الخطوات الصحيحة غير موثّقة");
+  assert.ok(read("src/content/pressure-in-liquids-answers.ts").includes("السلسلة الصحيحة"));
+  const initial = q8.items.map((_, i) => i);
+  assert.notDeepEqual(initial, key.answer, "الترتيب الابتدائي يكشف الحل");
+  const runner = read("src/components/quiz/PressureInLiquidsQuizRunner.tsx");
+  assert.ok(runner.includes('data-ordering-question="true"'));
+  assert.ok(runner.includes("data-ordering-current"));
+  assert.ok(runner.includes('data-ordering-move="up"'));
+  assert.ok(runner.includes('data-ordering-move="down"'));
+  assert.ok(runner.includes("moveOrderingItem"));
+  assert.ok(runner.includes('data-ordering-correct="true"'));
+  assert.ok(runner.includes('data-ordering-steps="true"'));
+  assert.ok(runner.includes("Array.isArray(expected)"));
+  assert.ok(runner.includes("!submitted"), "واجهة الترتيب يجب أن تُخفى بعد التسليم");
+  const publicQuiz = read("src/content/pressure-in-liquids-quiz.ts");
+  assert.ok(!publicQuiz.includes("[1,3,0,2]"), "تسرّب الترتيب الصحيح إلى الحمولة العامة");
+  assert.ok(!publicQuiz.includes("الترتيب الصحيح"), "تسرّب نص الحل إلى الحمولة العامة");
 });
 
 test("القرارات العلمية والنموذج الفيزيائي محفوظة", () => {

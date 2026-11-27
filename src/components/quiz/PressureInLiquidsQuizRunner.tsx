@@ -6,14 +6,18 @@
  * صفحة الخادم تمرّر الأسئلة العامة فقط؛ مفاتيح الإجابة والتفسيرات مستوردة
  * هنا في وحدة العميل ولا تُعرض في الواجهة قبل التسليم. لا خادم، ولا API،
  * ولا قاعدة بيانات، ولا حفظ للدرجة. درجة واحدة لكل سؤال دون خصم.
+ *
+ * `pil-8` ترتيب تفاعلي حقيقي: البنود مخلوطة في البداية، ويغيّر الطالب
+ * مواضعها بأزرار نقل، ولا يُصحَّح الترتيب ولا تظهر الخطوات الصحيحة إلا بعد
+ * تسليم الاختبار.
  */
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { CheckCircle2, ClipboardCheck, Lightbulb, RotateCcw, ShieldCheck, XCircle } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckCircle2, ClipboardCheck, Lightbulb, ListOrdered, RotateCcw, ShieldCheck, XCircle } from "lucide-react";
 import { RichText } from "@/components/content/RichText";
 import { Q } from "@/components/math/TeX";
 import { FigureBlock } from "@/components/figures";
-import type { LiquidQuizPublic, LiquidQuizQuestion } from "@/content/pressure-in-liquids-quiz";
+import type { LiquidQuizOrderingQuestion, LiquidQuizPublic, LiquidQuizQuestion } from "@/content/pressure-in-liquids-quiz";
 import { pressureInLiquidsAnswerKey, type LiquidQuizAnswer } from "@/content/pressure-in-liquids-answers";
 import styles from "./PressureInLiquidsQuizRunner.module.css";
 
@@ -40,6 +44,12 @@ function isCorrect(q: LiquidQuizQuestion, answers: Answers): boolean {
   const key = pressureInLiquidsAnswerKey[q.id];
   const mine = answers[q.id];
   if (!key || mine === undefined) return false;
+  if (q.type === "ordering") {
+    const expected = key.answer;
+    return Array.isArray(expected) && Array.isArray(mine)
+      && expected.length === mine.length
+      && expected.every((n, i) => n === mine[i]);
+  }
   if (q.type === "mcq") return mine === key.answer;
   if (q.type === "tf") return mine === key.answer;
   const expected = Number(key.answer);
@@ -47,9 +57,24 @@ function isCorrect(q: LiquidQuizQuestion, answers: Answers): boolean {
   return Number.isFinite(expected) && got !== null && Math.abs(got - expected) <= (key.tolerance ?? 0.02);
 }
 
+function orderingSequence(q: LiquidQuizOrderingQuestion, order: number[], marker: "mine" | "correct"): ReactNode {
+  return (
+    <ol className={styles.orderReviewList} data-ordering-list={marker}>
+      {order.map((itemIndex, i) => (
+        <li key={`${itemIndex}-${i}`}>
+          <RichText rich={q.items[itemIndex] ?? [{ t: "—" }]} />
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function correctDisplay(q: LiquidQuizQuestion): ReactNode {
   const key = pressureInLiquidsAnswerKey[q.id];
   if (!key) return "—";
+  if (q.type === "ordering") {
+    return orderingSequence(q, Array.isArray(key.answer) ? key.answer : [], "correct");
+  }
   if (q.type === "mcq") return <RichText rich={q.options?.[Number(key.answer)] ?? [{ t: "—" }]} />;
   if (q.type === "tf") return key.answer ? "صح" : "خطأ";
   return <span dir="ltr"><Q v={String(key.answer)} u={key.unit} /></span>;
@@ -59,14 +84,26 @@ function mineDisplay(q: LiquidQuizQuestion, answers: Answers): ReactNode {
   const key = pressureInLiquidsAnswerKey[q.id];
   const mine = answers[q.id];
   if (mine === undefined) return "—";
+  if (q.type === "ordering") {
+    return orderingSequence(q, Array.isArray(mine) ? mine : [], "mine");
+  }
   if (q.type === "mcq") return <RichText rich={q.options?.[Number(mine)] ?? [{ t: String(mine) }]} />;
   if (q.type === "tf") return mine ? "صح" : "خطأ";
   return <span dir="ltr"><Q v={String(mine)} u={key?.unit} /></span>;
 }
 
 export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }) {
+  // الترتيب الابتدائي مخلوط، لكنه يُسجَّل كإجابة كي يُحسب السؤال ضمن الإكمال.
+  const initialAnswers = useMemo<Answers>(() => {
+    const init: Answers = {};
+    for (const q of quiz.questions) {
+      if (q.type === "ordering") init[q.id] = q.items.map((_, i) => i);
+    }
+    return init;
+  }, [quiz.questions]);
+
   const [started, setStarted] = useState(false);
-  const [answers, setAnswers] = useState<Answers>({});
+  const [answers, setAnswers] = useState<Answers>(initialAnswers);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const complete = quiz.questions.filter((q) => answered(q, answers)).length;
@@ -76,6 +113,20 @@ export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }
   function choose(q: LiquidQuizQuestion, value: LiquidQuizAnswer) {
     if (submitted) return;
     setAnswers((a) => ({ ...a, [q.id]: value }));
+    setError("");
+  }
+
+  function moveOrderingItem(q: LiquidQuizOrderingQuestion, index: number, delta: -1 | 1) {
+    if (submitted) return;
+    setAnswers((a) => {
+      const current: number[] = Array.isArray(a[q.id])
+        ? [...(a[q.id] as number[])]
+        : q.items.map((_, i) => i);
+      const target = index + delta;
+      if (target < 0 || target >= current.length) return a;
+      [current[index], current[target]] = [current[target], current[index]];
+      return { ...a, [q.id]: current };
+    });
     setError("");
   }
 
@@ -95,7 +146,7 @@ export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }
   }
 
   function retry() {
-    setAnswers({});
+    setAnswers(initialAnswers);
     setSubmitted(false);
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -112,7 +163,7 @@ export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }
           <h2 className={styles.heading}>{quiz.title}</h2>
           <p className={styles.lede}>{quiz.description}</p>
           <p className={styles.lede}>
-            أنواع متنوعة: اختيار من متعدد مع قراءة رسم، صح وخطأ، مسائل عددية، وترتيب/مطابقة.
+            أنواع متنوعة: اختيار من متعدد مع قراءة رسم، صح وخطأ، مسائل عددية، وترتيب تفاعلي.
             درجة واحدة لكل سؤال، دون خصم على الخطأ. الزمن الإرشادي {quiz.durationMin} دقيقة.
           </p>
           <p className={styles.note}>
@@ -157,11 +208,15 @@ export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }
         const key = pressureInLiquidsAnswerKey[q.id];
         const ok = submitted && isCorrect(q, answers);
         const chosen = answers[q.id];
+        const orderingQuestion = q.type === "ordering" ? q : null;
+        const order: number[] = orderingQuestion
+          ? Array.isArray(chosen) ? [...(chosen as number[])] : orderingQuestion.items.map((_, i) => i)
+          : [];
         return (
           <section id={q.id} tabIndex={-1} key={q.id} className={styles.question} aria-label={`السؤال ${index + 1}`}>
             <div className={styles.questionHead}>
               <span className={styles.status}>السؤال {index + 1} من {quiz.questions.length}</span>
-              <span className={styles.level}>{q.level}{q.kind === "ordering" ? " · ترتيب/مطابقة" : ""}</span>
+              <span className={styles.level}>{q.level}{q.kind === "ordering" ? " · ترتيب تفاعلي" : ""}</span>
             </div>
             <p className={styles.prompt}><RichText rich={q.prompt} /></p>
             {q.figure && <div className={styles.figure}><FigureBlock figure={q.figure} /></div>}
@@ -215,16 +270,61 @@ export function PressureInLiquidsQuizRunner({ quiz }: { quiz: LiquidQuizPublic }
               </div>
             )}
 
+            {orderingQuestion && !submitted && (
+              <div className={styles.ordering} data-ordering-question="true" data-ordering-current={order.join(",")}>
+                <p className={styles.orderingHint}>
+                  <ListOrdered size={15} style={{ verticalAlign: "middle", marginInlineEnd: 6 }} />
+                  استعمل أزرار النقل لترتيب مراحل الاستنتاج من الأعلى إلى الأسفل.
+                </p>
+                <ol className={styles.orderingList}>
+                  {order.map((itemIndex, pos) => (
+                    <li key={itemIndex} className={styles.orderingItem}
+                      data-ordering-item={itemIndex} data-ordering-position={pos + 1}>
+                      <span className={styles.orderNumber}>{pos + 1}</span>
+                      <span className={styles.orderText}><RichText rich={orderingQuestion.items[itemIndex] ?? [{ t: "—" }]} /></span>
+                      <span className={styles.orderControls}>
+                        <button type="button" className={styles.orderMove} data-ordering-move="up"
+                          aria-label={`انقل البند ${pos + 1} للأعلى`} disabled={pos === 0}
+                          onClick={() => moveOrderingItem(orderingQuestion, pos, -1)}>
+                          <ArrowUp size={16} />
+                        </button>
+                        <button type="button" className={styles.orderMove} data-ordering-move="down"
+                          aria-label={`انقل البند ${pos + 1} للأسفل`} disabled={pos === order.length - 1}
+                          onClick={() => moveOrderingItem(orderingQuestion, pos, 1)}>
+                          <ArrowDown size={16} />
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
             {submitted && key && (
               <div className={`${styles.review} ${ok ? "" : styles.reviewWrong}`}>
                 <div>
                   {ok ? <CheckCircle2 size={16} style={{ verticalAlign: "middle", marginInlineEnd: 5 }} /> : <XCircle size={16} style={{ verticalAlign: "middle", marginInlineEnd: 5 }} />}
                   <strong>{ok ? "إجابة صحيحة" : "إجابة غير صحيحة"}</strong>
                 </div>
-                <div>إجابتك: {mineDisplay(q, answers)}</div>
-                {!ok && <div>الإجابة الصحيحة: {correctDisplay(q)}</div>}
-                <div style={{ marginTop: 7 }}><Lightbulb size={15} style={{ verticalAlign: "middle", marginInlineEnd: 5 }} /><RichText rich={key.explain} /></div>
-                {key.steps && <ol>{key.steps.map((s, i) => <li key={i}><RichText rich={s} /></li>)}</ol>}
+                {q.type === "ordering" ? (
+                  <>
+                    <div>ترتيبك: {mineDisplay(q, answers)}</div>
+                    <div data-ordering-correct="true">الترتيب الصحيح: {correctDisplay(q)}</div>
+                    <div className={styles.explainLine}><Lightbulb size={15} style={{ verticalAlign: "middle", marginInlineEnd: 5 }} /><RichText rich={key.explain} /></div>
+                    {key.steps && (
+                      <ol className={styles.reviewSteps} data-ordering-steps="true">
+                        {key.steps.map((s, i) => <li key={i}><RichText rich={s} /></li>)}
+                      </ol>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div>إجابتك: {mineDisplay(q, answers)}</div>
+                    {!ok && <div>الإجابة الصحيحة: {correctDisplay(q)}</div>}
+                    <div className={styles.explainLine}><Lightbulb size={15} style={{ verticalAlign: "middle", marginInlineEnd: 5 }} /><RichText rich={key.explain} /></div>
+                    {key.steps && <ol className={styles.reviewSteps}>{key.steps.map((s, i) => <li key={i}><RichText rich={s} /></li>)}</ol>}
+                  </>
+                )}
               </div>
             )}
           </section>

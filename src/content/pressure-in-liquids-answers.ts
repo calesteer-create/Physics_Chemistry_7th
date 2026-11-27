@@ -4,11 +4,14 @@
  * هذه الوحدة تُستورد من مكوّن العميل فقط، ولا تُمرَّر من صفحة الخادم في
  * الحمولة الأولى. الواجهة لا تعرض أي مفتاح أو تفسير قبل تسليم الاختبار.
  * التصحيح محلي في المتصفح بلا خادم ولا API ولا قاعدة بيانات.
+ *
+ * `pil-8` يخزّن الترتيب الصحيح كمصفوفة من مواضع البنود المعروضة، ولا تُعرض
+ * هذه المصفوفة ولا الخطوات الصحيحة قبل التسليم.
  */
 import type { Rich } from "@/content/types";
 import { rich } from "@/lib/liquid-pressure-rich";
 
-export type LiquidQuizAnswer = number | boolean | string;
+export type LiquidQuizAnswer = number | boolean | string | number[];
 
 export interface LiquidQuizKey {
   answer: LiquidQuizAnswer;
@@ -24,8 +27,8 @@ const R = (s: string): Rich => rich(s);
 export const pressureInLiquidsAnswerKey: Record<string, LiquidQuizKey> = {
   "pil-1": {
     answer: 0,
-    explain: R(`ضغط السائل وحده يُحسب بـ$P=\rho g h$؛ أمّا $P_t=P_0+\rho g h$ فهو الضغط الكلي عند سطح معرّض للهواء.`),
-    steps: [R("حدّد المطلوب: ضغط السائل فقط."), R("استبعد العلاقة التي تحتوي $P_0$."), R(`الصحيحة $P=\rho g h$.`)],
+    explain: R(`ضغط السائل وحده يُحسب بـ$P=\\rho g h$؛ أمّا $P_t=P_0+\\rho g h$ فهو الضغط الكلي عند سطح معرّض للهواء.`),
+    steps: [R("حدّد المطلوب: ضغط السائل فقط."), R("استبعد العلاقة التي تحتوي $P_0$."), R(`الصحيحة $P=\\rho g h$.`)],
   },
   "pil-2": {
     answer: true,
@@ -40,7 +43,7 @@ export const pressureInLiquidsAnswerKey: Record<string, LiquidQuizKey> = {
     tolerance: 0.01,
     unit: "Pa",
     explain: R("التعويض المباشر في قانون ضغط السائل يعطي 7000 Pa."),
-    steps: [R("$P=\rho g h$."), R("$P=1000\times10\times0.7$."), R("$P=7000\,\mathrm{Pa}$.")],
+    steps: [R("$P=\\rho g h$."), R("$P=1000\\times10\\times0.7$."), R("$P=7000\\,\\mathrm{Pa}$.")],
   },
   "pil-5": {
     answer: 1,
@@ -48,28 +51,35 @@ export const pressureInLiquidsAnswerKey: Record<string, LiquidQuizKey> = {
   },
   "pil-6": {
     answer: false,
-    explain: R("خطأ: مسائل الكتاب التي تطلب ضغط السائل تُحل بـ$P=\rho g h$ وحده؛ ولا يُضاف $P_0$ إلا عند طلب الضغط الكلي."),
+    explain: R("خطأ: مسائل الكتاب التي تطلب ضغط السائل تُحل بـ$P=\\rho g h$ وحده؛ ولا يُضاف $P_0$ إلا عند طلب الضغط الكلي."),
   },
   "pil-7": {
     answer: 1.2,
     tolerance: 0.02,
     unit: "m",
-    explain: R("من $P=\rho g h$ نحصل على $h=P/(\rho g)=1.2$ m."),
-    steps: [R("$h=\dfrac{P}{\rho g}$."), R("$h=\dfrac{12000}{1000\times10}$."), R("$h=1.2\,\mathrm{m}$.")],
+    explain: R("من $P=\\rho g h$ نحصل على $h=P/(\\rho g)=1.2$ m."),
+    steps: [R("$h=\\dfrac{P}{\\rho g}$."), R("$h=\\dfrac{12000}{1000\\times10}$."), R("$h=1.2\\,\\mathrm{m}$.")],
   },
   "pil-8": {
-    answer: 1,
-    explain: R("السلسلة الصحيحة تبدأ بثبات العمق و$g$، ثم مقارنة الكتلة الحجمية، ثم مقارنة الضغط، ثم كتابة $P=\rho g h$."),
+    // مواضع البنود كما تظهر في `items` بعد ترتيبها الصحيح.
+    answer: [1, 3, 0, 2],
+    explain: R("السلسلة الصحيحة تبدأ بثبات العمق $h$ و$g$، ثم مقارنة الكتلة الحجمية، ثم مقارنة الضغط، ثم كتابة $P=\\rho g h$."),
+    steps: [
+      R("١. نُثبّت العمق $h$ وتسارع الجاذبية $g$ في الكأسين."),
+      R("٢. الكتلة الحجمية للمحلول أكبر من كتلة الماء الحجمية."),
+      R("٣. عند العمق ذاته يكون ضغط المحلول أكبر من ضغط الماء."),
+      R("٤. نستنتج قانون ضغط السائل $P=\\rho g h$."),
+    ],
   },
   "pil-9": {
     answer: 20000,
     tolerance: 0.01,
     unit: "Pa",
-    explain: R("فرق الضغط بين عمقين في السائل نفسه هو $\\Delta P=\rho g\Delta h$، و$\\Delta h=2$ m."),
-    steps: [R("$\Delta h=3.5-1.5=2\,\mathrm{m}$."), R("$\Delta P=\rho g\Delta h$."), R("$\Delta P=1000\times10\times2=20000\,\mathrm{Pa}$.")],
+    explain: R("فرق الضغط بين عمقين في السائل نفسه هو $\\Delta P=\\rho g\\Delta h$، و$\\Delta h=2$ m."),
+    steps: [R("$\\Delta h=3.5-1.5=2\\,\\mathrm{m}$."), R("$\\Delta P=\\rho g\\Delta h$."), R("$\\Delta P=1000\\times10\\times2=20000\\,\\mathrm{Pa}$.")],
   },
   "pil-10": {
     answer: 0,
-    explain: R(`المجموعة الأولى فقط صحيحة: $P=\rho g h$ لضغط السائل، و$P_t=P_0+\rho g h$ للضغط الكلي، والقيمة العلمية المصحّحة $1\,\mathrm{atm}=101325\,\mathrm{Pa}=760\,\mathrm{mmHg}$. القيمة $10135$ مطبوعة في الكتاب والتصحيح من المنصة ولا يُنسب إليه.`),
+    explain: R(`المجموعة الأولى فقط صحيحة: $P=\\rho g h$ لضغط السائل، و$P_t=P_0+\\rho g h$ للضغط الكلي، والقيمة العلمية المصحّحة $1\\,\\mathrm{atm}=101325\\,\\mathrm{Pa}=760\\,\\mathrm{mmHg}$. القيمة $10135$ مطبوعة في الكتاب والتصحيح من المنصة ولا يُنسب إليه.`),
   },
 };
