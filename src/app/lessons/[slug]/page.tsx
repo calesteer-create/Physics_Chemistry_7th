@@ -37,6 +37,9 @@ import { ForceBookQuestions } from "@/components/lesson/ForceBookQuestions";
 import { OneSupportBookQuestions } from "@/components/lesson/OneSupportBookQuestions";
 import { WorkPowerBookQuestions } from "@/components/lesson/WorkPowerBookQuestions";
 import { PressureBookQuestions } from "@/components/lesson/PressureBookQuestions";
+import { PressureInLiquidsNotebook } from "@/components/lesson/PressureInLiquidsNotebook";
+import { PressureInLiquidsBookQuestions, PressureInLiquidsExtraExercises } from "@/components/lesson/PressureInLiquidsExercises";
+import { LiquidPressureLabs } from "@/components/lab/LiquidPressureLabs";
 import { MotionQuizBookQuestions } from "@/components/lesson/BookQuestions";
 import { Reveal } from "@/components/ui/Reveal";
 import { EngineerMark } from "@/components/brand/EngineerMark";
@@ -110,7 +113,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
       return (
         <section key="notebook">
           <StageHeader meta={STAGE_META.notebook} idx={idx} notebook />
-          {lesson.slug === "simple-machines" ? <SimpleMachinesNotebook/> : <Notebook items={lesson.notebook} lessonTitle={lesson.title} notation={isOneSupport ? oneSupportNotation : undefined} />}
+          {lesson.slug === "pressure-in-liquids" ? <PressureInLiquidsNotebook/> : lesson.slug === "simple-machines" ? <SimpleMachinesNotebook/> : <Notebook items={lesson.notebook} lessonTitle={lesson.title} notation={isOneSupport ? oneSupportNotation : undefined} />}
           {/* توقيع المهندس */}
           <div className="card mt-10 flex flex-col items-start justify-between gap-5 border-[rgba(230,192,122,0.3)] p-6 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
@@ -175,6 +178,21 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         {stageId === "lab" && lesson.labWidget === "pressure-lab" && (
           <div className="mt-7">
             <PressurePlayground />
+          </div>
+        )}
+        {stageId === "lab" && lesson.slug === "pressure-in-liquids" && (
+          <div className="mt-7">
+            <LiquidPressureLabs />
+          </div>
+        )}
+        {stageId === "check" && lesson.slug === "pressure-in-liquids" && (
+          <div className="mt-7">
+            <PressureInLiquidsBookQuestions />
+          </div>
+        )}
+        {stageId === "apply" && lesson.slug === "pressure-in-liquids" && (
+          <div className="mt-7">
+            <PressureInLiquidsExtraExercises />
           </div>
         )}
         {stageId === "quiz" && lesson.slug === "pressure" && (

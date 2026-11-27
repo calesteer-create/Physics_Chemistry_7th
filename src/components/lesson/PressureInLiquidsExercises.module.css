@@ -1,0 +1,61 @@
+/* أنشطة وأسئلة «الضغط في السوائل» — من الكتاب وتمارين المنصة الإضافية. */
+
+.wrap { min-width: 0; }
+
+.section { margin: 0 0 28px; min-width: 0; }
+.sectionHead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 14px; }
+.sectionTitle { margin: 0; color: #fff; font-size: clamp(18px, 2.2vw, 22px); font-weight: 900; }
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 11px; font-size: 11.5px; font-weight: 900; }
+.badgeBook { border: 1px solid rgba(60, 224, 244, .35); background: rgba(60, 224, 244, .08); color: #8ceeff; }
+.badgePlatform { border: 1px solid rgba(255, 176, 58, .45); background: rgba(255, 176, 58, .09); color: #ffd08a; }
+.level { border: 1px solid rgba(167, 139, 250, .4); background: rgba(167, 139, 250, .08); color: #cfc7ff; }
+
+.stack { display: grid; gap: 14px; min-width: 0; }
+.card { min-width: 0; border: 1.5px solid var(--color-line2); border-radius: 18px; background: rgba(6, 14, 30, .44); padding: clamp(15px, 2.5vw, 22px); }
+.cardHead { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.num { flex: 0 0 auto; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; border: 1.5px solid rgba(60, 224, 244, .3); background: rgba(60, 224, 244, .09); color: #8ceeff; font-size: 13px; font-weight: 900; }
+.cardTitle { margin: 0; color: #fff; font-size: 15.5px; font-weight: 900; line-height: 1.7; }
+.question { margin: 0; color: #dbeafe; font-size: 14.5px; font-weight: 750; line-height: 2; }
+.question p { margin: 0 0 6px; }
+.figure { margin-top: 14px; }
+
+.options { display: grid; gap: 9px; margin-top: 14px; }
+.option { display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; border: 1.5px solid var(--color-line2); border-radius: 12px; background: rgba(255,255,255,.02); color: var(--color-fog); padding: 10px 12px; font-size: 13.5px; font-weight: 800; line-height: 1.8; text-align: right; cursor: pointer; transition: border-color .2s, background .2s; }
+.option:hover { border-color: rgba(60,224,244,.5); }
+.option:disabled { cursor: default; }
+.letter { flex: 0 0 auto; display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; background: rgba(148,178,220,.09); color: var(--color-mist); font-size: 12px; font-weight: 900; }
+.optionCorrect { border-color: rgba(52,211,153,.6); background: rgba(52,211,153,.11); color: #a7f3d0; }
+.optionWrong { border-color: rgba(248,113,113,.6); background: rgba(248,113,113,.1); color: #fca5a5; }
+.optionDim { opacity: .45; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 13px; }
+.btn { min-height: 40px; border: 1.5px solid transparent; border-radius: 10px; padding: 8px 13px; font-size: 12.5px; font-weight: 900; cursor: pointer; }
+.btnGhost { background: rgba(255,255,255,.04); border-color: var(--color-line2); color: var(--color-mist); }
+.btnPrimary { background: #2563eb; color: #fff; }
+.btnHint { background: rgba(255,176,58,.1); border-color: rgba(255,176,58,.4); color: #ffd08a; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.feedback { margin-top: 13px; border-radius: 13px; border: 1.5px solid rgba(52,211,153,.35); background: rgba(52,211,153,.07); padding: 12px 14px; color: #bbf7d0; font-size: 13.5px; font-weight: 800; line-height: 2; }
+.feedbackWarn { border-color: rgba(255,176,58,.4); background: rgba(255,176,58,.07); color: #fde68a; }
+.hint { margin-top: 11px; border-right: 4px solid #ffb040; border-radius: 10px; background: rgba(255,176,58,.07); padding: 10px 13px; color: #fde68a; font-size: 13px; font-weight: 750; line-height: 1.9; }
+.solution { margin-top: 11px; border-right: 4px solid #0f766e; border-radius: 10px; background: rgba(15,118,110,.075); padding: 12px 14px; color: #c7f5e8; font-size: 13.5px; font-weight: 750; line-height: 2; }
+.solution ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.solution li { margin-bottom: 5px; }
+
+.fillLine { margin-top: 12px; color: #dbeafe; font-size: 14.5px; font-weight: 750; line-height: 2.6; }
+.fillInput { width: clamp(110px, 34vw, 190px); max-width: 100%; min-height: 38px; margin: 3px 4px; border: 1.5px solid rgba(60,224,244,.4); border-radius: 9px; background: rgba(6,14,30,.55); color: #fff; padding: 6px 9px; font-size: 13.5px; font-weight: 800; text-align: center; outline: none; }
+.fillInputOk { border-color: rgba(52,211,153,.7); background: rgba(52,211,153,.12); color: #a7f3d0; }
+.fillInputBad { border-color: rgba(248,113,113,.7); background: rgba(248,113,113,.1); color: #fca5a5; }
+
+.numberRow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 13px; }
+.numberInput { width: min(190px, 100%); min-height: 42px; border: 1.5px solid rgba(60,224,244,.4); border-radius: 10px; background: rgba(6,14,30,.55); color: #fff; padding: 8px 11px; font-size: 14px; font-weight: 900; text-align: center; direction: ltr; outline: none; }
+.unit { color: #ffd08a; font-size: 13px; font-weight: 900; direction: ltr; unicode-bidi: isolate; }
+.status { color: var(--color-mist); font-size: 12.5px; font-weight: 900; }
+
+.platformNotice { margin: 0 0 16px; border: 1.5px dashed rgba(255,176,58,.45); border-radius: 14px; background: rgba(255,176,58,.06); padding: 12px 15px; color: #ffd08a; font-size: 13.5px; font-weight: 900; line-height: 1.9; }
+
+@media (max-width: 30rem) {
+  .card { border-radius: 14px; }
+  .fillInput { width: 100%; display: block; margin: 6px 0; }
+  .option { font-size: 12.8px; }
+}
