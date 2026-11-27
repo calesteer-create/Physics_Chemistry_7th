@@ -1,0 +1,75 @@
+/**
+ * مفاتيح الإجابة والتفسيرات لاختبار «الضغط في السوائل».
+ *
+ * هذه الوحدة تُستورد من مكوّن العميل فقط، ولا تُمرَّر من صفحة الخادم في
+ * الحمولة الأولى. الواجهة لا تعرض أي مفتاح أو تفسير قبل تسليم الاختبار.
+ * التصحيح محلي في المتصفح بلا خادم ولا API ولا قاعدة بيانات.
+ */
+import type { Rich } from "@/content/types";
+import { rich } from "@/lib/liquid-pressure-rich";
+
+export type LiquidQuizAnswer = number | boolean | string;
+
+export interface LiquidQuizKey {
+  answer: LiquidQuizAnswer;
+  /** هامش مقبول للأسئلة العددية فقط. */
+  tolerance?: number;
+  unit?: string;
+  explain: Rich;
+  steps?: Rich[];
+}
+
+const R = (s: string): Rich => rich(s);
+
+export const pressureInLiquidsAnswerKey: Record<string, LiquidQuizKey> = {
+  "pil-1": {
+    answer: 0,
+    explain: R(`ضغط السائل وحده يُحسب بـ$P=\rho g h$؛ أمّا $P_t=P_0+\rho g h$ فهو الضغط الكلي عند سطح معرّض للهواء.`),
+    steps: [R("حدّد المطلوب: ضغط السائل فقط."), R("استبعد العلاقة التي تحتوي $P_0$."), R(`الصحيحة $P=\rho g h$.`)],
+  },
+  "pil-2": {
+    answer: true,
+    explain: R("صحيح: تجربة المانومتر تُظهر تساوي ضغط السائل المتوازن في جميع النقاط الواقعة في مستوٍ أفقي واحد."),
+  },
+  "pil-3": {
+    answer: 2,
+    explain: R("لا يتغيّر فرق السويتين: الضغط عند النقطة الواحدة متساوٍ من جميع الاتجاهات، ومتساوٍ على السوية الأفقية ذاتها."),
+  },
+  "pil-4": {
+    answer: 7000,
+    tolerance: 0.01,
+    unit: "Pa",
+    explain: R("التعويض المباشر في قانون ضغط السائل يعطي 7000 Pa."),
+    steps: [R("$P=\rho g h$."), R("$P=1000\times10\times0.7$."), R("$P=7000\,\mathrm{Pa}$.")],
+  },
+  "pil-5": {
+    answer: 1,
+    explain: R("المحور الأفقي يمثّل العمق $h$ بالمتر؛ وهو مكتوب في رسم الكتاب بالرمز $\\mathrm{m}$. شكل الرسم محفوظ، وهذا توضيح من المنصة لا تغيير صامت."),
+  },
+  "pil-6": {
+    answer: false,
+    explain: R("خطأ: مسائل الكتاب التي تطلب ضغط السائل تُحل بـ$P=\rho g h$ وحده؛ ولا يُضاف $P_0$ إلا عند طلب الضغط الكلي."),
+  },
+  "pil-7": {
+    answer: 1.2,
+    tolerance: 0.02,
+    unit: "m",
+    explain: R("من $P=\rho g h$ نحصل على $h=P/(\rho g)=1.2$ m."),
+    steps: [R("$h=\dfrac{P}{\rho g}$."), R("$h=\dfrac{12000}{1000\times10}$."), R("$h=1.2\,\mathrm{m}$.")],
+  },
+  "pil-8": {
+    answer: 1,
+    explain: R("السلسلة الصحيحة تبدأ بثبات العمق و$g$، ثم مقارنة الكتلة الحجمية، ثم مقارنة الضغط، ثم كتابة $P=\rho g h$."),
+  },
+  "pil-9": {
+    answer: 20000,
+    tolerance: 0.01,
+    unit: "Pa",
+    explain: R("فرق الضغط بين عمقين في السائل نفسه هو $\\Delta P=\rho g\Delta h$، و$\\Delta h=2$ m."),
+    steps: [R("$\Delta h=3.5-1.5=2\,\mathrm{m}$."), R("$\Delta P=\rho g\Delta h$."), R("$\Delta P=1000\times10\times2=20000\,\mathrm{Pa}$.")],
+  },
+  "pil-10": {
+    answer: 0,
+    explain: R(`المجموعة الأولى فقط صحيحة: $P=\rho g h$ لضغط السائل، و$P_t=P_0+\rho g h$ للضغط الكلي، والقيمة العلمية المصحّحة $1\,\mathrm{atm}=101325\,\mathrm{Pa}=760\,\mathrm{mmHg}$. القيمة $10135$ مطبوعة في الكتاب والتصحيح من المنصة ولا يُنسب إليه.`),
+  },
+};

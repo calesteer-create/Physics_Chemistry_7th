@@ -57,6 +57,20 @@ import {
   PressureApplicationsFigure,
   PressureConceptMapFigure,
 } from "./pressure-figures";
+import {
+  LiquidPressureIntroFigure,
+  ThreeHolesFigure,
+  ManometerToolsFigure,
+  ManometerExperimentFigure,
+  DepthFigure,
+  DensityFigure,
+  LiquidLawFigure,
+  AtmosphereFigure,
+  DamVesselsFigure,
+  LiquidApplicationsFigure,
+  BookQuestionFigure,
+  LiquidGraphFigure,
+} from "./liquid-pressure-figures";
 import type { ReactNode } from "react";
 
 /**
@@ -163,6 +177,18 @@ const FIGURES: Record<string, () => ReactElement> = {
   "pressure-block-weight": PressureBlockWeightFigure,
   "pressure-applications": PressureApplicationsFigure,
   "pressure-concept-map": PressureConceptMapFigure,
+  "liquid-pressure-intro": LiquidPressureIntroFigure,
+  "liquid-pressure-three-holes": ThreeHolesFigure,
+  "liquid-pressure-manometer-tools": ManometerToolsFigure,
+  "liquid-pressure-manometer-experiment": ManometerExperimentFigure,
+  "liquid-pressure-depth": DepthFigure,
+  "liquid-pressure-density": DensityFigure,
+  "liquid-pressure-law": LiquidLawFigure,
+  "liquid-pressure-atmosphere": AtmosphereFigure,
+  "liquid-pressure-dam-vessels": DamVesselsFigure,
+  "liquid-pressure-applications": LiquidApplicationsFigure,
+  "liquid-pressure-book-question": BookQuestionFigure,
+  "liquid-pressure-graph": LiquidGraphFigure,
 };
 
 // رسوم محسّنة للشرح فقط؛ لا تدخل سجل رسوم دفتر الطالب.

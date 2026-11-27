@@ -24,6 +24,7 @@ const baseline: Record<string, string> = {
   "forces-on-one-support": "b0320f71ae611d10425dc0bf8fd7259849825d68582f7a6d57e4a2d942a44d08",
   "work-and-power": "ed55fc49a39afa36e9e0e0a0c2cad956798c4e108f5ba0c1e04e2afeb7eae970",
   "pressure": "768aa060284dac364475e3baccdb5110810db7c3fc4a0816cb505608726f7f3b",
+  "pressure-in-liquids": "44edfe6994369bc62af1708543fb27b583fba2e897c5df267052d7da2d3b13fd",
 };
 
 test("محتوى دفتر الطالب وبنيته وترتيبه مطابق لخط الأساس المعتمد", () => {

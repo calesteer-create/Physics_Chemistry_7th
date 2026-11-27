@@ -1,0 +1,69 @@
+/* اختبار «الضغط في السوائل» — تصحيح محلي، تفسيرات بعد التسليم فقط. */
+
+.scope { min-width: 0; color: #dce8f8; }
+
+.intro, .panel {
+  min-width: 0;
+  border: 1.5px solid var(--color-line2);
+  border-radius: 20px;
+  background: rgba(6, 14, 30, .46);
+  padding: clamp(18px, 3vw, 30px);
+  margin-bottom: 16px;
+}
+
+.intro { border-color: rgba(60, 224, 244, .3); background: linear-gradient(145deg, rgba(60,224,244,.07), rgba(6,14,30,.5)); }
+
+.heading { margin: 0 0 10px; color: #fff; font-size: clamp(20px, 2.6vw, 27px); font-weight: 900; line-height: 1.6; }
+.lede { margin: 0 0 10px; color: var(--color-mist); font-size: 14.5px; font-weight: 700; line-height: 2; }
+.note { margin: 12px 0 0; border-right: 4px solid #ffb040; border-radius: 10px; background: rgba(255,176,58,.07); padding: 10px 13px; color: #fde68a; font-size: 13px; font-weight: 800; line-height: 1.9; }
+
+.meta { display: flex; flex-wrap: wrap; gap: 9px; margin: 14px 0; }
+.chip { border: 1px solid rgba(60,224,244,.3); background: rgba(60,224,244,.07); border-radius: 999px; padding: 5px 12px; color: #8ceeff; font-size: 12px; font-weight: 900; }
+.chipGold { border-color: rgba(255,176,58,.4); background: rgba(255,176,58,.08); color: #ffd08a; }
+
+.button { min-height: 44px; border: 1.5px solid transparent; border-radius: 11px; padding: 10px 18px; font-size: 13.5px; font-weight: 900; cursor: pointer; }
+.primary { background: linear-gradient(135deg, #0ea5b7, #2563eb); color: #fff; }
+.ghost { background: rgba(255,255,255,.04); border-color: var(--color-line2); color: var(--color-mist); }
+.button:disabled { opacity: .45; cursor: not-allowed; }
+
+.progress { display: grid; gap: 8px; }
+.progressBar { width: 100%; height: 10px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.progressBar span { display: block; height: 100%; background: linear-gradient(90deg, #3ce0f4, #a78bfa); }
+.progressText { color: var(--color-mist); font-size: 12.5px; font-weight: 900; }
+
+.question { min-width: 0; border: 1.5px solid var(--color-line2); border-radius: 18px; background: rgba(6,14,30,.44); padding: clamp(16px, 2.6vw, 24px); margin-bottom: 14px; }
+.questionHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 9px; margin-bottom: 11px; }
+.status { color: #8ceeff; font-size: 12px; font-weight: 900; }
+.level { border: 1px solid rgba(167,139,250,.4); background: rgba(167,139,250,.08); border-radius: 999px; padding: 3px 10px; color: #cfc7ff; font-size: 11px; font-weight: 900; }
+.prompt { margin: 0; color: #eaf4ff; font-size: 15.5px; font-weight: 800; line-height: 2; }
+.figure { margin: 14px 0; }
+
+.options { display: grid; gap: 9px; margin-top: 14px; }
+.option { display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; border: 1.5px solid var(--color-line2); border-radius: 12px; background: rgba(255,255,255,.02); color: var(--color-fog); padding: 10px 12px; font-size: 13.5px; font-weight: 800; line-height: 1.8; text-align: right; cursor: pointer; }
+.option:hover { border-color: rgba(60,224,244,.5); }
+.optionSelected { border-color: rgba(60,224,244,.75); background: rgba(60,224,244,.1); color: #a7f3ff; }
+.optionCorrect { border-color: rgba(52,211,153,.65); background: rgba(52,211,153,.11); color: #a7f3d0; }
+.optionWrong { border-color: rgba(248,113,113,.65); background: rgba(248,113,113,.1); color: #fca5a5; }
+.optionDim { opacity: .48; }
+.option:disabled { cursor: default; }
+.letter { flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(148,178,220,.09); color: var(--color-mist); font-size: 12px; font-weight: 900; }
+
+.input { width: min(210px, 100%); min-height: 44px; border: 1.5px solid rgba(60,224,244,.4); border-radius: 10px; background: rgba(6,14,30,.58); color: #fff; padding: 9px 12px; font-size: 14px; font-weight: 900; text-align: center; direction: ltr; outline: none; margin-top: 13px; }
+.unit { margin-inline-start: 8px; color: #ffd08a; font-size: 13px; font-weight: 900; direction: ltr; unicode-bidi: isolate; }
+
+.review { margin-top: 13px; border-radius: 13px; border: 1.5px solid rgba(52,211,153,.35); background: rgba(52,211,153,.07); padding: 12px 14px; color: #bbf7d0; font-size: 13.5px; font-weight: 800; line-height: 2; }
+.reviewWrong { border-color: rgba(255,176,58,.4); background: rgba(255,176,58,.07); color: #fde68a; }
+.review strong { color: #fff; }
+.review ol { margin: 7px 0 0; padding-inline-start: 20px; }
+.review li { margin-bottom: 4px; }
+
+.result { border-color: rgba(52,211,153,.45); background: linear-gradient(145deg, rgba(52,211,153,.09), rgba(6,14,30,.5)); }
+.resultScore { color: #6ee7b7; font-size: clamp(22px, 3vw, 31px); font-weight: 900; }
+.error { margin: 12px 0 0; border: 1.5px solid rgba(248,113,113,.45); background: rgba(248,113,113,.08); border-radius: 11px; padding: 10px 13px; color: #fca5a5; font-size: 13px; font-weight: 900; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+@media (max-width: 30rem) {
+  .question { border-radius: 14px; }
+  .option { font-size: 12.8px; }
+}

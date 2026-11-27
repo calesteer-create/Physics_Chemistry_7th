@@ -7,7 +7,7 @@ import { listQuizzesMeta } from "@/content/quiz-bank";
 export const metadata: Metadata = { title: "الاختبارات" };
 
 export default function QuizzesPage() {
-  const quizzes = [...listQuizzesMeta(), {id:"quiz-simple-machines-5", title:"اختبار الدرس الخامس — الآلات البسيطة", curricular:true, durationMin:20, count:10, lessonSlug:"simple-machines"}, {id:"quiz-pressure-6", title:"اختبار الدرس الأول — الضغط (الوحدة الثانية)", curricular:true, durationMin:18, count:10, lessonSlug:"pressure"}, {id:"quiz-unit-1", title:"اختبار الوحدة الأولى الشامل — الحركة والتحريك", curricular:true, durationMin:50, count:30, lessonSlug:null}];
+  const quizzes = [...listQuizzesMeta(), {id:"quiz-simple-machines-5", title:"اختبار الدرس الخامس — الآلات البسيطة", curricular:true, durationMin:20, count:10, lessonSlug:"simple-machines"}, {id:"quiz-pressure-6", title:"اختبار الدرس الأول — الضغط (الوحدة الثانية)", curricular:true, durationMin:18, count:10, lessonSlug:"pressure"}, {id:"quiz-pressure-in-liquids-7", title:"اختبار الدرس الثاني — الضغط في السوائل (الوحدة الثانية)", curricular:true, durationMin:20, count:10, lessonSlug:"pressure-in-liquids"}, {id:"quiz-unit-1", title:"اختبار الوحدة الأولى الشامل — الحركة والتحريك", curricular:true, durationMin:50, count:30, lessonSlug:null}];
 
   return (
     <div className="container-x py-16">
@@ -73,9 +73,9 @@ export default function QuizzesPage() {
         <div className="mt-10 flex items-center gap-3 rounded-2xl border border-[rgba(230,192,122,0.3)] bg-[rgba(230,192,122,0.05)] px-5 py-4">
           <ShieldCheck className="h-5.5 w-5.5 shrink-0 text-[var(--color-gold)]" />
           <p className="text-[13px] font-bold leading-7 text-[var(--color-mist)]">
-            مفاتيح الإجابة لا تصل إلى متصفحك أصلًا: الأسئلة تُرسل بدون إجابات، والتصحيح يجري في
-            الخادم، ولا ترى الحل إلا بعد تسليم الاختبار. الحلول التفصيلية الكاملة محفوظة في منطقة
-            المعلم المحمية.
+            في الاختبارات القديمة تُرسل الأسئلة بلا إجابات ويجري التسليم بآليتها الحالية. أمّا
+            اختبارات الدروس الجديدة فتُصحَّح محلياً في متصفحك: لا تُرسل إجاباتها أو درجاتها إلى
+            خادم، ولا تظهر الإجابات الصحيحة ولا التفسيرات قبل تسليم الاختبار.
           </p>
         </div>
       </Reveal>

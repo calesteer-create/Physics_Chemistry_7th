@@ -6,13 +6,14 @@ import { forceAndMotionLesson } from "./lessons/unit1/force-and-motion";
 import { forceOnOneSupportLesson } from "./lessons/unit1/force-on-one-support";
 import { workAndPowerLesson } from "./lessons/unit1/work-and-power";
 import { pressureLesson } from "./lessons/unit2/pressure";
+import { pressureInLiquidsLesson } from "./lessons/unit2/pressure-in-liquids";
 
 /**
  * السجل المركزي للمحتوى.
  * تُضاف الدروس المنهجية هنا بعد ورود صور الكتاب المدرسي واعتمادها.
  */
 
-const LESSONS: Lesson[] = [orientationLesson, motionAndRestLesson, forceAndMotionLesson, forceOnOneSupportLesson, workAndPowerLesson, simpleMachinesLesson, pressureLesson];
+const LESSONS: Lesson[] = [orientationLesson, motionAndRestLesson, forceAndMotionLesson, forceOnOneSupportLesson, workAndPowerLesson, simpleMachinesLesson, pressureLesson, pressureInLiquidsLesson];
 
 export const units: Unit[] = [
   {
@@ -37,7 +38,7 @@ export const units: Unit[] = [
     status: "active",
     lessons: [
       { slug: "pressure", title: "الضغط", status: "published" },
-      { slug: "pressure-in-liquids", title: "الضغط في السوائل", status: "pending" },
+      { slug: "pressure-in-liquids", title: "الضغط في السوائل", status: "published" },
       { slug: "archimedes-buoyancy", title: "دافعة أرخميدس", status: "pending" },
       { slug: "transport-project", title: "مشروع وسائل النقل", status: "pending" },
     ],
